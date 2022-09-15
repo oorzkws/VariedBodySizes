@@ -19,14 +19,6 @@ public static class GraphicMeshSet_MeshAt
             return;
         }
 
-        var pawnSizeFactor = Main.CurrentComponent.GetVariedBodySize(Main.CurrentPawn);
-
-        if (rot.AsInt == 3)
-        {
-            __result = MeshMakerPlanes.NewPlaneMesh(1.5f * pawnSizeFactor, true, true);
-            return;
-        }
-
-        __result = MeshMakerPlanes.NewPlaneMesh(1.5f * pawnSizeFactor, false, true);
+        __result = Main.GetPawnMesh(Main.CurrentComponent.GetVariedBodySize(Main.CurrentPawn), rot.AsInt == 3);
     }
 }
