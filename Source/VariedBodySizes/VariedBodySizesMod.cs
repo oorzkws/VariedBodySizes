@@ -109,6 +109,12 @@ internal class VariedBodySizesMod : Mod
         listing_Standard.CheckboxLabeled("VariedBodySizes.realbodysize.label".Translate(),
             ref Settings.AffectRealBodySize,
             "VariedBodySizes.realbodysize.tooltip".Translate());
+        listing_Standard.CheckboxLabeled("VariedBodySizes.realhealthscale.label".Translate(),
+            ref Settings.AffectRealHealthScale,
+            "VariedBodySizes.realhealthscale.tooltip".Translate());
+        listing_Standard.CheckboxLabeled("VariedBodySizes.meleedamage.label".Translate(),
+            ref Settings.AffectMeleeDamage,
+            "VariedBodySizes.meleedamage.tooltip".Translate());
 
         if (currentVersion != null)
         {

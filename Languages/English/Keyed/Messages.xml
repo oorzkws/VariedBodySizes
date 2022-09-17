@@ -9,7 +9,11 @@
   <VariedBodySizes.yes>Yes</VariedBodySizes.yes>
   <VariedBodySizes.resetgame>Reset current game</VariedBodySizes.resetgame>
   <VariedBodySizes.realbodysize.label>Also modify actual bodysize</VariedBodySizes.realbodysize.label>
-  <VariedBodySizes.realbodysize.tooltip>Instead of just visual, the changed bodysize will affect any calculation based on body-size. For example bed-use, pen-size, food-need, bullets stopping power.</VariedBodySizes.realbodysize.tooltip>
+  <VariedBodySizes.realbodysize.tooltip>The changed bodysize will affect any calculation based on body-size. For example bed-use, pen-size, food-need, bullets stopping power.</VariedBodySizes.realbodysize.tooltip>
+  <VariedBodySizes.realhealthscale.label>Also modify health scaling</VariedBodySizes.realhealthscale.label>
+  <VariedBodySizes.realhealthscale.tooltip>Bodysize will also affect the amount of health points for pawns and animals. This will affect all bodyparts and how much damage they can take.</VariedBodySizes.realhealthscale.tooltip>
+  <VariedBodySizes.meleedamage.label>Also modify melee damage</VariedBodySizes.meleedamage.label>
+  <VariedBodySizes.meleedamage.tooltip>Bodysize will also affect the amount of melee damage a pawn/animal can inflict.</VariedBodySizes.meleedamage.tooltip>
   <VariedBodySizes.version.label>Installed mod-version: {0}</VariedBodySizes.version.label>
   <VariedBodySizes.logging.label>Verbose logging</VariedBodySizes.logging.label>
   <VariedBodySizes.logging.tooltip>Increased logging for debugging</VariedBodySizes.logging.tooltip>

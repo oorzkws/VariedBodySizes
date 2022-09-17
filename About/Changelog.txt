@@ -1,5 +1,8 @@
 # Changelog for VariedBodySizes
 
+1.3.2 - Added support for healthfactor and melee damage
+
+
 1.3.1 - Performance update and save/load fix
 
 

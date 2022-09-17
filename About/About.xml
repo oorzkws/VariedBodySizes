@@ -20,16 +20,29 @@
   </loadAfter>
   <description>[img]https://i.imgur.com/buuPQel.png[/img]
 
-This mod will make the bodysize of pawns and animals a bit more varied. When a pawn spawns they will get a random change in their size. This is by default just a visual effect, but can be changed in the settings to affect gameplay as well.
+This mod adds two new settings to rimworld. The first allows you to individually set a customized size range for all pawns and animal sizes. This change is strictly cosmetic and alters no other statistics of the pawn or animal.
 
-Mod-settings 
+The second, and only if you chose to enable it, enables functional changes as well. By enabling "also modify body size stat" in the mod config you will also alter the "body size" stat. This affects things like calculating meat amount, leather amount, carry capacity and various other stats. It can also be used in other mods for all sorts of reasons. Basically since this setting modifies the body size stat, it will be included in those types of calculations. 
+
+Enabling this setting should not change things like health, melee range, melee damage, or movement speed.
+
+[h2]Mod-settings[/h2]
 [list]
-[*] Default size-range
-[*] Also modify the actual body-size value (affects gameplay)
-[*] Individual size variation per pawntype
+[*] Can set a blanket default setting for everything
+[*] Sizes can range from 10% to 200% of normal size
+[*] Also all size changes to also alter the "body size" stat
+[*] Search filter for when you are looking for a specific pawn/animal or mod-name
+[*] Shows the mod name the pawn or animal came from
 [/list]
 
-Verified to work with [url=https://steamcommunity.com/workshop/filedetails/?id=839005762]Humanoid Alien Races[/url] and some children-mods.
+Should work with most if not all pawn and animal mods
+Load order should not matter as all calculations are done after game-start.
+
+[h2]Verified compatible mods[/h2]
+[list]
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=839005762]Humanoid Alien Races[/url]
+[*][url=https://steamcommunity.com/sharedfiles/filedetails/?id=2559574784]Babies and Children[/url]
+[/list]
 
 Idea: Visandar_the_Unliving
 
