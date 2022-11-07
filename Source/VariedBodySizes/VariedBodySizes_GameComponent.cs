@@ -53,6 +53,6 @@ public class VariedBodySizes_GameComponent : GameComponent
 
         Scribe_Collections.Look(ref VariedBodySizesDictionary, "VariedBodySizesDictionary", LookMode.Reference,
             LookMode.Value,
-            ref variedBodySizesDictionaryKeys, ref variedBodySizesDictionaryValues);
+            ref variedBodySizesDictionaryKeys, ref variedBodySizesDictionaryValues, false);
     }
 }
