@@ -6,9 +6,10 @@ namespace VariedBodySizes;
 /// <summary>
 ///     Definition of the settings for the mod
 /// </summary>
-internal class VariedBodySizesModSettings : ModSettings
+public class VariedBodySizesModSettings : ModSettings
 {
     public bool AffectMeleeDamage;
+    public bool AffectMeleeDodgeChance;
     public bool AffectRealBodySize;
     public bool AffectRealHealthScale;
     public FloatRange DefaultVariation = new FloatRange(0.9f, 1.1f);
@@ -25,6 +26,7 @@ internal class VariedBodySizesModSettings : ModSettings
         Scribe_Values.Look(ref AffectRealBodySize, "AffectRealBodySize");
         Scribe_Values.Look(ref AffectRealHealthScale, "AffectRealHealthScale");
         Scribe_Values.Look(ref AffectMeleeDamage, "AffectMeleeDamage");
+        Scribe_Values.Look(ref AffectMeleeDodgeChance, "AffectMeleeDodgeChance");
         Scribe_Values.Look(ref DefaultVariation, "DefaultVariation", new FloatRange(0.9f, 1.1f));
         Scribe_Collections.Look(ref VariedBodySizes, "VariedBodySizes", LookMode.Value,
             LookMode.Value,
