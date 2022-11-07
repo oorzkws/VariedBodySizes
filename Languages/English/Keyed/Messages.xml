@@ -14,6 +14,8 @@
   <VariedBodySizes.realhealthscale.tooltip>Bodysize will also affect the amount of health points for pawns and animals. This will affect all bodyparts and how much damage they can take.</VariedBodySizes.realhealthscale.tooltip>
   <VariedBodySizes.meleedamage.label>Also modify melee damage</VariedBodySizes.meleedamage.label>
   <VariedBodySizes.meleedamage.tooltip>Bodysize will also affect the amount of melee damage a pawn/animal can inflict.</VariedBodySizes.meleedamage.tooltip>
+  <VariedBodySizes.meleedodgechance.label>Also modify melee dodge chance</VariedBodySizes.meleedodgechance.label>
+  <VariedBodySizes.meleedodgechance.tooltip>Bodysize will also affect the melee dodge chance of a pawn/animal.</VariedBodySizes.meleedodgechance.tooltip>
   <VariedBodySizes.version.label>Installed mod-version: {0}</VariedBodySizes.version.label>
   <VariedBodySizes.logging.label>Verbose logging</VariedBodySizes.logging.label>
   <VariedBodySizes.logging.tooltip>Increased logging for debugging</VariedBodySizes.logging.tooltip>
