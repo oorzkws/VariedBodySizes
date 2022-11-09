@@ -115,6 +115,9 @@ internal class VariedBodySizesMod : Mod
         listing_Standard.CheckboxLabeled("VariedBodySizes.meleedamage.label".Translate(),
             ref Settings.AffectMeleeDamage,
             "VariedBodySizes.meleedamage.tooltip".Translate());
+        listing_Standard.CheckboxLabeled("VariedBodySizes.meleedodgechance.label".Translate(),
+            ref Settings.AffectMeleeDodgeChance,
+            "VariedBodySizes.meleedodgechance.tooltip".Translate());
 
         if (currentVersion != null)
         {
