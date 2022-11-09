@@ -1,5 +1,8 @@
 # Changelog for VariedBodySizes
 
+1.4.2 - Added setting for melee dodge chance, support for VEF, made settings public. Thanks oorzkws!
+
+
 1.4.1 - Mod updated for 1.4 and passed autotests..
 Used DeepL to update translations for ChineseSimplified, French, German, Russian
 

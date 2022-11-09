@@ -8,6 +8,11 @@ public static class VerbProperties_GetDamageFactorFor
 {
     public static void Postfix(ref float __result, Pawn attacker, VerbProperties __instance)
     {
+        if (!VariedBodySizesMod.instance.Settings.AffectMeleeDamage)
+        {
+            return;
+        }
+
         if (!__instance.IsMeleeAttack)
         {
             return;
@@ -18,10 +23,6 @@ public static class VerbProperties_GetDamageFactorFor
             return;
         }
 
-        if (!VariedBodySizesMod.instance.Settings.AffectMeleeDamage)
-        {
-            return;
-        }
 
         if (Main.CurrentComponent == null)
         {
