@@ -18,6 +18,7 @@ You can enable the "Also modify health scaling" to make pawns health pool be aff
 -  Also alter the actual body size-stat
 -  Also alter the health factor
 -  Also alter melee damage factor
+-  Also alter melee dodge chance
 -  Search filter for when you are looking for a specific pawn/animal or mod-name
 -  Shows the mod name the pawn or animal came from
 
@@ -36,6 +37,7 @@ Load order should not matter as all calculations are done after game-start.
 
 
 Idea: Visandar_the_Unliving
+VEF support and dodge chance by: oorzkws
 
 ![Image](https://i.imgur.com/O0IIlYj.png)
 

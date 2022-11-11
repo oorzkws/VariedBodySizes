@@ -1,5 +1,8 @@
 # Changelog for VariedBodySizes
 
+1.4.3 - Fixed version of the VEF-compatibility, thanks oorzkws!
+
+
 1.4.2 - Added setting for melee dodge chance, support for VEF, made settings public. Thanks oorzkws!
 
 
