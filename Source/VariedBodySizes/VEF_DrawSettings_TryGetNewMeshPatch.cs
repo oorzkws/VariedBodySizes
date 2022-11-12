@@ -7,7 +7,7 @@ using Verse;
 namespace VariedBodySizes;
 
 // VE breaks pawn render scaling with transpiler fun times so we have to modify the meshes that get passed to it...
-[HarmonyPatch]
+//[HarmonyPatch]
 public static class VEF_DrawSettings_TryGetNewMeshPatch
 {
     private static readonly string[] VEFMethods =
