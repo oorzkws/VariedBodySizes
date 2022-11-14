@@ -88,6 +88,9 @@ _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
 
+# Rider (JetBrains IDEA) is a .NET IDE
+.idea
+
 # JustCode is a .NET coding addin-in
 .JustCode
 
