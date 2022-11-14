@@ -1,4 +1,5 @@
 using HarmonyLib;
+using UnityEngine;
 using Verse;
 
 namespace VariedBodySizes;
@@ -19,5 +20,10 @@ public static class Pawn_BodySize
         }
 
         __result *= Main.CurrentComponent.GetVariedBodySize(__instance);
+
+        if (__instance.DevelopmentalStage  == DevelopmentalStage.Baby)
+        {
+            __result = Mathf.Min(__result, 0.25f);
+        }
     }
 }
