@@ -4,7 +4,7 @@ using Verse;
 
 namespace VariedBodySizes;
 
-[HarmonyPatch(typeof(Graphic), "MeshAt")]
+//[HarmonyPatch(typeof(Graphic), "MeshAt")]
 public static class Graphic_MeshAt
 {
     public static void Prefix(ref Vector2 ___drawSize, out Vector2 __state)

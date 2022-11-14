@@ -4,7 +4,7 @@ using Verse;
 
 namespace VariedBodySizes;
 
-[HarmonyPatch(typeof(GraphicMeshSet), "MeshAt")]
+//[HarmonyPatch(typeof(GraphicMeshSet), "MeshAt")]
 public static class GraphicMeshSet_MeshAt
 {
     public static void Postfix(GraphicMeshSet __instance, ref Mesh __result, Rot4 rot)

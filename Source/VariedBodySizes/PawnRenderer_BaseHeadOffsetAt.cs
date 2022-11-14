@@ -4,7 +4,7 @@ using Verse;
 
 namespace VariedBodySizes;
 
-[HarmonyPatch(typeof(PawnRenderer), "BaseHeadOffsetAt")]
+//[HarmonyPatch(typeof(PawnRenderer), "BaseHeadOffsetAt")]
 public static class PawnRenderer_BaseHeadOffsetAt
 {
     public static void Postfix(ref Vector3 __result)

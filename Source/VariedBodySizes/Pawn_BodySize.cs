@@ -13,11 +13,6 @@ public static class Pawn_BodySize
             return;
         }
 
-        if (Main.CurrentComponent == null)
-        {
-            return;
-        }
-
-        __result *= Main.CurrentComponent.GetVariedBodySize(__instance);
+        __result *= Main.CurrentComponent?.GetVariedBodySize(__instance) ?? 1.0f;
     }
 }
