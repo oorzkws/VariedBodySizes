@@ -296,7 +296,7 @@ public static class RenderPatches
             static bool Prepare()
             {
                 if (!hasVEF) return false;
-                targetMethod = AccessTools.Method("VanillaGenesExpanded.HumanlikeMeshPoolUtility_Patches.GeneScaleFactor");
+                targetMethod = AccessTools.Method("VanillaGenesExpanded.HumanlikeMeshPoolUtility_Patches:GeneScaleFactor");
                 return targetMethod != null;
             }
 
