@@ -36,10 +36,11 @@ public class TimedCache<T>
 
     public void Set(Pawn key, T value)
     {
+        CheckFirstExpiry();
+        
         var node = new LinkedListNode<CacheEntry<T>>(new CacheEntry<T>(value, key));
         internalCache.Add(key, node);
         expiryList.AddLast(node);
-        CheckFirstExpiry();
     }
 
     public bool TryGet(Pawn key, out T value)
