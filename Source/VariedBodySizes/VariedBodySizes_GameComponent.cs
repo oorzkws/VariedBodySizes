@@ -5,18 +5,14 @@ namespace VariedBodySizes;
 
 public class VariedBodySizes_GameComponent : GameComponent
 {
-    public Game currentGame;
-
     public Dictionary<Pawn, float> VariedBodySizesDictionary;
-
+    
     private List<Pawn> variedBodySizesDictionaryKeys;
-
     private List<float> variedBodySizesDictionaryValues;
 
     public VariedBodySizes_GameComponent(Game game)
     {
         Main.CurrentComponent = this;
-        currentGame = game;
     }
 
     public float GetVariedBodySize(Pawn pawn)
@@ -31,10 +27,7 @@ public class VariedBodySizes_GameComponent : GameComponent
             return 1f;
         }
 
-        if (VariedBodySizesDictionary == null)
-        {
-            VariedBodySizesDictionary = new Dictionary<Pawn, float>();
-        }
+        VariedBodySizesDictionary ??= new Dictionary<Pawn, float>();
 
         if (VariedBodySizesDictionary.ContainsKey(pawn))
         {

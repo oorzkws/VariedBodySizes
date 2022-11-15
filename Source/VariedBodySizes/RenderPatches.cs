@@ -9,122 +9,49 @@ using Verse;
 // ReSharper disable InconsistentNaming
 // ReSharper disable IdentifierTypo
 // ReSharper disable UnusedType.Local
+// ReSharper disable UnusedMember.Local
 
 namespace VariedBodySizes;
-public static class BodyRenderRedux
+public static class RenderPatches
 {
-    private readonly struct CacheEntry
-    {
-        public readonly GraphicMeshSet PlayerMesh;
-        public readonly Pawn Owner;
-        private readonly int bornTick;
-
-        public CacheEntry(GraphicMeshSet playerMesh, Pawn owner)
-        {
-            PlayerMesh = playerMesh;
-            Owner = owner;
-            bornTick = Find.TickManager.TicksGame;
-        }
-        public bool Expired(int currentTick, int expiryPeriod)
-        {
-            return bornTick + expiryPeriod < currentTick;
-        }
-    }
-
-    private class TimedCache
-    {
-        private readonly int expiry;
-        private readonly Dictionary<Pawn, LinkedListNode<CacheEntry>> internalCache = new();
-        private readonly LinkedList<CacheEntry> expiryList = new();
-        public TimedCache(int expiryTime) => this.expiry = expiryTime;
-
-        public GraphicMeshSet SetAndReturn(Pawn key, GraphicMeshSet value)
-        {
-            Set(key, value);
-            return internalCache[key].Value.PlayerMesh;
-        }
-    
-        public void Set(Pawn key, GraphicMeshSet value)
-        {
-            var node = new LinkedListNode<CacheEntry>(new CacheEntry(value, key));
-            internalCache.Add(key, node);
-            expiryList.AddLast(node);
-            CheckFirstExpiry();
-        }
-
-        public GraphicMeshSet Get(Pawn key)
-        {
-            return ContainsKey(key) ? internalCache[key].Value.PlayerMesh : null;
-        }
-    
-        public bool ContainsKey(Pawn key)
-        {
-            CheckKeyExpiry(key);
-            return internalCache.ContainsKey(key);
-        }
-
-        private void CheckKeyExpiry(Pawn key)
-        {
-            if (internalCache.ContainsKey(key) && internalCache[key].Value.Expired(Find.TickManager.TicksGame, expiry))
-                internalCache.Remove(key);
-        }
-        private void CheckFirstExpiry()
-        {
-            var first = expiryList.First;
-            if (first == null || !first.Value.Expired(Find.TickManager.TicksGame, expiry)) return;
-            expiryList.RemoveFirst();
-            internalCache.Remove(first.Value.Owner);
-        }
-    }
-    
     private static readonly bool hasVEF = ModsConfig.IsActive("oskarpotocki.vanillafactionsexpanded.core");
     
-    private static TimedCache headCache = new(3600);
-    private static TimedCache bodyCache = new(3600);
-    private static TimedCache hairCache = new(36000);
-    private static TimedCache beardCache = new(36000);
-    private static TimedCache overlayCache = new(36000);
+    private static readonly TimedCache<GraphicMeshSet> headCache = new(360);
+    private static readonly TimedCache<GraphicMeshSet> bodyCache = new(360);
+    private static readonly TimedCache<GraphicMeshSet> hairCache = new(360);
+    private static readonly TimedCache<GraphicMeshSet> beardCache = new(360);
+    private static readonly TimedCache<GraphicMeshSet> overlayCache = new(360);
 
 
     private static GraphicMeshSet GetHeadBodyMeshForPawn(float scaleFactor, Pawn pawn, bool isHead)
     {
         var targetCache = isHead ? headCache : bodyCache;
-        GraphicMeshSet returnedMesh = targetCache.Get(pawn);
-        
-        if (returnedMesh != null)
-        {
+
+        if (targetCache.TryGet(pawn, out var returnedMesh))
             return returnedMesh;
-        }
-        else // Yeah it's redundant but it's readable
-        {
-            var scaledFactor = scaleFactor * (Main.CurrentComponent?.GetVariedBodySize(pawn) ?? 1f);
-            var scaledMesh = MeshPool.GetMeshSetForWidth(scaledFactor);
-            targetCache.Set(pawn, scaledMesh);
-            return scaledMesh;
-        }
+        
+        var scaledFactor = scaleFactor * (Main.CurrentComponent?.GetVariedBodySize(pawn) ?? 1f);
+        var scaledMesh = MeshPool.GetMeshSetForWidth(scaledFactor);
+        targetCache.Set(pawn, scaledMesh);
+        return scaledMesh;
     }
 
     private static GraphicMeshSet GetHairBeardMeshForPawn(Vector2 scalar, Pawn pawn, bool isHair)
     {
         var targetCache = isHair ? hairCache : beardCache;
-        var returnedMesh = targetCache.Get(pawn);
-        
-        if (returnedMesh != null)
-        {
+
+        if (targetCache.TryGet(pawn, out var returnedMesh))
             return returnedMesh;
-        }
-        else // Yeah it's redundant but it's readable
-        {
-            var scaledFactor = scalar * (Main.CurrentComponent?.GetVariedBodySize(pawn) ?? 1f);
-            var scaledMesh = MeshPool.GetMeshSetForWidth(scaledFactor.x, scaledFactor.y);
-            targetCache.Set(pawn, scaledMesh);
-            return scaledMesh;
-        }
+        
+        var scaledFactor = scalar * (Main.CurrentComponent?.GetVariedBodySize(pawn) ?? 1f);
+        var scaledMesh = MeshPool.GetMeshSetForWidth(scaledFactor.x, scaledFactor.y);
+        targetCache.Set(pawn, scaledMesh);
+        return scaledMesh;
     }
 
     private static GraphicMeshSet GetBodyOverlayMeshForPawn(GraphicMeshSet baseMesh, Pawn pawn)
     {
-        GraphicMeshSet returnedMesh = overlayCache.Get(pawn);
+        var returnedMesh = overlayCache.Get(pawn);
         
         if (returnedMesh != null)
         {
@@ -144,7 +71,7 @@ public static class BodyRenderRedux
     
     private static Vector2 returnModifiedDrawHeight(Vector2 vec, Pawn pawn)
     {
-        return vec *= Mathf.Sqrt(Main.CurrentComponent?.GetVariedBodySize(pawn) ?? 1f);
+        return vec * Mathf.Sqrt(Main.CurrentComponent?.GetVariedBodySize(pawn) ?? 1f);
     }
     
     // Unconditional
@@ -225,7 +152,7 @@ public static class BodyRenderRedux
                     yield return new CodeInstruction(OpCodes.Ldc_I4, isHead ? 1 : 0);
                     //[0036] PUSH our custom mesh, POP pawn and float and bool
                     yield return new CodeInstruction(OpCodes.Call,
-                        AccessTools.Method(typeof(BodyRenderRedux), nameof(GetHeadBodyMeshForPawn)));
+                        AccessTools.Method(typeof(RenderPatches), nameof(GetHeadBodyMeshForPawn)));
                 }
 
                 //[003B] RET GraphicMeshSet POP GraphicMeshSet
@@ -315,19 +242,44 @@ public static class BodyRenderRedux
                 yield return new CodeInstruction(OpCodes.Ldc_I4, isHair ? 1 : 0);
                 //[006D] PUSH our custom mesh, POP pawn, Vector2, bool
                 yield return new CodeInstruction(OpCodes.Call,
-                    AccessTools.Method(typeof(BodyRenderRedux), nameof(GetHairBeardMeshForPawn)));
+                    AccessTools.Method(typeof(RenderPatches), nameof(GetHairBeardMeshForPawn)));
                 //[0072] RET GraphicMeshSet POP GraphicMeshSet
                 yield return new CodeInstruction(OpCodes.Ret);
             }
         }
 
         [HarmonyPatch(typeof(PawnRenderer), "GetBodyOverlayMeshSet")]
-        [HarmonyDebug]
+        //[HarmonyDebug]
         private static class PawnRenderer_GetBodyOverlayMeshSetPatch
         {
             static void Postfix(ref GraphicMeshSet __result, Pawn ___pawn)
             {
                 __result = GetBodyOverlayMeshForPawn(__result, ___pawn);
+            }
+        }
+        
+        [HarmonyPatch(typeof(PawnRenderer), "BaseHeadOffsetAt")]
+        //[HarmonyDebug]
+        private static class PawnRenderer_BaseHeadOffsetAt_Patch
+        {
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+            {
+                // Just gonna search here for the switch statement and drop in before
+                // Adding vector = returnModifiedDrawHeight(vector, pawn);
+                return new CodeMatcher(instructions).MatchStartForward(
+                        new CodeMatch(OpCodes.Stloc_0),
+                        new CodeMatch(OpCodes.Ldarga_S),
+                        new CodeMatch(OpCodes.Call),
+                        new CodeMatch(OpCodes.Stloc_1),
+                        new CodeMatch(OpCodes.Ldloc_1),
+                        new CodeMatch(OpCodes.Switch))
+                    .InsertAndAdvance(
+                        new CodeInstruction(OpCodes.Stloc_0),
+                        new CodeInstruction(OpCodes.Ldloc_0),
+                        new CodeInstruction(OpCodes.Ldarg_0),
+                        new CodeInstruction(CodeInstruction.LoadField(typeof(PawnRenderer), "pawn")),
+                        new CodeInstruction(OpCodes.Call, AccessTools.Method("VariedBodySizes.RenderPatches:returnModifiedDrawHeight"))
+                    ).InstructionEnumeration();
             }
         }
     }
@@ -353,64 +305,6 @@ public static class BodyRenderRedux
             static void Postfix(Pawn pawn, ref float __result)
             {
                 __result *= Main.CurrentComponent?.GetVariedBodySize(pawn) ?? 1f;
-            }
-        }
-        
-        [HarmonyPatch(typeof(PawnRenderer), "BaseHeadOffsetAt")]
-        private static class PawnRenderer_BaseHeadOffsetAt_Patch
-        {
-            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-            {
-                // Just gonna search here for the switch statement and drop in before
-                OpCode[] opPattern = new[]
-                    {OpCodes.Stloc_0, OpCodes.Ldarga_S, OpCodes.Call, OpCodes.Stloc_1, OpCodes.Ldloc_1, OpCodes.Switch};
-                var opList = instructions.ToList();
-                var switchPos = -1;
-                // Patterh find
-                for (int i = 0; i < opList.Count; i++)
-                {
-                    if(opList[i].opcode == opPattern[0])
-                    {
-                        for(int ii = 1; ii < opPattern.Length; ii++)
-                        {
-                            if (opList[i + ii] == null || opList[i + ii].opcode == opPattern[ii])
-                            {
-                                break;
-                            }
-                            // We found the whole pattern, yay
-                            if (ii == opPattern.Length - 1)
-                            {
-                                switchPos = i + ii;
-                                break;
-                            }
-                        }
-                    }
-                    
-                }
-                // switchPos is only positive with matches, otherwise we just return the code verbatim
-                for(int i=0; i < opList.Count; i++)
-                {
-                    // Insert below the stloc
-                    if (i == switchPos - 2)
-                    {
-                        // PUSH: this
-                        yield return new CodeInstruction(OpCodes.Ldarg_0);
-                        // PUSH: vector2
-                        yield return new CodeInstruction(OpCodes.Ldloc_0);
-                        // PUSH: this
-                        yield return new CodeInstruction(OpCodes.Ldarg_0);
-                        // PUSH: pawn POP this
-                        yield return new CodeInstruction(CodeInstruction.LoadField(typeof(PawnRenderer), "pawn"));
-                        // PUSH: vector2, POP pawn, vector2
-                        yield return new CodeInstruction(OpCodes.Call,
-                            AccessTools.Method(
-                                "VariedBodySizes.BodyRenderRedux.returnModifiedDrawHeight"));
-                        // POP: vector2 
-                        yield return new CodeInstruction(OpCodes.Stloc_0);
-                    }
-
-                    yield return opList[i];
-                }
             }
         }
     }

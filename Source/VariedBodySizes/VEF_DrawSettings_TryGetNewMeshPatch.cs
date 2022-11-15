@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+/*using System.Collections.Generic;
 using System.Reflection;
 using HarmonyLib;
 using UnityEngine;
@@ -65,4 +65,4 @@ public static class VEF_DrawSettings_TryGetNewMeshPatch
             mesh = Main.GetPawnMesh(Main.CurrentComponent.GetVariedBodySize(pawn), pawn.Rotation.AsInt == 3);
         }
     }
-}
+}*/
