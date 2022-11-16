@@ -13,12 +13,45 @@ public static class Main
 {
     public static VariedBodySizes_GameComponent CurrentComponent;
     public static readonly List<ThingDef> AllPawnTypes;
+    public static readonly Harmony HarmonyInstance;
+    private static readonly KeyValuePair<Type, string>[] targetMethods =
+    {
+        new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeBodySetForPawn"),
+        new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeHeadSetForPawn"),
+        new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeHairSetForPawn"),
+        new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeBeardSetForPawn"),
+        new(typeof(PawnRenderer),"GetBodyOverlayMeshSet"),
+        new(typeof(PawnRenderer),"BaseHeadOffsetAt")
+    };
+
     static Main()
     {
         AllPawnTypes = DefDatabase<ThingDef>.AllDefsListForReading.Where(def => def.race != null)
             .OrderBy(def => def.label).ToList();
-        new Harmony("Mlie.VariedBodySizes").PatchAll(Assembly.GetExecutingAssembly());
+        HarmonyInstance = new Harmony("Mlie.VariedBodySizes");
+        HarmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
         VariedBodySizesMod.instance.Settings.VariedBodySizes ??= new Dictionary<string, FloatRange>();
+                foreach (var targetPair in targetMethods)
+        {
+            var target = targetPair.Value;
+            var targetMethod = AccessTools.Method(targetPair.Key, targetPair.Value);
+            if (targetMethod != null)
+            {
+                var patches = Harmony.GetPatchInfo(targetMethod);
+                if (patches is null)
+                {
+                    continue;
+                }
+
+                if (!patches.Owners.Contains("OskarPotocki.VFECore"))
+                {
+                    continue;
+                }
+
+                FileLog.Log($"Unpatching {targetMethod.DeclaringType?.Name ?? string.Empty}:{targetMethod.Name}");
+                Main.HarmonyInstance.Unpatch(targetMethod, HarmonyPatchType.All, "OskarPotocki.VFECore");
+            }
+        }
     }
 
     public static float GetPawnVariation(Pawn pawn)
