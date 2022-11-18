@@ -91,6 +91,9 @@ _ReSharper*/
 # JetBrains Rider (IDEA) is a .NET IDE
 .idea
 
+# JetBrains Fleet is a general purpose IDE
+.fleet
+
 # JustCode is a .NET coding addin-in
 .JustCode
 

@@ -1,47 +1,45 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
 using HarmonyLib;
-using RimWorld;
+using JetBrains.Annotations;
 using UnityEngine;
 using Verse;
 using CodeInstruction = HarmonyLib.CodeInstruction;
 
-// ReSharper disable InconsistentNaming
-
 namespace VariedBodySizes;
 public static class RenderPatches
 {
-    private static readonly bool hasVEF;
-    private static readonly Type VEFGeneExtension = AccessTools.TypeByName("VanillaGenesExpanded.GeneExtension");
-    private static readonly AccessTools.FieldRef<object, Vector2> VEFBodyScaleField;
-    private static readonly AccessTools.FieldRef<object, Vector2> VEFHeadScaleField;
+    private static readonly bool hasVef;
+    private static readonly Type vefGeneExtension = AccessTools.TypeByName("VanillaGenesExpanded.GeneExtension");
+    private static readonly AccessTools.FieldRef<object, Vector2> vefBodyScaleField;
+    private static readonly AccessTools.FieldRef<object, Vector2> vefHeadScaleField;
 
     private static readonly TimedCache<GraphicMeshSet> overlayCache = new(360);
 
     static RenderPatches()
     {
-        hasVEF = ModsConfig.IsActive("oskarpotocki.vanillafactionsexpanded.core") && VEFGeneExtension != null;
-        if (!hasVEF) return;
-        VEFBodyScaleField = AccessTools.FieldRefAccess<Vector2>( "VanillaGenesExpanded.GeneExtension:bodyScaleFactor");
-        VEFHeadScaleField = AccessTools.FieldRefAccess<Vector2>( "VanillaGenesExpanded.GeneExtension:headScaleFactor");
+        hasVef = ModsConfig.IsActive("oskarpotocki.vanillafactionsexpanded.core") && vefGeneExtension != null;
+        if (!hasVef) return;
+        vefBodyScaleField = AccessTools.FieldRefAccess<Vector2>( "VanillaGenesExpanded.GeneExtension:bodyScaleFactor");
+        vefHeadScaleField = AccessTools.FieldRefAccess<Vector2>( "VanillaGenesExpanded.GeneExtension:headScaleFactor");
     }
 
-    private static Vector2 GetVEScalarForPawn(Pawn pawn, bool isHead = false)
+    private static Vector2 GetVeScalarForPawn(Pawn pawn, bool isHead = false)
     {
         var baseScale = Vector2.one;
-        if (!hasVEF || !ModsConfig.BiotechActive || !pawn.RaceProps.Humanlike || pawn.genes is not { } genes)
+        if (!hasVef || !ModsConfig.BiotechActive || !pawn.RaceProps.Humanlike || pawn.genes is not { } genes)
             return baseScale;
         
         foreach (var gene in genes.GenesListForReading.Where(g => g.Active))
         {
             if (gene.def.modExtensions == null) continue;
-            foreach (var ext in gene.def.modExtensions.Where(e => e.GetType() == VEFGeneExtension))
+            foreach (var ext in gene.def.modExtensions.Where(e => e.GetType() == vefGeneExtension))
             {
-                baseScale *= (isHead ? VEFHeadScaleField : VEFBodyScaleField).Invoke(ext);
+                baseScale *= (isHead ? vefHeadScaleField : vefBodyScaleField).Invoke(ext);
             }
         }
 
@@ -55,33 +53,25 @@ public static class RenderPatches
 
     private static Vector2 GetScalarForPawn(Pawn pawn, bool isHead = false)
     {
-        return GetBaseScalarForPawn(pawn) * GetVEScalarForPawn(pawn, isHead);
+        return GetBaseScalarForPawn(pawn) * GetVeScalarForPawn(pawn, isHead);
     }
 
     private static GraphicMeshSet GetBodyOverlayMeshForPawn(GraphicMeshSet baseMesh, Pawn pawn)
     {
         var returnedMesh = overlayCache.Get(pawn);
         
-        if (returnedMesh != null && string.Empty != "")
+        if (returnedMesh != null)
         {
             return returnedMesh;
         }
-        else // Yeah it's redundant but it's readable
-        {
-            var tempMesh = baseMesh.MeshAt(Rot4.North);
-            Log.Warning($"Mesh for {pawn.Name}");
-            foreach (var vert in tempMesh.vertices)
-            {
-                Log.Warning($"{vert.x},{vert.y},{vert.z}@{vert.magnitude}|{vert.sqrMagnitude}");
-            }
-            // I don't really understand this bit but I can't do rotations in my head. Credit to Allyina for figuring it out.
-            var baseVector = baseMesh.MeshAt(Rot4.North).vertices[2] * 2;
-            var scalarVector = GetScalarForPawn(pawn);
-            var scaledMesh = MeshPool.GetMeshSetForWidth(baseVector.x * scalarVector.x, baseVector.z * scalarVector.y);
-            overlayCache.Set(pawn, scaledMesh);
-            return scaledMesh;
-        }
         
+        // North[2] is positive on both x and y axis. Defaults would be 0.65,0,0.65 times 2 for the default 1.3f
+        var baseVector = baseMesh.MeshAt(Rot4.North).vertices[2] * 2;
+        var scalarVector = GetScalarForPawn(pawn);
+        var scaledMesh = MeshPool.GetMeshSetForWidth(baseVector.x * scalarVector.x, baseVector.z * scalarVector.y);
+        overlayCache.Set(pawn, scaledMesh);
+        return scaledMesh;
+
     }
   
     // Unconditional
@@ -135,14 +125,18 @@ public static class RenderPatches
 
         [HarmonyPatch]
         //[HarmonyDebug]
+        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         private static class GraphicMeshSet_GetHumanlikeSetForPawnPatch
         {
+            [UsedImplicitly]
             private static IEnumerable<MethodBase> TargetMethods()
             {
                 yield return getHeadSet;
                 yield return getBodySet;
             }
-
+            
+            [UsedImplicitly]
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator, MethodBase original)
             {
                 // store which method we are patching currently
@@ -204,14 +198,18 @@ public static class RenderPatches
 
         [HarmonyPatch]
         //[HarmonyDebug]
+        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         private static class GraphicMeshSet_GetHairBeardSetForPawnPatch
         {
+            [UsedImplicitly]
             private static IEnumerable<MethodBase> TargetMethods()
             {
                 yield return getHairSet;
                 yield return getBeardSet;
             }
             
+            [UsedImplicitly]
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions,
                 ILGenerator generator, MethodBase original)
             {
@@ -230,14 +228,17 @@ public static class RenderPatches
                         new CodeInstruction(OpCodes.Call, vector2TimesVector2),
                         // Store
                         new CodeInstruction(OpCodes.Stloc_0)
-                    ).InstructionEnumeration();;
+                    ).InstructionEnumeration();
             }
         }
 
         [HarmonyPatch(typeof(PawnRenderer), "GetBodyOverlayMeshSet")]
         //[HarmonyDebug]
+        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         private static class PawnRenderer_GetBodyOverlayMeshSetPatch
         {
+            [UsedImplicitly]
             static void Postfix(ref GraphicMeshSet __result, Pawn ___pawn)
             {
                 __result = GetBodyOverlayMeshForPawn(__result, ___pawn);
@@ -246,12 +247,17 @@ public static class RenderPatches
         
         [HarmonyPatch]
         //[HarmonyDebug]
+        [UsedImplicitly]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         private static class PawnRenderer_BaseHeadOffsetAt_Patch
         {
+            [UsedImplicitly]
             private static MethodBase TargetMethod()
             {
                 return headOffsetAt;
             }
+            
+            [UsedImplicitly]
             static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
                 // Find where it roots the age/size factor
@@ -268,18 +274,21 @@ public static class RenderPatches
                     // Grab our local and multiply by the pawn scalar
                     new CodeInstruction(OpCodes.Ldfld, vector2FieldY),
                     new CodeInstruction(OpCodes.Mul)
-                ).InstructionEnumeration();;
+                ).InstructionEnumeration();
             }
         }
 
         [HarmonyPatch]
+        [UsedImplicitly]
         private static class PawnRenderer_DrawBodyGenesPatch
         {
+            [UsedImplicitly]
             private static MethodBase TargetMethod()
             {
                 return drawBodyGenes;
             }
             
+            [UsedImplicitly]
             static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
                 // Find where it roots the age/size factor
@@ -300,6 +309,7 @@ public static class RenderPatches
         }
         
         [HarmonyPatch]
+        [UsedImplicitly]
         //[HarmonyDebug]
         private static class PawnRenderer_DrawExtraEyeGraphicPatch
         {
@@ -319,16 +329,19 @@ public static class RenderPatches
                     });
                 });
 
+            [UsedImplicitly]
             private static bool Prepare()
             {
                 return drawEyeOverlay != null;
             }
 
+            [UsedImplicitly]
             private static MethodBase TargetMethod()
             {
                 return drawEyeOverlay;
             }
 
+            [UsedImplicitly]
             static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
                 // Find where it roots the age/size factor
