@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -8,7 +7,6 @@ using HarmonyLib;
 using JetBrains.Annotations;
 using RimWorld;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
 using Verse;
 using CodeInstruction = HarmonyLib.CodeInstruction;
 using FieldInfo = System.Reflection.FieldInfo;
@@ -28,8 +26,6 @@ public static class RenderPatches
 
     private static readonly MethodBase floatTimesVector2 =
         AccessTools.Method(typeof(Vector2), "op_Multiply", new[] {typeof(float), typeof(Vector2)});
-    private static readonly MethodBase vector2TimesFloat =
-        AccessTools.Method(typeof(Vector2), "op_Multiply", new[] {typeof(Vector2), typeof(float)});
 
     private static readonly MethodBase getScalar =
         AccessTools.Method(typeof(RenderPatches),"GetScalarForPawn");
