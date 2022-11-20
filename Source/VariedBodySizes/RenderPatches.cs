@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -19,28 +20,15 @@ public static class RenderPatches
     // Commented until their compat gets in order
     private static readonly bool hasVef = false;//ModsConfig.IsActive("oskarpotocki.vanillafactionsexpanded.core");
 
-    private static readonly MethodBase getHumanlikeBodyWidthFunc =
-        AccessTools.Method(typeof(HumanlikeMeshPoolUtility), "HumanlikeBodyWidthForPawn");
-
-    private static readonly FieldInfo pawnRendererPawn = AccessTools.Field("Verse.PawnRenderer:pawn");
-
-    private static readonly MethodBase floatTimesVector2 =
-        AccessTools.Method(typeof(Vector2), "op_Multiply", new[] {typeof(float), typeof(Vector2)});
-
-    private static readonly MethodBase getScalar =
-        AccessTools.Method(typeof(RenderPatches),"GetScalarForPawn");
-
-    private static readonly TimedCache<GraphicMeshSet> overlayCache = new(360);
-
     private static bool NotNull(params object[] input)
     {
         if (input.All(o => o is not null)) return true;
-        Log.Warning("VariedBodySizes: Signature match not found");
+        Main.LogMessage("VariedBodySizes: Signature match not found", true);
         foreach (var obj in input)
         {
             if (obj is MemberInfo memberObj)
             {
-                Log.Warning($"\tValid entry:{memberObj.Name}");
+                Main.LogMessage($"\tValid entry:{memberObj}", true);
             }
         }
         return false;
@@ -51,17 +39,32 @@ public static class RenderPatches
         return input;
     }
 
+    // CodeMatcher will throw errors if we try to take actions in an invalid state (i.e. no match)
+    private static void OnSuccess(CodeMatcher match, Action<CodeMatcher> action)
+    {
+        if (match.IsInvalid)
+        {
+            Main.LogMessage("Transpiler did not find target", true);
+            return;
+        }
+        action.Invoke(match);
+    }
+
     private static float GetScalarForPawn(Pawn pawn)
     {
         return Main.CurrentComponent?.GetVariedBodySize(pawn) ?? 1f;
     }
 
-    private static GraphicMeshSet TranslateForPawn(GraphicMeshSet baseMesh, Pawn pawn)
-    {
-        // North[2] is positive on both x and y axis. Defaults would be 0.65,0,0.65 times 2 for the default 1.3f
-        var baseVector = baseMesh.MeshAt(Rot4.North).vertices[2] * 2 * GetScalarForPawn(pawn);
-        return MeshPool.GetMeshSetForWidth(baseVector.x, baseVector.z);
-    }
+    private static readonly MethodBase getHumanlikeBodyWidthFunc =
+        AccessTools.Method(typeof(HumanlikeMeshPoolUtility), "HumanlikeBodyWidthForPawn");
+
+    private static readonly FieldInfo pawnRendererPawn = AccessTools.Field("Verse.PawnRenderer:pawn");
+
+    private static readonly MethodBase floatTimesVector2 =
+        AccessTools.Method(typeof(Vector2), "op_Multiply", new[] {typeof(float), typeof(Vector2)});
+
+    private static readonly MethodBase getScalar =
+        AccessTools.Method(typeof(RenderPatches),"GetScalarForPawn");
 
     // Unconditional
     [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -99,6 +102,32 @@ public static class RenderPatches
                 .Where(f => f.FieldType == typeof(Graphic));
             private static readonly MethodBase resolveAllGraphics = AccessTools.Method(typeof(PawnGraphicSet), "ResolveAllGraphics");
 
+            private static bool ProcessField<TKey>(Dictionary<TKey, Vector2> backingDict, TKey key, Graphic graphic, float pawnScale, out Graphic scaledGraphic)
+            {
+                scaledGraphic = default;
+                if (key is null) return false;
+                if (graphic is null) return false;
+                backingDict.TryAdd(key, graphic.drawSize);
+
+                var originalSize = backingDict[key];
+                var scaledSize = originalSize * pawnScale;
+
+                // Nothing to do
+                if (originalSize == scaledSize) return false;
+                if (scaledSize == graphic.drawSize) return false;
+
+                // Graphic was changed somehow
+                if (originalSize != graphic.drawSize)
+                {
+                    originalSize = graphic.drawSize;
+                    scaledSize = originalSize * pawnScale;
+                    backingDict[key] = originalSize;
+                }
+
+                scaledGraphic = graphic.GetCopy(scaledSize, null);
+                return true;
+            }
+
             [UsedImplicitly]
             private static bool Prepare() => NotNull(resolveAllGraphics);
 
@@ -108,8 +137,8 @@ public static class RenderPatches
             [UsedImplicitly]
             private static void Postfix(PawnGraphicSet __instance, Pawn ___pawn)
             {
-                Log.Warning($"Resolving graphics for {___pawn}");
                 var pawnDrawSize = GetScalarForPawn(___pawn);
+                
                 // Build dict entry if not already present
                 if (!originalSizes.ContainsKey(___pawn))
                 {
@@ -117,95 +146,50 @@ public static class RenderPatches
                     originalGeneSizes.Add(___pawn, new Dictionary<Gene, Vector2>());
                     originalGearSizes.Add(___pawn, new Dictionary<Apparel, Vector2>());
                 }
-
-                var pawnSizeList = originalSizes[___pawn];
-                var pawnGeneSizeList = originalGeneSizes[___pawn];
-                var pawnGearSizeList = originalGearSizes[___pawn];
+                
+                // Regular graphics incl naked body for animals
                 foreach (var field in graphicFields)
                 {
-                    if (field.GetValue(__instance) is not Graphic fieldGraphic) continue;
-
-
-                    pawnSizeList.TryAdd(field, fieldGraphic.drawSize);
-
-                    var originalSize = pawnSizeList[field];
-                    var scaledSize = originalSize * pawnDrawSize;
-
-                    // Nothing to do
-                    if (originalSize == scaledSize) continue;
-                    if (scaledSize == fieldGraphic.drawSize) continue;
-
-                    // Graphic was changed somehow
-                    if (originalSize != fieldGraphic.drawSize)
-                    {
-                        originalSize = fieldGraphic.drawSize;
-                        scaledSize = originalSize * pawnDrawSize;
-                        pawnSizeList[field] = originalSize;
-                    }
-
+                    if (!ProcessField(originalSizes[___pawn], field, field.GetValue(__instance) as Graphic, pawnDrawSize,
+                            out var scaledGraphic)) continue;
                     // Resize and continue
-                    field.SetValue(__instance, fieldGraphic.GetCopy(scaledSize, null));
+                    field.SetValue(__instance, scaledGraphic);
                 }
 
+                // Gene graphics like eye overlays
                 for (var i = 0; i < (__instance.geneGraphics?.Count ?? 0); i++)
                 {
                     var geneGraphic = __instance.geneGraphics![i];
-                    if (geneGraphic.sourceGene is null) continue;
-                    if (geneGraphic.graphic is null) continue;
-                    pawnGeneSizeList.TryAdd(geneGraphic.sourceGene, geneGraphic.graphic.drawSize);
-                    var originalSize = pawnGeneSizeList[geneGraphic.sourceGene];
-                    var scaledSize = originalSize * pawnDrawSize;
 
-                    // Nothing to do
-                    if (originalSize == scaledSize) continue;
-                    if (scaledSize == geneGraphic.graphic.drawSize) continue;
-
-                    // Graphic was changed somehow
-                    if (originalSize != geneGraphic.graphic.drawSize)
-                    {
-                        originalSize = geneGraphic.graphic.drawSize;
-                        scaledSize = originalSize * pawnDrawSize;
-                        pawnGeneSizeList[geneGraphic.sourceGene] = originalSize;
-                    }
-
-                    geneGraphic.graphic = geneGraphic.graphic.GetCopy(scaledSize, null);
-
-                    if (geneGraphic.rottingGraphic is not null)
-                    {
-                        geneGraphic.rottingGraphic = geneGraphic.rottingGraphic.GetCopy(scaledSize, null);
-                    }
+                    // If it doesn't match we won't have a rotting graphic anyway
+                    if (!ProcessField(originalGeneSizes[___pawn], geneGraphic.sourceGene, geneGraphic.graphic, pawnDrawSize,
+                            out var scaledGraphic)) continue;
+                    
+                    geneGraphic.graphic = scaledGraphic;
+                    
+                    if (ProcessField(originalGeneSizes[___pawn], geneGraphic.sourceGene, geneGraphic.rottingGraphic, pawnDrawSize,
+                            out var scaledRottingGraphic))
+                        geneGraphic.rottingGraphic = scaledRottingGraphic;
 
                     // Pop back and continue
                     __instance.geneGraphics[i] = new GeneGraphicRecord(geneGraphic.graphic,
                         geneGraphic.rottingGraphic, geneGraphic.sourceGene);
                 }
+                
+                // Apparel graphics 
                 for (var i = 0; i < (__instance.apparelGraphics?.Count ?? 0); i++)
                 {
                     var gearGraphic = __instance.apparelGraphics![i];
-                    if (gearGraphic.sourceApparel is null) continue;
-                    if (gearGraphic.graphic is null) continue;
-                    pawnGearSizeList.TryAdd(gearGraphic.sourceApparel, gearGraphic.graphic.drawSize);
-                    var originalSize = pawnGearSizeList[gearGraphic.sourceApparel];
-                    var scaledSize = originalSize * pawnDrawSize;
-
-                    // Nothing to do
-                    if (originalSize == scaledSize) continue;
-                    if (scaledSize == gearGraphic.graphic.drawSize) continue;
-
-                    // Graphic was changed somehow
-                    if (originalSize != gearGraphic.graphic.drawSize)
-                    {
-                        originalSize = gearGraphic.graphic.drawSize;
-                        scaledSize = originalSize * pawnDrawSize;
-                        pawnGearSizeList[gearGraphic.sourceApparel] = originalSize;
-                    }
-
-                    gearGraphic.graphic = gearGraphic.graphic.GetCopy(scaledSize, null);
-
+                    
+                    if (!ProcessField(originalGearSizes[___pawn], gearGraphic.sourceApparel, gearGraphic.graphic, pawnDrawSize,
+                            out var scaledGraphic)) continue;
+                    
                     // Pop back and continue
                     __instance.apparelGraphics[i] =
-                        new ApparelGraphicRecord(gearGraphic.graphic, gearGraphic.sourceApparel);
+                        new ApparelGraphicRecord(scaledGraphic, gearGraphic.sourceApparel);
                 }
+                
+                // Done
             }
         }
     }
@@ -215,7 +199,7 @@ public static class RenderPatches
     {
 
         [HarmonyPatch]
-        [HarmonyDebug]
+        //[HarmonyDebug]
         [UsedImplicitly]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         private static class GraphicMeshSet_GetHumanlikeSetForPawnPatch
@@ -253,19 +237,28 @@ public static class RenderPatches
                     new CodeMatch(OpCodes.Ldflda),
                     new CodeMatch(OpCodes.Call),
                     new CodeMatch(OpCodes.Call, getMeshSet1D)
-                ).RemoveInstructions(4).InsertAndAdvance(
-                    // We already have our pawn on the stack so we just replace our match with the function call
-                    new CodeInstruction(OpCodes.Call, getHumanlikeBodyWidthFunc)
+                );
+
+                // If success
+                OnSuccess(editor, match =>
+                    match.RemoveInstructions(4).InsertAndAdvance(
+                        // We already have our pawn on the stack so we just replace our match with the function call
+                        new CodeInstruction(OpCodes.Call, getHumanlikeBodyWidthFunc)
+                    )
                 );
 
                 // Second change: MeshPool.humanlikeHead/BodySet -> MeshPool.GetMeshSetForWidth(MeshPool.HumanlikeBodyWidthForPawn(pawn))
                 editor.Start().MatchStartForward(
                     new CodeMatch(OpCodes.Ldsfld, isHead ? headSetField : bodySetField)
-                ).SetAndAdvance(
-                    OpCodes.Ldarg_S, 0 // pawn to stack
-                ).InsertAndAdvance(
-                    new CodeInstruction(OpCodes.Call, getHumanlikeBodyWidthFunc), // Pop pawn, push width
-                    new CodeInstruction(OpCodes.Call, getMeshSet1D) // Pop width, push mesh
+                );
+
+                OnSuccess(editor, match => 
+                    match.SetAndAdvance(
+                        OpCodes.Ldarg_S, 0 // pawn to stack
+                    ).InsertAndAdvance(
+                        new CodeInstruction(OpCodes.Call, getHumanlikeBodyWidthFunc), // Pop pawn, push width
+                        new CodeInstruction(OpCodes.Call, getMeshSet1D) // Pop width, push mesh
+                    )
                 );
                 
                 // Done
@@ -295,10 +288,12 @@ public static class RenderPatches
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions,
                 ILGenerator generator, MethodBase original)
             {
+                var editor = new CodeMatcher(instructions);
                 // var vector *= GetScalarForPawn(pawn)
-                return new CodeMatcher(instructions).Start().MatchStartForward(
+                editor.Start().MatchStartForward(
                     new CodeMatch(OpCodes.Stloc_0)
-                ).Advance(1).InsertAndAdvance(
+                );
+                OnSuccess(editor, match => match.Advance(1).InsertAndAdvance(
                     // Pawn to stack
                     new CodeInstruction(OpCodes.Ldarg_0),
                     // Pawn scalar to stack, consumes current stack
@@ -308,7 +303,8 @@ public static class RenderPatches
                     new CodeInstruction(OpCodes.Call, floatTimesVector2),
                     // Store
                     new CodeInstruction(OpCodes.Stloc_0)
-                ).InstructionEnumeration();
+                ));
+                return editor.InstructionEnumeration();
             }
         }
         
@@ -319,6 +315,14 @@ public static class RenderPatches
         private static class PawnRenderer_GetBodyOverlayMeshSetPatch
         {
             private static readonly MethodBase getBodyOverlayMesh = AccessTools.Method(typeof(PawnRenderer), "GetBodyOverlayMeshSet");
+            private static readonly TimedCache<GraphicMeshSet> overlayCache = new(360);
+            
+            private static GraphicMeshSet TranslateForPawn(GraphicMeshSet baseMesh, Pawn pawn)
+            {
+                // North[2] is positive on both x and y axis. Defaults would be 0.65,0,0.65 times 2 for the default 1.3f
+                var baseVector = baseMesh.MeshAt(Rot4.North).vertices[2] * 2 * GetScalarForPawn(pawn);
+                return MeshPool.GetMeshSetForWidth(baseVector.x, baseVector.z);
+            }
             
             [UsedImplicitly]
             private static bool Prepare() => !hasVef && NotNull(getBodyOverlayMesh);
@@ -358,10 +362,12 @@ public static class RenderPatches
             [UsedImplicitly]
             static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
+                var editor = new CodeMatcher(instructions);
                 // Find where it roots the age/size factor
-                return new CodeMatcher(instructions).Start().MatchStartForward(
+                editor.Start().MatchStartForward(
                     new CodeMatch(OpCodes.Ldfld, ageBodyFactor)
-                ).Advance(1).InsertAndAdvance(
+                );
+                OnSuccess(editor, match => match.Advance(1).InsertAndAdvance(
                     // Pawn to stack
                     new CodeInstruction(OpCodes.Ldarg_0),
                     new CodeInstruction(OpCodes.Ldfld, pawnRendererPawn),
@@ -369,7 +375,8 @@ public static class RenderPatches
                     new CodeInstruction(OpCodes.Call, getScalar),
                     // Multiply ageBodyFactor by our scalar
                     new CodeInstruction(OpCodes.Mul)
-                ).InstructionEnumeration();
+                ));
+                return editor.InstructionEnumeration();
             }
         }
 
@@ -391,10 +398,12 @@ public static class RenderPatches
             [UsedImplicitly]
             static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
+                var editor = new CodeMatcher(instructions);
                 // Find where it checks body scale
-                return new CodeMatcher(instructions).Start().MatchStartForward(
+                editor.Start().MatchStartForward(
                     new CodeMatch(OpCodes.Ldfld, bodyScale)
-                ).Advance(1).InsertAndAdvance(
+                );
+                OnSuccess(editor, match => match.Advance(1).InsertAndAdvance(
                     // Pop body scale to local
                     new CodeInstruction(OpCodes.Stloc_0),
                     // Pawn to stack
@@ -406,7 +415,8 @@ public static class RenderPatches
                     new CodeInstruction(OpCodes.Ldloc_0),
                     // multiply by the pawn scalar
                     new CodeInstruction(OpCodes.Call, floatTimesVector2)
-                ).InstructionEnumeration();
+                ));
+                return editor.InstructionEnumeration();
             }
         }
 
@@ -450,7 +460,8 @@ public static class RenderPatches
             private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
             {
                 var woundOffsetCount = 0;
-                // Modify the 2nd arg, scale (float) right at the start of the function
+                // Modify the 2nd arg - scale (float) - right at the start of the function
+                // Since we use repeat() everywhere we don't have to care about checking for validity.. probably
                 return new CodeMatcher(instructions).Start().InsertAndAdvance(
                     // Pawn to stack
                     new CodeInstruction(OpCodes.Ldarg_0),
@@ -464,7 +475,8 @@ public static class RenderPatches
                     new CodeInstruction(OpCodes.Mul),
                     // Store back as arg
                     new CodeInstruction(OpCodes.Starg, 2)
-                ).Start().MatchStartForward(
+                ).Start().MatchStartForward( 
+                    // First two instances of wound offset. Can't just modify vector3_1 since it's used elsewhere.
                     new CodeMatch(i => i.IsLdloc()),
                     new CodeMatch(OpCodes.Ldfld, woundOffset),
                     new CodeMatch(_ => woundOffsetCount++ < 3)
