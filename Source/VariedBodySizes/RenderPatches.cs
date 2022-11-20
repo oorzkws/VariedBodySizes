@@ -124,7 +124,9 @@ public static class RenderPatches
                     backingDict[key] = originalSize;
                 }
 
-                scaledGraphic = graphic.GetCopy(scaledSize, null);
+                // we could graphic.GetCopy(scaledSize, null) but that discards the mask :(
+                scaledGraphic = GraphicDatabase.Get(graphic.GetType(), graphic.path, graphic.Shader, scaledSize,
+                    graphic.color, graphic.colorTwo, graphic.maskPath);
                 return true;
             }
 
@@ -180,21 +182,20 @@ public static class RenderPatches
                 for (var i = 0; i < (__instance.apparelGraphics?.Count ?? 0); i++)
                 {
                     var gearGraphic = __instance.apparelGraphics![i];
-                    
                     if (!ProcessField(originalGearSizes[___pawn], gearGraphic.sourceApparel, gearGraphic.graphic, pawnDrawSize,
                             out var scaledGraphic)) continue;
-                    
                     // Pop back and continue
                     __instance.apparelGraphics[i] =
                         new ApparelGraphicRecord(scaledGraphic, gearGraphic.sourceApparel);
                 }
-                
                 // Done
             }
         }
     }
     
     // Base game
+    [UsedImplicitly]
+    [HarmonyBefore("OskarPotocki.VFECore")]
     private static class PatchesNoVef
     {
 
