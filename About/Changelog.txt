@@ -1,5 +1,9 @@
 # Changelog for VariedBodySizes
 
+1.4.4 - Added option for affecting hunger rate.
+Used DeepL to update translations for ChineseSimplified, French, German, Russian
+
+
 1.4.3 - Fixed version of the VEF-compatibility, thanks oorzkws!
 
 

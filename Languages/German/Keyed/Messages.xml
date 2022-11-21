@@ -18,4 +18,8 @@
   <VariedBodySizes.version.label>Installierte Mod-Version: {0}</VariedBodySizes.version.label>
   <VariedBodySizes.logging.label>Ausführliche Protokollierung</VariedBodySizes.logging.label>
   <VariedBodySizes.logging.tooltip>Verbesserte Protokollierung für die Fehlersuche</VariedBodySizes.logging.tooltip>
+  <VariedBodySizes.realhungerrate.label>Ändern Sie auch die Hungerrate</VariedBodySizes.realhungerrate.label>
+  <VariedBodySizes.realhungerrate.tooltip>Die Körpergröße wirkt sich auch auf die Hungerquote von Bauern und Tieren aus. Dies wirkt sich auf die Menge an Nahrung aus, die benötigt wird, um die Spielfigur gesund zu halten.</VariedBodySizes.realhungerrate.tooltip>
+  <VariedBodySizes.meleedodgechance.label>Auch Nahkampf-Ausweichchance ändern</VariedBodySizes.meleedodgechance.label>
+  <VariedBodySizes.meleedodgechance.tooltip>Die Körpergröße wirkt sich auch auf die Chance eines Bauern/Tieres aus, im Nahkampf auszuweichen.</VariedBodySizes.meleedodgechance.tooltip>
 </LanguageData>

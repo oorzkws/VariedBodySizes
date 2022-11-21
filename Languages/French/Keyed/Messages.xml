@@ -18,4 +18,8 @@
   <VariedBodySizes.version.label>Version installée du module : {0}</VariedBodySizes.version.label>
   <VariedBodySizes.logging.label>Journalisation verbeuse</VariedBodySizes.logging.label>
   <VariedBodySizes.logging.tooltip>Augmentation de la journalisation pour le débogage</VariedBodySizes.logging.tooltip>
+  <VariedBodySizes.realhungerrate.label>Modifier également le taux de faim</VariedBodySizes.realhungerrate.label>
+  <VariedBodySizes.realhungerrate.tooltip>La taille du corps affecte également le taux de faim des pions et des animaux. Cela affectera la quantité de nourriture nécessaire pour garder le pion en bonne santé.</VariedBodySizes.realhungerrate.tooltip>
+  <VariedBodySizes.meleedodgechance.label>Modifie également les chances d'esquive en mêlée</VariedBodySizes.meleedodgechance.label>
+  <VariedBodySizes.meleedodgechance.tooltip>La taille du corps affecte également les chances d'esquive en mêlée d'un pion/animal.</VariedBodySizes.meleedodgechance.tooltip>
 </LanguageData>

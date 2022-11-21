@@ -12,6 +12,8 @@
   <VariedBodySizes.realbodysize.tooltip>The changed bodysize will affect any calculation based on body-size. For example bed-use, pen-size, food-need, bullets stopping power.</VariedBodySizes.realbodysize.tooltip>
   <VariedBodySizes.realhealthscale.label>Also modify health scaling</VariedBodySizes.realhealthscale.label>
   <VariedBodySizes.realhealthscale.tooltip>Bodysize will also affect the amount of health points for pawns and animals. This will affect all bodyparts and how much damage they can take.</VariedBodySizes.realhealthscale.tooltip>
+  <VariedBodySizes.realhungerrate.label>Also modify hunger rate</VariedBodySizes.realhungerrate.label>
+  <VariedBodySizes.realhungerrate.tooltip>Bodysize will also affect the hunger rate for pawns and animals. This will affect the amount of food needed to keep the pawn healthy.</VariedBodySizes.realhungerrate.tooltip>
   <VariedBodySizes.meleedamage.label>Also modify melee damage</VariedBodySizes.meleedamage.label>
   <VariedBodySizes.meleedamage.tooltip>Bodysize will also affect the amount of melee damage a pawn/animal can inflict.</VariedBodySizes.meleedamage.tooltip>
   <VariedBodySizes.meleedodgechance.label>Also modify melee dodge chance</VariedBodySizes.meleedodgechance.label>

@@ -12,6 +12,7 @@ public class VariedBodySizesModSettings : ModSettings
     public bool AffectMeleeDodgeChance;
     public bool AffectRealBodySize;
     public bool AffectRealHealthScale;
+    public bool AffectRealHungerRate;
     public FloatRange DefaultVariation = new FloatRange(0.9f, 1.1f);
     public Dictionary<string, FloatRange> VariedBodySizes;
     private List<string> variedBodySizesKeys;
@@ -25,6 +26,7 @@ public class VariedBodySizesModSettings : ModSettings
         Scribe_Values.Look(ref VerboseLogging, "VerboseLogging");
         Scribe_Values.Look(ref AffectRealBodySize, "AffectRealBodySize");
         Scribe_Values.Look(ref AffectRealHealthScale, "AffectRealHealthScale");
+        Scribe_Values.Look(ref AffectRealHungerRate, "AffectRealHungerRate");
         Scribe_Values.Look(ref AffectMeleeDamage, "AffectMeleeDamage");
         Scribe_Values.Look(ref AffectMeleeDodgeChance, "AffectMeleeDodgeChance");
         Scribe_Values.Look(ref DefaultVariation, "DefaultVariation", new FloatRange(0.9f, 1.1f));

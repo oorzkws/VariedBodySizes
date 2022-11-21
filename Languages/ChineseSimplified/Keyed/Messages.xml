@@ -18,4 +18,8 @@
   <VariedBodySizes.version.label>已安装的mod-version。{0}</VariedBodySizes.version.label>
   <VariedBodySizes.logging.label>冗长的日志记录</VariedBodySizes.logging.label>
   <VariedBodySizes.logging.tooltip>增加了用于调试的日志记录</VariedBodySizes.logging.tooltip>
+  <VariedBodySizes.realhungerrate.label>同时修改饥饿率</VariedBodySizes.realhungerrate.label>
+  <VariedBodySizes.realhungerrate.tooltip>体型也会影响卒子和动物的饥饿率。这将影响保持卒子健康所需的食物量。</VariedBodySizes.realhungerrate.tooltip>
+  <VariedBodySizes.meleedodgechance.label>同时修改近战躲避的机会</VariedBodySizes.meleedodgechance.label>
+  <VariedBodySizes.meleedodgechance.tooltip>身体大小也会影响小兵/动物的近战躲避机会。</VariedBodySizes.meleedodgechance.tooltip>
 </LanguageData>
