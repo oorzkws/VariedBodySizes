@@ -114,7 +114,7 @@ internal class VariedBodySizesMod : Mod
             "VariedBodySizes.realhealthscale.tooltip".Translate());
         listing_Standard.CheckboxLabeled("VariedBodySizes.realhungerrate.label".Translate(),
             ref Settings.AffectRealHungerRate,
-            "VariedBodySizes.realhealthscale.tooltip".Translate());
+            "VariedBodySizes.realhungerrate.tooltip".Translate());
         listing_Standard.CheckboxLabeled("VariedBodySizes.meleedamage.label".Translate(),
             ref Settings.AffectMeleeDamage,
             "VariedBodySizes.meleedamage.tooltip".Translate());
