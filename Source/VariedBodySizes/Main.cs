@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
-using UnityEngine;
+using JetBrains.Annotations;
 using Verse;
 
 namespace VariedBodySizes;
@@ -62,5 +63,49 @@ public static class Main
         }
 
         Log.Message($"[VariedBodySizes]: {message}");
+    }
+}
+
+// Utility stuff here
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+[UsedImplicitly]
+public static partial class HarmonyPatches
+{
+    // Commented until their compat gets in order
+    private static readonly bool hasVef = false;//ModsConfig.IsActive("oskarpotocki.vanillafactionsexpanded.core");
+    
+    private static float GetScalarForPawn(Pawn pawn)
+    {
+        return Main.CurrentComponent?.GetVariedBodySize(pawn) ?? 1f;
+    }
+
+    private static bool NotNull(params object[] input)
+    {
+        if (input.All(o => o is not null)) return true;
+        Main.LogMessage("VariedBodySizes: Signature match not found", true);
+        foreach (var obj in input)
+        {
+            if (obj is MemberInfo memberObj)
+            {
+                Main.LogMessage($"\tValid entry:{memberObj}", true);
+            }
+        }
+        return false;
+    }
+
+    private static IEnumerable<MethodBase> YieldAll(params MethodBase[] input)
+    {
+        return input;
+    }
+
+    // CodeMatcher will throw errors if we try to take actions in an invalid state (i.e. no match)
+    private static void OnSuccess(CodeMatcher match, Action<CodeMatcher> action)
+    {
+        if (match.IsInvalid)
+        {
+            Main.LogMessage("Transpiler did not find target", true);
+            return;
+        }
+        action.Invoke(match);
     }
 }

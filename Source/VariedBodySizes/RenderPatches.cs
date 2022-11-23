@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -15,46 +14,10 @@ using FieldInfo = System.Reflection.FieldInfo;
 namespace VariedBodySizes;
 
 // Note to self: args(oldest, newer, newest)
-public static class RenderPatches
+// These patches are the most likely to break with time, so they're all wrapped with Prepare()
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+public static partial class HarmonyPatches
 {
-    // Commented until their compat gets in order
-    private static readonly bool hasVef = false;//ModsConfig.IsActive("oskarpotocki.vanillafactionsexpanded.core");
-
-    private static bool NotNull(params object[] input)
-    {
-        if (input.All(o => o is not null)) return true;
-        Main.LogMessage("VariedBodySizes: Signature match not found", true);
-        foreach (var obj in input)
-        {
-            if (obj is MemberInfo memberObj)
-            {
-                Main.LogMessage($"\tValid entry:{memberObj}", true);
-            }
-        }
-        return false;
-    }
-
-    private static IEnumerable<MethodBase> YieldAll(params MethodBase[] input)
-    {
-        return input;
-    }
-
-    // CodeMatcher will throw errors if we try to take actions in an invalid state (i.e. no match)
-    private static void OnSuccess(CodeMatcher match, Action<CodeMatcher> action)
-    {
-        if (match.IsInvalid)
-        {
-            Main.LogMessage("Transpiler did not find target", true);
-            return;
-        }
-        action.Invoke(match);
-    }
-
-    private static float GetScalarForPawn(Pawn pawn)
-    {
-        return Main.CurrentComponent?.GetVariedBodySize(pawn) ?? 1f;
-    }
-
     private static readonly MethodBase getHumanlikeBodyWidthFunc =
         AccessTools.Method(typeof(HumanlikeMeshPoolUtility), "HumanlikeBodyWidthForPawn");
 
@@ -64,10 +27,9 @@ public static class RenderPatches
         AccessTools.Method(typeof(Vector2), "op_Multiply", new[] {typeof(float), typeof(Vector2)});
 
     private static readonly MethodBase getScalar =
-        AccessTools.Method(typeof(RenderPatches),"GetScalarForPawn");
+        AccessTools.Method(typeof(HarmonyPatches),"GetScalarForPawn");
 
     // Unconditional
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     [UsedImplicitly]
     [HarmonyBefore("OskarPotocki.VFECore")]
     private static class PatchesUnconditional
@@ -90,7 +52,6 @@ public static class RenderPatches
         }
 
         [HarmonyPatch]
-        //[HarmonyDebug]
         [UsedImplicitly]
         private static class PawnGraphicSet_ResolveAllGraphicsPatch
         {
@@ -200,9 +161,7 @@ public static class RenderPatches
     {
 
         [HarmonyPatch]
-        //[HarmonyDebug]
         [UsedImplicitly]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         private static class GraphicMeshSet_GetHumanlikeSetForPawnPatch
         {
             private static readonly MethodBase getHeadSet =
@@ -268,9 +227,7 @@ public static class RenderPatches
         }
 
         [HarmonyPatch]
-        //[HarmonyDebug]
         [UsedImplicitly]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         private static class GraphicMeshSet_GetHairBeardSetForPawnPatch
         {
             private static readonly MethodBase getHairSet =
@@ -310,9 +267,7 @@ public static class RenderPatches
         }
         
         [HarmonyPatch]
-        //[HarmonyDebug]
         [UsedImplicitly]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         private static class PawnRenderer_GetBodyOverlayMeshSetPatch
         {
             private static readonly MethodBase getBodyOverlayMesh = AccessTools.Method(typeof(PawnRenderer), "GetBodyOverlayMeshSet");
@@ -346,9 +301,7 @@ public static class RenderPatches
         }
 
         [HarmonyPatch]
-        //[HarmonyDebug]
         [UsedImplicitly]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         private static class PawnRenderer_BaseHeadOffsetAtPatch
         {
             private static readonly MethodBase headOffsetAt = AccessTools.Method("Verse.PawnRenderer:BaseHeadOffsetAt");
@@ -382,9 +335,7 @@ public static class RenderPatches
         }
 
         [HarmonyPatch]
-        //[HarmonyDebug]
         [UsedImplicitly]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         private static class PawnRenderer_DrawBodyGenesPatch
         {
             private static readonly MethodBase drawBodyGenes = AccessTools.Method("Verse.PawnRenderer:DrawBodyGenes");
@@ -422,9 +373,7 @@ public static class RenderPatches
         }
 
         [HarmonyPatch]
-        //[HarmonyDebug]
         [UsedImplicitly]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         private static class PawnRenderer_DrawExtraEyeGraphicPatch
         {
             [UsedImplicitly]

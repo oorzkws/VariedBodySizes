@@ -1,35 +1,41 @@
+using System.Diagnostics.CodeAnalysis;
 using HarmonyLib;
+using JetBrains.Annotations;
 using RimWorld;
 using Verse;
 
 namespace VariedBodySizes;
 
-[HarmonyPatch(typeof(VerbProperties), "GetDamageFactorFor", typeof(Tool), typeof(Pawn), typeof(HediffComp_VerbGiver))]
-public static class VerbProperties_GetDamageFactorForPatch
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+public static partial class HarmonyPatches
 {
-    public static void Postfix(ref float __result, Pawn attacker, VerbProperties __instance)
+    [HarmonyPatch(typeof(VerbProperties), "GetDamageFactorFor", typeof(Tool), typeof(Pawn),
+        typeof(HediffComp_VerbGiver))]
+    [UsedImplicitly]
+    public static class VerbProperties_GetDamageFactorForPatch
     {
-        if (!VariedBodySizesMod.instance.Settings.AffectMeleeDamage ||
-            !__instance.IsMeleeAttack ||
-            attacker == null ||
-            Main.CurrentComponent == null
-        ){
-            return;
+        public static float Postfix(float result, Pawn attacker, VerbProperties __instance)
+        {
+            if (!VariedBodySizesMod.instance.Settings.AffectMeleeDamage) return result;
+            if (!__instance.IsMeleeAttack) return result;
+
+            return result * GetScalarForPawn(attacker);
         }
-
-        __result *= Main.CurrentComponent.GetVariedBodySize(attacker);
     }
-}
 
-[HarmonyPatch(typeof(Verb_MeleeAttack), "GetDodgeChance")]
-public static class VerbMeleeAttack_GetDodgeChancePatch
-{
-    private static readonly TimedCache<float> statCache = new(360);
-    public static void Postfix(ref float __result, LocalTargetInfo target)
+    [HarmonyPatch(typeof(Verb_MeleeAttack), "GetDodgeChance")]
+    [UsedImplicitly]
+    public static class VerbMeleeAttack_GetDodgeChancePatch
     {
-        if (!VariedBodySizesMod.instance.Settings.AffectMeleeDodgeChance || target.Thing is not Pawn pawn)
-            return;
+        [UsedImplicitly]
+        public static float Postfix(float result, LocalTargetInfo target)
+        {
+            if (!VariedBodySizesMod.instance.Settings.AffectMeleeDodgeChance) return result;
+            if(target.Thing is not Pawn pawn) return result;
 
-        __result /= Main.CurrentComponent.GetVariedBodySize(pawn);
+            var new_result = result / GetScalarForPawn(pawn);
+            Main.LogMessage($"Dodge chance for {pawn.LabelShort} modified: {result * 100}% -> {new_result * 100}%");
+            return new_result;
+        }
     }
 }
