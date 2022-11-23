@@ -20,8 +20,6 @@ public static class Main
         AllPawnTypes = DefDatabase<ThingDef>.AllDefsListForReading.Where(def => def.race != null)
             .OrderBy(def => def.label).ToList();
         HarmonyInstance = new Harmony("Mlie.VariedBodySizes");
-        HarmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
-        VariedBodySizesMod.instance.Settings.VariedBodySizes ??= new Dictionary<string, FloatRange>();
         // Until VEF works we're just going to override with our own scaling.
         foreach (var targetPair in new KeyValuePair<Type, string>[]{
             new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeBodySetForPawn"),
@@ -40,6 +38,9 @@ public static class Main
             LogMessage($"Unpatching {targetMethod.DeclaringType?.Name ?? string.Empty}:{targetMethod.Name}", true);
             HarmonyInstance.Unpatch(targetMethod, HarmonyPatchType.All, "OskarPotocki.VFECore");
         }
+        // Do our patches after we undo theirs
+        HarmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
+        VariedBodySizesMod.instance.Settings.VariedBodySizes ??= new Dictionary<string, FloatRange>();
     }
 
     public static float GetPawnVariation(Pawn pawn)
