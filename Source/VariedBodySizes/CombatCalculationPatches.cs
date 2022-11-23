@@ -33,7 +33,8 @@ public static partial class HarmonyPatches
             if (!VariedBodySizesMod.instance.Settings.AffectMeleeDodgeChance) return result;
             if(target.Thing is not Pawn pawn) return result;
 
-            var new_result = result / GetScalarForPawn(pawn);
+            // Move it towards whichever is advantageous/disadvantageous based on body size
+            var new_result = result < 0 ? result * GetScalarForPawn(pawn): result / GetScalarForPawn(pawn);
             Main.LogMessage($"Dodge chance for {pawn.LabelShort} modified: {result * 100}% -> {new_result * 100}%");
             return new_result;
         }
