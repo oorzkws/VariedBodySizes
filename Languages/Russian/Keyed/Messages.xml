@@ -18,4 +18,8 @@
   <VariedBodySizes.version.label>Установленная версия мода: {0}</VariedBodySizes.version.label>
   <VariedBodySizes.logging.label>Подробное протоколирование</VariedBodySizes.logging.label>
   <VariedBodySizes.logging.tooltip>Увеличенное протоколирование для отладки</VariedBodySizes.logging.tooltip>
+  <VariedBodySizes.realhungerrate.label>Также измените уровень голода</VariedBodySizes.realhungerrate.label>
+  <VariedBodySizes.realhungerrate.tooltip>Размер тела также влияет на уровень голода пешек и животных. Это влияет на количество пищи, необходимое для поддержания здоровья пешки.</VariedBodySizes.realhungerrate.tooltip>
+  <VariedBodySizes.meleedodgechance.label>Также изменяет шанс уклонения в ближнем бою</VariedBodySizes.meleedodgechance.label>
+  <VariedBodySizes.meleedodgechance.tooltip>Размер тела также влияет на шанс уклонения пешки/животного в ближнем бою.</VariedBodySizes.meleedodgechance.tooltip>
 </LanguageData>
