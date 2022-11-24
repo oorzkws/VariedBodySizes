@@ -21,7 +21,8 @@ public static class Main
         AllPawnTypes = DefDatabase<ThingDef>.AllDefsListForReading.Where(def => def.race != null)
             .OrderBy(def => def.label).ToList();
         HarmonyInstance = new Harmony("Mlie.VariedBodySizes");
-        // Until VEF works we're just going to override with our own scaling.
+        // Until VEF changes their mind we're just going to override with our own scaling.
+        var outString = string.Empty;
         foreach (var targetPair in new KeyValuePair<Type, string>[]{
             new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeBodySetForPawn"),
             new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeHeadSetForPawn"),
@@ -29,7 +30,10 @@ public static class Main
             new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeBeardSetForPawn"),
             new(typeof(PawnRenderer),"GetBodyOverlayMeshSet"),
             new(typeof(PawnRenderer),"BaseHeadOffsetAt"),
-            new(AccessTools.TypeByName("Verse.PawnRenderer+<>c__DisplayClass54_0"), "<DrawHeadHair>g__DrawExtraEyeGraphic|6")
+            new(typeof(PawnRenderer), "DrawBodyApparel"),
+            new(typeof(PawnRenderer), "DrawBodyGenes"),
+            new(typeof(GeneGraphicData), "GetGraphics"),
+            new(AccessTools.TypeByName("Verse.PawnRenderer+<>c__DisplayClass54_0"), "<DrawHeadHair>g__DrawExtraEyeGraphic|6"),
         })
         {
             var targetMethod = AccessTools.Method(targetPair.Key, targetPair.Value);
@@ -71,9 +75,9 @@ public static class Main
 [UsedImplicitly]
 public static partial class HarmonyPatches
 {
-    // Commented until their compat gets in order
-    private static readonly bool hasVef = false;//ModsConfig.IsActive("oskarpotocki.vanillafactionsexpanded.core");
-    
+    // We have to overwrite their patches, unfortunately
+    private static bool hasVef => ModsConfig.IsActive("oskarpotocki.vanillafactionsexpanded.core");
+
     private static float GetScalarForPawn(Pawn pawn)
     {
         return Main.CurrentComponent?.GetVariedBodySize(pawn) ?? 1f;
