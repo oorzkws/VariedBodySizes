@@ -10,7 +10,7 @@ public static partial class HarmonyPatches
     // We're just going to patch ourselves if it's relevant
     [HarmonyPatch]
     [UsedImplicitly]
-    private static class VefCompatPatch
+    public static class VefCompatPatch
     {
         private delegate float BodyScaleDelegate(float width, Pawn pawn);
 
@@ -18,14 +18,14 @@ public static partial class HarmonyPatches
             "VanillaGenesExpanded.HumanlikeMeshPoolUtility_Patches:GeneScaleFactor") : null;
 
         [UsedImplicitly]
-        private static bool Prepare() => hasVef && NotNull(vefBodyScaleMethod);
+        public static bool Prepare() => hasVef && NotNull(vefBodyScaleMethod);
         
         [UsedImplicitly]
-        private static MethodBase TargetMethod() =>
+        public static MethodBase TargetMethod() =>
             AccessTools.Method("VariedBodySizes.VariedBodySizes_GameComponent:OnCalculateBodySize");
 
         [UsedImplicitly]
-        private static float Postfix(float result, Pawn pawn)
+        public static float Postfix(float result, Pawn pawn)
         {
             return pawn is null ? result : vefBodyScaleMethod(result, pawn);
         }

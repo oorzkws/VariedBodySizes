@@ -22,19 +22,18 @@ public static class Main
             .OrderBy(def => def.label).ToList();
         HarmonyInstance = new Harmony("Mlie.VariedBodySizes");
         // Until VEF changes their mind we're just going to override with our own scaling.
-        var outString = string.Empty;
         foreach (var targetPair in new KeyValuePair<Type, string>[]{
-            new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeBodySetForPawn"),
-            new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeHeadSetForPawn"),
-            new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeHairSetForPawn"),
-            new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeBeardSetForPawn"),
-            new(typeof(PawnRenderer),"GetBodyOverlayMeshSet"),
-            new(typeof(PawnRenderer),"BaseHeadOffsetAt"),
-            new(typeof(PawnRenderer), "DrawBodyApparel"),
-            new(typeof(PawnRenderer), "DrawBodyGenes"),
-            new(typeof(GeneGraphicData), "GetGraphics"),
-            new(AccessTools.TypeByName("Verse.PawnRenderer+<>c__DisplayClass54_0"), "<DrawHeadHair>g__DrawExtraEyeGraphic|6"),
-        })
+             new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeBodySetForPawn"),
+             new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeHeadSetForPawn"),
+             new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeHairSetForPawn"),
+             new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeBeardSetForPawn"),
+             new(typeof(PawnRenderer),"GetBodyOverlayMeshSet"),
+             new(typeof(PawnRenderer),"BaseHeadOffsetAt"),
+             new(typeof(PawnRenderer), "DrawBodyApparel"),
+             new(typeof(PawnRenderer), "DrawBodyGenes"),
+             new(typeof(GeneGraphicData), "GetGraphics"),
+             new(AccessTools.TypeByName("Verse.PawnRenderer+<>c__DisplayClass54_0"), "<DrawHeadHair>g__DrawExtraEyeGraphic|6"),
+         })
         {
             var targetMethod = AccessTools.Method(targetPair.Key, targetPair.Value);
             if (targetMethod == null) continue;

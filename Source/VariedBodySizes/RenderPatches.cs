@@ -32,16 +32,16 @@ public static partial class HarmonyPatches
 
     [HarmonyPatch]
     [UsedImplicitly]
-    private static class HumanlikeMeshPoolUtility_HumanlikeBodyWidthForPawnPatch
+    public static class HumanlikeMeshPoolUtility_HumanlikeBodyWidthForPawnPatch
     {
         [UsedImplicitly]
-        private static bool Prepare() => NotNull(getHumanlikeBodyWidthFunc);
+        public static bool Prepare() => NotNull(getHumanlikeBodyWidthFunc);
 
         [UsedImplicitly]
-        private static MethodBase TargetMethod() => getHumanlikeBodyWidthFunc;
+        public static MethodBase TargetMethod() => getHumanlikeBodyWidthFunc;
 
         [UsedImplicitly]
-        private static void Postfix(Pawn pawn, ref float __result)
+        public static void Postfix(Pawn pawn, ref float __result)
         {
             __result *= GetScalarForPawn(pawn);
         }
@@ -49,7 +49,7 @@ public static partial class HarmonyPatches
 
     [HarmonyPatch]
     [UsedImplicitly]
-    private static class PawnGraphicSet_ResolveAllGraphicsPatch
+    public static class PawnGraphicSet_ResolveAllGraphicsPatch
     {
         
         private static readonly Dictionary<Pawn, Dictionary<FieldInfo, Vector2>> originalSizes = new();
@@ -88,13 +88,13 @@ public static partial class HarmonyPatches
         }
 
         [UsedImplicitly]
-        private static bool Prepare() => NotNull(resolveAllGraphics);
+        public static bool Prepare() => NotNull(resolveAllGraphics);
 
         [UsedImplicitly]
-        private static MethodBase TargetMethod() => resolveAllGraphics;
+        public static MethodBase TargetMethod() => resolveAllGraphics;
 
         [UsedImplicitly]
-        private static void Postfix(PawnGraphicSet __instance, Pawn ___pawn)
+        public static void Postfix(PawnGraphicSet __instance, Pawn ___pawn)
         {
             var pawnDrawSize = GetScalarForPawn(___pawn);
             
@@ -151,7 +151,7 @@ public static partial class HarmonyPatches
 
     [HarmonyPatch]
     [UsedImplicitly]
-    private static class GraphicMeshSet_GetHumanlikeSetForPawnPatch
+    public static class GraphicMeshSet_GetHumanlikeSetForPawnPatch
     {
         private static readonly MethodBase getHeadSet =
             AccessTools.Method("Verse.HumanlikeMeshPoolUtility:GetHumanlikeHeadSetForPawn");
@@ -166,13 +166,13 @@ public static partial class HarmonyPatches
             AccessTools.Method("Verse.MeshPool:GetMeshSetForWidth", new[] {typeof(float)});
 
         [UsedImplicitly]
-        private static bool Prepare() => NotNull(getHeadSet, getBodySet, headSetField, bodySetField, getMeshSet1D);
+        public static bool Prepare() => NotNull(getHeadSet, getBodySet, headSetField, bodySetField, getMeshSet1D);
 
         [UsedImplicitly]
-        private static IEnumerable<MethodBase> TargetMethods() => YieldAll(getHeadSet, getBodySet);
+        public static IEnumerable<MethodBase> TargetMethods() => YieldAll(getHeadSet, getBodySet);
 
         [UsedImplicitly]
-        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions,
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions,
             ILGenerator generator, MethodBase original)
         {
             // store which method we are patching currently
@@ -217,7 +217,7 @@ public static partial class HarmonyPatches
 
     [HarmonyPatch]
     [UsedImplicitly]
-    private static class GraphicMeshSet_GetHairBeardSetForPawnPatch
+    public static class GraphicMeshSet_GetHairBeardSetForPawnPatch
     {
         private static readonly MethodBase getHairSet =
             AccessTools.Method("Verse.HumanlikeMeshPoolUtility:GetHumanlikeHairSetForPawn");
@@ -226,13 +226,13 @@ public static partial class HarmonyPatches
             AccessTools.Method("Verse.HumanlikeMeshPoolUtility:GetHumanlikeBeardSetForPawn");
 
         [UsedImplicitly]
-        private static bool Prepare() => NotNull(getHairSet, getBeardSet, floatTimesVector2);
+        public static bool Prepare() => NotNull(getHairSet, getBeardSet, floatTimesVector2);
 
         [UsedImplicitly]
-        private static IEnumerable<MethodBase> TargetMethods() => YieldAll(getHairSet, getBeardSet);
+        public static IEnumerable<MethodBase> TargetMethods() => YieldAll(getHairSet, getBeardSet);
 
         [UsedImplicitly]
-        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions,
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions,
             ILGenerator generator, MethodBase original)
         {
             var editor = new CodeMatcher(instructions);
@@ -257,7 +257,7 @@ public static partial class HarmonyPatches
     
     [HarmonyPatch]
     [UsedImplicitly]
-    private static class PawnRenderer_GetBodyOverlayMeshSetPatch
+    public static class PawnRenderer_GetBodyOverlayMeshSetPatch
     {
         private static readonly MethodBase getBodyOverlayMesh = AccessTools.Method(typeof(PawnRenderer), "GetBodyOverlayMeshSet");
         private static readonly TimedCache<GraphicMeshSet> overlayCache = new(360);
@@ -270,11 +270,11 @@ public static partial class HarmonyPatches
         }
         
         [UsedImplicitly]
-        private static bool Prepare() => NotNull(getBodyOverlayMesh);
+        public static bool Prepare() => NotNull(getBodyOverlayMesh);
 
         [UsedImplicitly]
-        private static MethodBase TargetMethod() => getBodyOverlayMesh;
-        
+        public static MethodBase TargetMethod() => getBodyOverlayMesh;
+
         private static GraphicMeshSet GetBodyOverlayMeshForPawn(GraphicMeshSet baseMesh, Pawn pawn)
         {
             if (!overlayCache.TryGet(pawn, out var returnedMesh))
@@ -283,7 +283,7 @@ public static partial class HarmonyPatches
         }
 
         [UsedImplicitly]
-        private static void Postfix(ref GraphicMeshSet __result, Pawn ___pawn)
+        public static void Postfix(ref GraphicMeshSet __result, Pawn ___pawn)
         {
             __result = GetBodyOverlayMeshForPawn(__result, ___pawn);
         }
@@ -291,19 +291,19 @@ public static partial class HarmonyPatches
 
     [HarmonyPatch]
     [UsedImplicitly]
-    private static class PawnRenderer_BaseHeadOffsetAtPatch
+    public static class PawnRenderer_BaseHeadOffsetAtPatch
     {
         private static readonly MethodBase headOffsetAt = AccessTools.Method("Verse.PawnRenderer:BaseHeadOffsetAt");
         private static readonly FieldInfo ageBodyFactor = AccessTools.Field("RimWorld.LifeStageDef:bodySizeFactor");
 
         [UsedImplicitly]
-        private static bool Prepare() => NotNull(headOffsetAt, ageBodyFactor, pawnRendererPawn);
+        public static bool Prepare() => NotNull(headOffsetAt, ageBodyFactor, pawnRendererPawn);
 
         [UsedImplicitly]
-        private static MethodBase TargetMethod() => headOffsetAt;
+        public static MethodBase TargetMethod() => headOffsetAt;
 
         [UsedImplicitly]
-        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             var editor = new CodeMatcher(instructions);
             // Find where it roots the age/size factor
@@ -325,19 +325,19 @@ public static partial class HarmonyPatches
 
     [HarmonyPatch]
     [UsedImplicitly]
-    private static class PawnRenderer_DrawBodyGenesPatch
+    public static class PawnRenderer_DrawBodyGenesPatch
     {
         private static readonly MethodBase drawBodyGenes = AccessTools.Method("Verse.PawnRenderer:DrawBodyGenes");
         private static readonly FieldInfo bodyScale = AccessTools.Field("RimWorld.BodyTypeDef:bodyGraphicScale");
 
         [UsedImplicitly]
-        private static bool Prepare() => NotNull(drawBodyGenes, bodyScale, pawnRendererPawn, floatTimesVector2);
+        public static bool Prepare() => NotNull(drawBodyGenes, bodyScale, pawnRendererPawn, floatTimesVector2);
 
         [UsedImplicitly]
-        private static MethodBase TargetMethod() => drawBodyGenes;
+        public static MethodBase TargetMethod() => drawBodyGenes;
 
         [UsedImplicitly]
-        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             var editor = new CodeMatcher(instructions);
             // Find where it checks body scale
@@ -363,7 +363,7 @@ public static partial class HarmonyPatches
 
     [HarmonyPatch]
     [UsedImplicitly]
-    private static class PawnRenderer_DrawExtraEyeGraphicPatch
+    public static class PawnRenderer_DrawExtraEyeGraphicPatch
     {
         [UsedImplicitly]
         private static Vector3 ModifyVectorForPawn(Vector3 vec, Pawn pawn)
@@ -390,13 +390,13 @@ public static partial class HarmonyPatches
             woundOffset = AccessTools.Field(typeof(BodyTypeDef.WoundAnchor), "offset");
 
         [UsedImplicitly]
-        private static bool Prepare() => NotNull(drawEyeOverlay, eyeOverlayPawnRendererField, pawnRendererPawn, woundOffset);
+        public static bool Prepare() => NotNull(drawEyeOverlay, eyeOverlayPawnRendererField, pawnRendererPawn, woundOffset);
 
         [UsedImplicitly]
-        private static MethodBase TargetMethod() => drawEyeOverlay;
+        public static MethodBase TargetMethod() => drawEyeOverlay;
 
         [UsedImplicitly]
-        private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             var woundOffsetCount = 0;
             // Modify the 2nd arg - scale (float) - right at the start of the function
