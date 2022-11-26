@@ -1,5 +1,8 @@
 # Changelog for VariedBodySizes
 
+1.4.5 - Fixed a typo in the settings
+
+
 1.4.4 - Added option for affecting hunger rate.
 Used DeepL to update translations for ChineseSimplified, French, German, Russian
 
