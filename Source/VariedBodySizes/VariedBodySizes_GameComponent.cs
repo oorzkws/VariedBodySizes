@@ -7,7 +7,7 @@ namespace VariedBodySizes;
 public class VariedBodySizes_GameComponent : GameComponent
 {
     public Dictionary<Pawn, float> VariedBodySizesDictionary;
-    
+
     private List<Pawn> variedBodySizesDictionaryKeys;
     private List<float> variedBodySizesDictionaryValues;
 
@@ -15,7 +15,7 @@ public class VariedBodySizes_GameComponent : GameComponent
     {
         Main.CurrentComponent = this;
     }
-    
+
     // This way others can hook and modify while benefiting from our cache
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.PreserveSig)]
     public static float OnCalculateBodySize(float bodySize, Pawn pawn)
@@ -37,11 +37,13 @@ public class VariedBodySizes_GameComponent : GameComponent
 
         VariedBodySizesDictionary ??= new Dictionary<Pawn, float>();
 
-        if (!VariedBodySizesDictionary.ContainsKey(pawn))
+        if (VariedBodySizesDictionary.ContainsKey(pawn))
         {
-            VariedBodySizesDictionary[pawn] = Main.GetPawnVariation(pawn);
-            Main.LogMessage($"[VariedBodySizes]: Setting size of {pawn} to {VariedBodySizesDictionary[pawn]}");
+            return OnCalculateBodySize(VariedBodySizesDictionary[pawn], pawn);
         }
+
+        VariedBodySizesDictionary[pawn] = Main.GetPawnVariation(pawn);
+        Main.LogMessage($"Setting size of {pawn} to {VariedBodySizesDictionary[pawn]}");
 
         // Apply any registered modifiers when storing
         return OnCalculateBodySize(VariedBodySizesDictionary[pawn], pawn);

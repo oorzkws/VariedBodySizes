@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
-using JetBrains.Annotations;
 using Verse;
 
 namespace VariedBodySizes;
@@ -22,26 +20,37 @@ public static class Main
             .OrderBy(def => def.label).ToList();
         HarmonyInstance = new Harmony("Mlie.VariedBodySizes");
         // Until VEF changes their mind we're just going to override with our own scaling.
-        foreach (var targetPair in new KeyValuePair<Type, string>[]{
-             new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeBodySetForPawn"),
-             new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeHeadSetForPawn"),
-             new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeHairSetForPawn"),
-             new(typeof(HumanlikeMeshPoolUtility),"GetHumanlikeBeardSetForPawn"),
-             new(typeof(PawnRenderer),"GetBodyOverlayMeshSet"),
-             new(typeof(PawnRenderer),"BaseHeadOffsetAt"),
-             new(typeof(PawnRenderer), "DrawBodyApparel"),
-             new(typeof(PawnRenderer), "DrawBodyGenes"),
-             new(typeof(GeneGraphicData), "GetGraphics"),
-             new(AccessTools.TypeByName("Verse.PawnRenderer+<>c__DisplayClass54_0"), "<DrawHeadHair>g__DrawExtraEyeGraphic|6"),
-         })
+        foreach (var targetPair in new[]
+                 {
+                     new KeyValuePair<Type, string>(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeBodySetForPawn"),
+                     new KeyValuePair<Type, string>(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeHeadSetForPawn"),
+                     new(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeHairSetForPawn"),
+                     new(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeBeardSetForPawn"),
+                     new(typeof(PawnRenderer), "GetBodyOverlayMeshSet"),
+                     new(typeof(PawnRenderer), "BaseHeadOffsetAt"),
+                     new(typeof(PawnRenderer), "DrawBodyApparel"),
+                     new(typeof(PawnRenderer), "DrawBodyGenes"),
+                     new(typeof(GeneGraphicData), "GetGraphics"),
+                     new(AccessTools.TypeByName("Verse.PawnRenderer+<>c__DisplayClass54_0"),
+                         "<DrawHeadHair>g__DrawExtraEyeGraphic|6")
+                 })
         {
             var targetMethod = AccessTools.Method(targetPair.Key, targetPair.Value);
-            if (targetMethod == null) continue;
+            if (targetMethod == null)
+            {
+                continue;
+            }
+
             var patches = Harmony.GetPatchInfo(targetMethod);
-            if (patches?.Owners.Contains("OskarPotocki.VFECore") != true) continue;
+            if (patches?.Owners.Contains("OskarPotocki.VFECore") != true)
+            {
+                continue;
+            }
+
             LogMessage($"Unpatching {targetMethod.DeclaringType?.Name ?? string.Empty}:{targetMethod.Name}", true);
             HarmonyInstance.Unpatch(targetMethod, HarmonyPatchType.All, "OskarPotocki.VFECore");
         }
+
         // Do our patches after we undo theirs
         HarmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
         VariedBodySizesMod.instance.Settings.VariedBodySizes ??= new Dictionary<string, FloatRange>();
@@ -70,8 +79,7 @@ public static class Main
 }
 
 // Utility stuff here
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-[UsedImplicitly]
+
 public static partial class HarmonyPatches
 {
     // We have to overwrite their patches, unfortunately
@@ -84,8 +92,12 @@ public static partial class HarmonyPatches
 
     private static bool NotNull(params object[] input)
     {
-        if (input.All(o => o is not null)) return true;
-        Main.LogMessage("VariedBodySizes: Signature match not found", true);
+        if (input.All(o => o is not null))
+        {
+            return true;
+        }
+
+        Main.LogMessage("Signature match not found", true);
         foreach (var obj in input)
         {
             if (obj is MemberInfo memberObj)
@@ -93,6 +105,7 @@ public static partial class HarmonyPatches
                 Main.LogMessage($"\tValid entry:{memberObj}", true);
             }
         }
+
         return false;
     }
 
@@ -109,6 +122,7 @@ public static partial class HarmonyPatches
             Main.LogMessage("Transpiler did not find target", true);
             return;
         }
+
         action.Invoke(match);
     }
 }

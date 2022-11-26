@@ -1,5 +1,8 @@
 # Changelog for VariedBodySizes
 
+1.4.6 - A lot of performance and bug-fixes by Mute
+
+
 1.4.5 - Fixed a typo in the settings
 
 

@@ -37,6 +37,8 @@ Load order should not matter as all calculations are done after game-start.
 
 
 
+Also, Mute made a Biotech gene mod for body-sizes: https://steamcommunity.com/sharedfiles/filedetails/?id=2887397385]Body Size Genes
+
 Idea: Visandar_the_Unliving
 VEF support and dodge chance by: oorzkws
 
