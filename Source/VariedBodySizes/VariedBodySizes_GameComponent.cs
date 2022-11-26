@@ -1,22 +1,26 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Verse;
 
 namespace VariedBodySizes;
 
 public class VariedBodySizes_GameComponent : GameComponent
 {
-    public Game currentGame;
-
     public Dictionary<Pawn, float> VariedBodySizesDictionary;
-
+    
     private List<Pawn> variedBodySizesDictionaryKeys;
-
     private List<float> variedBodySizesDictionaryValues;
 
     public VariedBodySizes_GameComponent(Game game)
     {
         Main.CurrentComponent = this;
-        currentGame = game;
+    }
+    
+    // This way others can hook and modify while benefiting from our cache
+    [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.PreserveSig)]
+    public static float OnCalculateBodySize(float bodySize, Pawn pawn)
+    {
+        return pawn == null ? 1f : bodySize;
     }
 
     public float GetVariedBodySize(Pawn pawn)
@@ -31,20 +35,16 @@ public class VariedBodySizes_GameComponent : GameComponent
             return 1f;
         }
 
-        if (VariedBodySizesDictionary == null)
+        VariedBodySizesDictionary ??= new Dictionary<Pawn, float>();
+
+        if (!VariedBodySizesDictionary.ContainsKey(pawn))
         {
-            VariedBodySizesDictionary = new Dictionary<Pawn, float>();
+            VariedBodySizesDictionary[pawn] = Main.GetPawnVariation(pawn);
+            Main.LogMessage($"[VariedBodySizes]: Setting size of {pawn} to {VariedBodySizesDictionary[pawn]}");
         }
 
-        if (VariedBodySizesDictionary.ContainsKey(pawn))
-        {
-            return VariedBodySizesDictionary[pawn];
-        }
-
-        VariedBodySizesDictionary[pawn] = Main.GetPawnVariation(pawn);
-        Main.LogMessage($"[VariedBodySizes]: Setting size of {pawn} to {VariedBodySizesDictionary[pawn]}");
-
-        return VariedBodySizesDictionary[pawn];
+        // Apply any registered modifiers when storing
+        return OnCalculateBodySize(VariedBodySizesDictionary[pawn], pawn);
     }
 
     public override void ExposeData()

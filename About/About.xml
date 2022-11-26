@@ -18,6 +18,7 @@
   </modDependencies>
   <loadAfter>
     <li>brrainz.harmony</li>
+    <li>oskarpotocki.vanillafactionsexpanded.core</li>
   </loadAfter>
   <description>[img]https://i.imgur.com/buuPQel.png[/img]
 
