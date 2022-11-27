@@ -1,6 +1,7 @@
 # Changelog for VariedBodySizes
 
-1.4.7 - Compatibility with [NL] Facial Animation
+1.4.7 - Added support for [url=https://steamcommunity.com/sharedfiles/filedetails/?id=1635901197][NL] Facial Animation[/url]
+
 
 1.4.6 - A lot of performance and bug-fixes by Mute
 
