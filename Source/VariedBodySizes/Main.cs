@@ -26,6 +26,7 @@ public static class Main
                      new KeyValuePair<Type, string>(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeHeadSetForPawn"),
                      new(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeHairSetForPawn"),
                      new(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeBeardSetForPawn"),
+                     new(typeof(HumanlikeMeshPoolUtility), "HumanlikeBodyWidthForPawn"),
                      new(typeof(PawnRenderer), "GetBodyOverlayMeshSet"),
                      new(typeof(PawnRenderer), "BaseHeadOffsetAt"),
                      new(typeof(PawnRenderer), "DrawBodyApparel"),
