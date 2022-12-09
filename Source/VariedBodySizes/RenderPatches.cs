@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -454,11 +455,13 @@ public static partial class HarmonyPatches
         private static readonly FieldInfo
             woundOffset = AccessTools.Field(typeof(BodyTypeDef.WoundAnchor), "offset");
 
+        private static readonly FieldInfo eyeOffset = AccessTools.Field(typeof(HeadTypeDef), "eyeOffsetEastWest");
+
         private static Vector3 ModifyVectorForPawn(Vector3 vec, Pawn pawn)
         {
             var scalar = GetScalarForPawn(pawn);
             vec.x *= scalar;
-            vec.z /= scalar;
+            vec.z += vec.z * (1 - scalar) * 0.5f; // +/- 50% * scalar
             return vec;
         }
 
@@ -497,7 +500,7 @@ public static partial class HarmonyPatches
                 // First two instances of wound offset. Can't just modify vector3_1 since it's used elsewhere.
                 new CodeMatch(i => i.IsLdloc()),
                 new CodeMatch(OpCodes.Ldfld, woundOffset),
-                new CodeMatch(_ => woundOffsetCount++ < 3)
+                new CodeMatch(_ => woundOffsetCount++ < 2)
             ).Repeat(match => match.Advance(2).InsertAndAdvance(
                 new CodeInstruction(OpCodes.Ldarg_0),
                 new CodeInstruction(OpCodes.Ldfld, eyeOverlayPawnRendererField),

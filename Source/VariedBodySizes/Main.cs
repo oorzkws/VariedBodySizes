@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
@@ -120,7 +121,7 @@ public static partial class HarmonyPatches
     {
         if (match.IsInvalid)
         {
-            Main.LogMessage("Transpiler did not find target", true);
+            Main.LogMessage($"Transpiler did not find target @ {new StackTrace().GetFrame(1).GetMethod().DeclaringType?.FullName ?? "unknown"}", true);
             return;
         }
 
