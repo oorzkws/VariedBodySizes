@@ -1,5 +1,8 @@
 # Changelog for VariedBodySizes
 
+1.4.8 - Fixes bionic and archotech eyes being misplaced
+
+
 1.4.7 - Added support for [url=https://steamcommunity.com/sharedfiles/filedetails/?id=1635901197][NL] Facial Animation[/url]
 
 
