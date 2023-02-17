@@ -1,5 +1,9 @@
 # Changelog for VariedBodySizes
 
+1.4.9 - Added option to affect gathered resources from animals (milk, wool etc.).
+Used DeepL to update translations for ChineseSimplified, French, German, Russian
+
+
 1.4.8 - Fixes bionic and archotech eyes being misplaced
 
 

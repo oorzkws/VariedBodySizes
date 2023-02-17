@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 using HarmonyLib;
 using RimWorld;
 using UnityEngine;
@@ -103,6 +106,33 @@ public static partial class HarmonyPatches
             }
 
             p.def.race.baseHungerRate = __state;
+        }
+    }
+
+    [HarmonyPatch]
+    public static class CompHasGatherableBodyResource_ResourceAmountPatch
+    {
+        private static IEnumerable<MethodBase> TargetMethods()
+        {
+            foreach (var subClassType in typeof(CompHasGatherableBodyResource).AllSubclassesNonAbstract())
+            {
+                yield return AccessTools.PropertyGetter(subClassType, "ResourceAmount");
+            }
+        }
+
+        public static void Postfix(ref int __result, ThingWithComps ___parent)
+        {
+            if (!VariedBodySizesMod.instance.Settings.AffectHarvestYield)
+            {
+                return;
+            }
+
+            if (___parent is not Pawn pawn)
+            {
+                return;
+            }
+
+            __result = (int)Math.Round(__result * GetScalarForPawn(pawn));
         }
     }
 }

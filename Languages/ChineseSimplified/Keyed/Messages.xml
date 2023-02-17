@@ -22,4 +22,6 @@
   <VariedBodySizes.realhungerrate.tooltip>体型也会影响卒子和动物的饥饿率。这将影响保持卒子健康所需的食物量。</VariedBodySizes.realhungerrate.tooltip>
   <VariedBodySizes.meleedodgechance.label>同时修改近战躲避的机会</VariedBodySizes.meleedodgechance.label>
   <VariedBodySizes.meleedodgechance.tooltip>身体大小也会影响小兵/动物的近战躲避机会。</VariedBodySizes.meleedodgechance.tooltip>
+  <VariedBodySizes.harvestyield.label>同时修改动物产品产量</VariedBodySizes.harvestyield.label>
+  <VariedBodySizes.harvestyield.tooltip>身体大小也会影响挤奶/剪毛等时接收到的产品数量。</VariedBodySizes.harvestyield.tooltip>
 </LanguageData>

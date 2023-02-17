@@ -121,6 +121,9 @@ internal class VariedBodySizesMod : Mod
         listing_Standard.CheckboxLabeled("VariedBodySizes.meleedodgechance.label".Translate(),
             ref Settings.AffectMeleeDodgeChance,
             "VariedBodySizes.meleedodgechance.tooltip".Translate());
+        listing_Standard.CheckboxLabeled("VariedBodySizes.harvestyield.label".Translate(),
+            ref Settings.AffectHarvestYield,
+            "VariedBodySizes.harvestyield.tooltip".Translate());
 
         if (currentVersion != null)
         {

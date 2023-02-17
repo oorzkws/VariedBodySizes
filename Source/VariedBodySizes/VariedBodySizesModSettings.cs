@@ -8,6 +8,7 @@ namespace VariedBodySizes;
 /// </summary>
 public class VariedBodySizesModSettings : ModSettings
 {
+    public bool AffectHarvestYield;
     public bool AffectMeleeDamage;
     public bool AffectMeleeDodgeChance;
     public bool AffectRealBodySize;
@@ -29,6 +30,7 @@ public class VariedBodySizesModSettings : ModSettings
         Scribe_Values.Look(ref AffectRealHungerRate, "AffectRealHungerRate");
         Scribe_Values.Look(ref AffectMeleeDamage, "AffectMeleeDamage");
         Scribe_Values.Look(ref AffectMeleeDodgeChance, "AffectMeleeDodgeChance");
+        Scribe_Values.Look(ref AffectHarvestYield, "AffectHarvestYield");
         Scribe_Values.Look(ref DefaultVariation, "DefaultVariation", new FloatRange(0.9f, 1.1f));
         Scribe_Collections.Look(ref VariedBodySizes, "VariedBodySizes", LookMode.Value,
             LookMode.Value,

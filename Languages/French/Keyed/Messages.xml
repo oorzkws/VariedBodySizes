@@ -22,4 +22,6 @@
   <VariedBodySizes.realhungerrate.tooltip>La taille du corps affecte également le taux de faim des pions et des animaux. Cela affectera la quantité de nourriture nécessaire pour garder le pion en bonne santé.</VariedBodySizes.realhungerrate.tooltip>
   <VariedBodySizes.meleedodgechance.label>Modifie également les chances d'esquive en mêlée</VariedBodySizes.meleedodgechance.label>
   <VariedBodySizes.meleedodgechance.tooltip>La taille du corps affecte également les chances d'esquive en mêlée d'un pion/animal.</VariedBodySizes.meleedodgechance.tooltip>
+  <VariedBodySizes.harvestyield.label>Modifier également le rendement des produits animaux</VariedBodySizes.harvestyield.label>
+  <VariedBodySizes.harvestyield.tooltip>La taille du corps affecte également la quantité de produits reçus lors de la traite/du cisaillement, etc.</VariedBodySizes.harvestyield.tooltip>
 </LanguageData>

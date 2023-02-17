@@ -22,4 +22,6 @@
   <VariedBodySizes.realhungerrate.tooltip>Die Körpergröße wirkt sich auch auf die Hungerquote von Bauern und Tieren aus. Dies wirkt sich auf die Menge an Nahrung aus, die benötigt wird, um die Spielfigur gesund zu halten.</VariedBodySizes.realhungerrate.tooltip>
   <VariedBodySizes.meleedodgechance.label>Auch Nahkampf-Ausweichchance ändern</VariedBodySizes.meleedodgechance.label>
   <VariedBodySizes.meleedodgechance.tooltip>Die Körpergröße wirkt sich auch auf die Chance eines Bauern/Tieres aus, im Nahkampf auszuweichen.</VariedBodySizes.meleedodgechance.tooltip>
+  <VariedBodySizes.harvestyield.label>Auch die Ausbeute an tierischen Erzeugnissen ändern</VariedBodySizes.harvestyield.label>
+  <VariedBodySizes.harvestyield.tooltip>Die Körpergröße wirkt sich auch auf die Menge der Produkte aus, die beim Melken/Scheren usw. aufgenommen werden.</VariedBodySizes.harvestyield.tooltip>
 </LanguageData>

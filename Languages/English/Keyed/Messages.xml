@@ -18,6 +18,8 @@
   <VariedBodySizes.meleedamage.tooltip>Bodysize will also affect the amount of melee damage a pawn/animal can inflict.</VariedBodySizes.meleedamage.tooltip>
   <VariedBodySizes.meleedodgechance.label>Also modify melee dodge chance</VariedBodySizes.meleedodgechance.label>
   <VariedBodySizes.meleedodgechance.tooltip>Bodysize will also affect the melee dodge chance of a pawn/animal.</VariedBodySizes.meleedodgechance.tooltip>
+  <VariedBodySizes.harvestyield.label>Also modify animal product yield</VariedBodySizes.harvestyield.label>
+  <VariedBodySizes.harvestyield.tooltip>Bodysize will also affect the amount of products recieved when milking/shearing etc.</VariedBodySizes.harvestyield.tooltip>
   <VariedBodySizes.version.label>Installed mod-version: {0}</VariedBodySizes.version.label>
   <VariedBodySizes.logging.label>Verbose logging</VariedBodySizes.logging.label>
   <VariedBodySizes.logging.tooltip>Increased logging for debugging</VariedBodySizes.logging.tooltip>
