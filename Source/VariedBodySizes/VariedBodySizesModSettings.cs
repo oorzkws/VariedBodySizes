@@ -9,10 +9,10 @@ namespace VariedBodySizes;
 public class VariedBodySizesModSettings : ModSettings
 {
     public bool AffectHarvestYield;
-    public bool AffectMeleeDamage;
-    public bool AffectMeleeDodgeChance;
-    public bool AffectRealBodySize;
-    public bool AffectRealHealthScale;
+    public bool AffectMeleeDamage = ModsConfig.IsActive("mute.genebodysize");
+    public bool AffectMeleeDodgeChance = ModsConfig.IsActive("mute.genebodysize");
+    public bool AffectRealBodySize = ModsConfig.IsActive("mute.genebodysize");
+    public bool AffectRealHealthScale = ModsConfig.IsActive("mute.genebodysize");
     public bool AffectRealHungerRate;
     public FloatRange DefaultVariation = new FloatRange(0.9f, 1.1f);
     public Dictionary<string, FloatRange> VariedBodySizes;
