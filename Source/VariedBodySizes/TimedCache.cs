@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using FisheryLib;
+using System.Runtime.CompilerServices;
 using Verse;
 
 namespace VariedBodySizes;
@@ -6,71 +8,48 @@ namespace VariedBodySizes;
 public class TimedCache<T>
 {
     private readonly int expiry;
-    private readonly LinkedList<CacheEntry<T>> expiryList = new LinkedList<CacheEntry<T>>();
-
-    private readonly Dictionary<Pawn, LinkedListNode<CacheEntry<T>>> internalCache =
-        new Dictionary<Pawn, LinkedListNode<CacheEntry<T>>>();
+    private readonly Dictionary<int, CacheEntry<T>> internalCache = new Dictionary<int, CacheEntry<T>>();
 
     public TimedCache(int expiryTime)
     {
         expiry = expiryTime;
     }
 
-    public T SetAndReturn(Pawn key, T value)
+    public void Set(Pawn pawn, T value)
     {
-        Set(key, value);
-        return internalCache[key].Value.CachedValue;
+        internalCache[pawn.thingIDNumber] = new CacheEntry<T>(cachedValue:value);
     }
 
-    public void Set(Pawn key, T value)
+    public void Remove(Pawn pawn)
     {
-        CheckFirstExpiry();
-
-        var node = new LinkedListNode<CacheEntry<T>>(new CacheEntry<T>(value, key));
-        internalCache.Add(key, node);
-        expiryList.AddLast(node);
+        internalCache.Remove(pawn.thingIDNumber);
     }
 
-    public bool TryGet(Pawn key, out T value)
+    public bool Contains(Pawn pawn)
     {
-        if (!ContainsKey(key))
+        return internalCache.ContainsKey(pawn.thingIDNumber);
+    }
+    
+    public bool TryGet(Pawn pawn, out T value)
+    {
+        ref var reference = ref internalCache.TryGetReferenceUnsafe(pawn.thingIDNumber);
+        if (!Unsafe.IsNullRef(ref reference))
         {
-            value = default;
-            return false;
+            if (reference.Expired(expiry))
+            {
+                internalCache.Remove(pawn.thingIDNumber);
+                value = default;
+                return false;
+            }
+            value = reference.CachedValue;
+            return true;
         }
-
-        value = internalCache[key].Value.CachedValue;
-        return true;
+        value = default;
+        return false;
     }
 
-    public T Get(Pawn key)
+    public T Get(Pawn pawn)
     {
-        return ContainsKey(key) ? internalCache[key].Value.CachedValue : default;
-    }
-
-    public bool ContainsKey(Pawn key)
-    {
-        CheckKeyExpiry(key);
-        return internalCache.ContainsKey(key);
-    }
-
-    private void CheckKeyExpiry(Pawn key)
-    {
-        if (internalCache.ContainsKey(key) && internalCache[key].Value.Expired(Find.TickManager.TicksGame, expiry))
-        {
-            internalCache.Remove(key);
-        }
-    }
-
-    private void CheckFirstExpiry()
-    {
-        var first = expiryList.First;
-        if (first == null || !first.Value.Expired(Find.TickManager.TicksGame, expiry))
-        {
-            return;
-        }
-
-        expiryList.RemoveFirst();
-        internalCache.Remove(first.Value.Owner);
+        return internalCache.GetReference(pawn.thingIDNumber).CachedValue;
     }
 }

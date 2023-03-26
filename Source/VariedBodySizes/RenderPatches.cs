@@ -340,7 +340,9 @@ public static partial class HarmonyPatches
         {
             if (!overlayCache.TryGet(pawn, out var returnedMesh))
             {
-                return overlayCache.SetAndReturn(pawn, TranslateForPawn(baseMesh, pawn));
+                var result = TranslateForPawn(baseMesh, pawn);
+                overlayCache.Set(pawn, result);
+                return result;
             }
 
             return returnedMesh;
