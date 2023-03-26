@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using FisheryLib;
 using System.Runtime.CompilerServices;
+using FisheryLib;
 using Verse;
 
 namespace VariedBodySizes;
@@ -17,7 +17,7 @@ public class TimedCache<T>
 
     public void Set(Pawn pawn, T value)
     {
-        internalCache[pawn.thingIDNumber] = new CacheEntry<T>(cachedValue:value);
+        internalCache[pawn.thingIDNumber] = new CacheEntry<T>(value);
     }
 
     public void Remove(Pawn pawn)
@@ -29,7 +29,7 @@ public class TimedCache<T>
     {
         return internalCache.ContainsKey(pawn.thingIDNumber);
     }
-    
+
     public bool TryGet(Pawn pawn, out T value)
     {
         ref var reference = ref internalCache.TryGetReferenceUnsafe(pawn.thingIDNumber);
@@ -41,9 +41,11 @@ public class TimedCache<T>
                 value = default;
                 return false;
             }
+
             value = reference.CachedValue;
             return true;
         }
+
         value = default;
         return false;
     }

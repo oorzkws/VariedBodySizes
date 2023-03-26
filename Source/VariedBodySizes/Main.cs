@@ -29,7 +29,7 @@ public static class Main
                      //new(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeBeardSetForPawn"),
                      //new(typeof(HumanlikeMeshPoolUtility), "HumanlikeBodyWidthForPawn"),
                      //new(typeof(PawnRenderer), "GetBodyOverlayMeshSet"),
-                     new(typeof(PawnRenderer), "BaseHeadOffsetAt"),
+                     new(typeof(PawnRenderer), "BaseHeadOffsetAt")
                      //new(typeof(PawnRenderer), "DrawBodyApparel"),
                      //new(typeof(PawnRenderer), "DrawBodyGenes"),
                      //new(typeof(GeneGraphicData), "GetGraphics"),
@@ -61,9 +61,9 @@ public static class Main
     public static float GetPawnVariation(Pawn pawn)
     {
         var sizeRange = VariedBodySizesMod.instance.Settings.DefaultVariation;
-        if (VariedBodySizesMod.instance.Settings.VariedBodySizes.ContainsKey(pawn.def.defName))
+        if (VariedBodySizesMod.instance.Settings.VariedBodySizes.TryGetValue(pawn.def.defName, out var bodySize))
         {
-            sizeRange = VariedBodySizesMod.instance.Settings.VariedBodySizes[pawn.def.defName];
+            sizeRange = bodySize;
         }
 
         return (float)Math.Round(Rand.Range(sizeRange.min, sizeRange.max), 2);
@@ -121,7 +121,9 @@ public static partial class HarmonyPatches
     {
         if (match.IsInvalid)
         {
-            Main.LogMessage($"Transpiler did not find target @ {new StackTrace().GetFrame(1).GetMethod().DeclaringType?.FullName ?? "unknown"}", true);
+            Main.LogMessage(
+                $"Transpiler did not find target @ {new StackTrace().GetFrame(1).GetMethod().DeclaringType?.FullName ?? "unknown"}",
+                true);
             return;
         }
 

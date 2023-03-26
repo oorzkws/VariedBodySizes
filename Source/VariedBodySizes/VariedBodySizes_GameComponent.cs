@@ -37,9 +37,9 @@ public class VariedBodySizes_GameComponent : GameComponent
 
         VariedBodySizesDictionary ??= new Dictionary<Pawn, float>();
 
-        if (VariedBodySizesDictionary.ContainsKey(pawn))
+        if (VariedBodySizesDictionary.TryGetValue(pawn, out var bodySize))
         {
-            return OnCalculateBodySize(VariedBodySizesDictionary[pawn], pawn);
+            return OnCalculateBodySize(bodySize, pawn);
         }
 
         VariedBodySizesDictionary[pawn] = Main.GetPawnVariation(pawn);

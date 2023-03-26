@@ -28,6 +28,7 @@ public static partial class HarmonyPatches
             {
                 return returnedMesh;
             }
+
             var result = TranslateForPawn(baseMesh, pawn);
             headCache.Set(pawn, result);
             return result;

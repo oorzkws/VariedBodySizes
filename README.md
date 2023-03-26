@@ -20,6 +20,7 @@ You can enable the "Also modify health scaling" to make pawns health pool be aff
 -  Also alter the hunger rate
 -  Also alter melee damage factor
 -  Also alter melee dodge chance
+-  Also alter animal resource yield
 -  Search filter for when you are looking for a specific pawn/animal or mod-name
 -  Shows the mod name the pawn or animal came from
 
@@ -61,4 +62,4 @@ https://ko-fi.com/G2G55DDYD]![Image](https://i.imgur.com/Utx6OIH.png)
 -  If you have the solution for a problem, please post it to the GitHub repository.
 
 
-https://steamcommunity.com/sharedfiles/filedetails/changelog/2863019550]Last updated 2023-02-17
+https://steamcommunity.com/sharedfiles/filedetails/changelog/2863019550]Last updated 2023-03-26

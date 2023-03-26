@@ -338,14 +338,14 @@ public static partial class HarmonyPatches
 
         private static GraphicMeshSet GetBodyOverlayMeshForPawn(GraphicMeshSet baseMesh, Pawn pawn)
         {
-            if (!overlayCache.TryGet(pawn, out var returnedMesh))
+            if (overlayCache.TryGet(pawn, out var returnedMesh))
             {
-                var result = TranslateForPawn(baseMesh, pawn);
-                overlayCache.Set(pawn, result);
-                return result;
+                return returnedMesh;
             }
 
-            return returnedMesh;
+            var result = TranslateForPawn(baseMesh, pawn);
+            overlayCache.Set(pawn, result);
+            return result;
         }
 
 

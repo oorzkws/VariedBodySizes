@@ -27,7 +27,7 @@ internal class VariedBodySizesMod : Mod
     /// <summary>
     ///     The private settings
     /// </summary>
-    private VariedBodySizesModSettings settings;
+    public VariedBodySizesModSettings Settings;
 
     /// <summary>
     ///     Constructor
@@ -38,27 +38,8 @@ internal class VariedBodySizesMod : Mod
     {
         instance = this;
         searchText = string.Empty;
-        currentVersion =
-            VersionFromManifest.GetVersionFromModMetaData(
-                ModLister.GetActiveModWithIdentifier("Mlie.VariedBodySizes"));
-    }
-
-    /// <summary>
-    ///     The instance-settings for the mod
-    /// </summary>
-    internal VariedBodySizesModSettings Settings
-    {
-        get
-        {
-            if (settings == null)
-            {
-                settings = GetSettings<VariedBodySizesModSettings>();
-            }
-
-            return settings;
-        }
-
-        set => settings = value;
+        currentVersion = VersionFromManifest.GetVersionFromModMetaData(content.ModMetaData);
+        Settings = GetSettings<VariedBodySizesModSettings>();
     }
 
     public override string SettingsCategory()
@@ -190,9 +171,9 @@ internal class VariedBodySizesMod : Mod
 
             var currentValue = Settings.DefaultVariation;
             var originalColor = GUI.contentColor;
-            if (instance.Settings.VariedBodySizes.ContainsKey(pawnType.defName))
+            if (instance.Settings.VariedBodySizes.TryGetValue(pawnType.defName, out var bodySize))
             {
-                currentValue = instance.Settings.VariedBodySizes[pawnType.defName];
+                currentValue = bodySize;
                 GUI.contentColor = Color.green;
             }
 
