@@ -9,21 +9,16 @@
     <FileVersion>1.4.9</FileVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Krafs.Publicizer">
-      <Version>*</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <ExcludeAssets>runtime</ExcludeAssets>
-    </PackageReference>
-    <Publicize Include="Assembly-CSharp" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="false"/>
-    <PackageReference Include="Krafs.Rimworld.Ref">
-      <Version>*</Version>
-      <ExcludeAssets>runtime</ExcludeAssets>
-      <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Lib.Harmony">
-      <Version>*</Version>
-      <ExcludeAssets>runtime</ExcludeAssets>
-    </PackageReference>
+    <PackageReference Include="Lib.Harmony" Version="*" ExcludeAssets="runtime" />
+    <PackageReference Include="Krafs.Rimworld.Ref" Version="*" ExcludeAssets="runtime" />
+    <PackageReference Include="Krafs.Publicizer" Version="*" ExcludeAssets="runtime" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.*" />
+    <Publicize Include="Assembly-CSharp" />
     <PackageReference Include="Mlie_Rimworld_VersionFromManifest" Version="*" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="1Fishery">
+      <HintPath>..\..\1.4\Assemblies\1Fishery.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
