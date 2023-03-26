@@ -13,20 +13,21 @@ public static partial class HarmonyPatches
     [HarmonyPatch(typeof(Pawn), "BodySize", MethodType.Getter)]
     public static class Pawn_BodySizePatch
     {
-        private static readonly TimedCache<float> statCache = new TimedCache<float>(360);
+        private static readonly TimedCache<float> statCache = new TimedCache<float>(36);
 
 
-        public static float Postfix(float result, Pawn __instance)
+        public static void Postfix(ref float result, Pawn __instance)
         {
             if (!VariedBodySizesMod.instance.Settings.AffectRealBodySize)
             {
-                return result;
+                return;
             }
 
-            // cached value, or calculate cache and return
-            if (statCache.TryGet(__instance, out var pawnSize))
+            // cached value, or calculate, cache and return
+            if (statCache.TryGet(__instance, out var pawnSize) && Math.Abs(pawnSize - result) > 0.01f)
             {
-                return pawnSize;
+                result = pawnSize;
+                return;
             }
 
             result *= GetScalarForPawn(__instance);
@@ -38,7 +39,7 @@ public static partial class HarmonyPatches
             }
 
             // Cache and return
-            return statCache.SetAndReturn(__instance, result);
+            statCache.Set(__instance, result);
         }
     }
 
@@ -48,37 +49,38 @@ public static partial class HarmonyPatches
         private static readonly TimedCache<float> statCache = new TimedCache<float>(3600);
 
 
-        public static float Postfix(float result, Pawn __instance)
+        public static void Postfix(ref float result, Pawn __instance)
         {
             if (!VariedBodySizesMod.instance.Settings.AffectRealHealthScale)
             {
-                return result;
+                return;
             }
 
             // cached value, or calculate cache and return
-            if (statCache.TryGet(__instance, out var pawnSize))
+            if (statCache.TryGet(__instance, out var pawnSize) && Math.Abs(pawnSize - result) > 0.01f)
             {
-                return pawnSize;
+                result = pawnSize;
+                return;
             }
 
             result *= GetScalarForPawn(__instance);
 
             // Cache and return
-            return statCache.SetAndReturn(__instance, result);
+            statCache.Set(__instance, result);
         }
     }
 
     [HarmonyPatch(typeof(Need_Food), "FoodFallPerTickAssumingCategory")]
     public static class Need_Food_FoodFallPerTickAssumingCategoryPatch
     {
-        public static float Postfix(float result, Pawn ___pawn)
+        public static void Postfix(ref float result, Pawn ___pawn)
         {
             if (!VariedBodySizesMod.instance.Settings.AffectRealHungerRate)
             {
-                return result;
+                return;
             }
 
-            return result * GetScalarForPawn(___pawn);
+            result *= GetScalarForPawn(___pawn);
         }
     }
 

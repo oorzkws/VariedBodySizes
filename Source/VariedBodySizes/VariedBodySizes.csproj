@@ -9,6 +9,12 @@
     <FileVersion>1.4.9</FileVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Krafs.Publicizer">
+      <Version>*</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <Publicize Include="Assembly-CSharp" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="false"/>
     <PackageReference Include="Krafs.Rimworld.Ref">
       <Version>*</Version>
       <ExcludeAssets>runtime</ExcludeAssets>
