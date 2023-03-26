@@ -25,16 +25,16 @@ public static class Main
                  {
                      new KeyValuePair<Type, string>(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeBodySetForPawn"),
                      new KeyValuePair<Type, string>(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeHeadSetForPawn"),
-                     new(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeHairSetForPawn"),
-                     new(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeBeardSetForPawn"),
-                     new(typeof(HumanlikeMeshPoolUtility), "HumanlikeBodyWidthForPawn"),
-                     new(typeof(PawnRenderer), "GetBodyOverlayMeshSet"),
+                     //new(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeHairSetForPawn"),
+                     //new(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeBeardSetForPawn"),
+                     //new(typeof(HumanlikeMeshPoolUtility), "HumanlikeBodyWidthForPawn"),
+                     //new(typeof(PawnRenderer), "GetBodyOverlayMeshSet"),
                      new(typeof(PawnRenderer), "BaseHeadOffsetAt"),
-                     new(typeof(PawnRenderer), "DrawBodyApparel"),
-                     new(typeof(PawnRenderer), "DrawBodyGenes"),
-                     new(typeof(GeneGraphicData), "GetGraphics"),
-                     new(AccessTools.TypeByName("Verse.PawnRenderer+<>c__DisplayClass54_0"),
-                         "<DrawHeadHair>g__DrawExtraEyeGraphic|6")
+                     //new(typeof(PawnRenderer), "DrawBodyApparel"),
+                     //new(typeof(PawnRenderer), "DrawBodyGenes"),
+                     //new(typeof(GeneGraphicData), "GetGraphics"),
+                     //new(AccessTools.TypeByName("Verse.PawnRenderer+<>c__DisplayClass54_0"),
+                     //    "<DrawHeadHair>g__DrawExtraEyeGraphic|6")
                  })
         {
             var targetMethod = AccessTools.Method(targetPair.Key, targetPair.Value);

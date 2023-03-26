@@ -28,9 +28,12 @@ public static partial class HarmonyPatches
         }
 
 
-        public static float Postfix(float result, Pawn pawn)
+        public static void Postfix(ref float __result, Pawn pawn)
         {
-            return pawn is null ? result : vefBodyScaleMethod(result, pawn);
+            if (pawn is not null)
+            {
+                __result = vefBodyScaleMethod(__result, pawn);
+            }
         }
 
         private delegate float BodyScaleDelegate(float width, Pawn pawn);

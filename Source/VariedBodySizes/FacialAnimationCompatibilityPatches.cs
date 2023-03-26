@@ -24,9 +24,13 @@ public static partial class HarmonyPatches
 
         private static GraphicMeshSet GetBodyOverlayMeshForPawn(GraphicMeshSet baseMesh, Pawn pawn)
         {
-            return !headCache.TryGet(pawn, out var returnedMesh)
-                ? headCache.SetAndReturn(pawn, TranslateForPawn(baseMesh, pawn))
-                : returnedMesh;
+            if (headCache.TryGet(pawn, out var returnedMesh))
+            {
+                return returnedMesh;
+            }
+            var result = TranslateForPawn(baseMesh, pawn);
+            headCache.Set(pawn, result);
+            return result;
         }
 
         public static bool Prepare()

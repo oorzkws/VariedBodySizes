@@ -1,0 +1,3 @@
+1Fishery:
+  Written by bbradson, subject to the terms of the Mozilla Public License, v. 2.0
+  You may find the source and binaries at https://github.com/bbradson/Fishery
