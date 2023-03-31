@@ -69,6 +69,26 @@ public static class Main
         return (float)Math.Round(Rand.Range(sizeRange.min, sizeRange.max), 2);
     }
 
+    public static void ResetAllCaches(Pawn pawn)
+    {
+        if (HarmonyPatches.FacialAnimation_GetHeadMeshSetPatch.HeadCache.TryGet(pawn, out _))
+        {
+            HarmonyPatches.FacialAnimation_GetHeadMeshSetPatch.HeadCache.Remove(pawn);
+        }
+
+        if (HarmonyPatches.Pawn_BodySizePatch.StatCache.TryGet(pawn, out _))
+        {
+            HarmonyPatches.Pawn_BodySizePatch.StatCache.Remove(pawn);
+        }
+
+        if (HarmonyPatches.PawnRenderer_GetBodyOverlayMeshSetPatch.OverlayCache.TryGet(pawn, out _))
+        {
+            HarmonyPatches.PawnRenderer_GetBodyOverlayMeshSetPatch.OverlayCache.Remove(pawn);
+        }
+
+        GlobalTextureAtlasManager.TryMarkPawnFrameSetDirty(pawn);
+    }
+
     public static void LogMessage(string message, bool forced = false)
     {
         if (!forced && !VariedBodySizesMod.instance.Settings.VerboseLogging)

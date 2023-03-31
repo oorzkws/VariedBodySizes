@@ -13,7 +13,7 @@ public static partial class HarmonyPatches
     [HarmonyPatch(typeof(Pawn), "BodySize", MethodType.Getter)]
     public static class Pawn_BodySizePatch
     {
-        private static readonly TimedCache<float> statCache = new TimedCache<float>(36);
+        public static readonly TimedCache<float> StatCache = new TimedCache<float>(36);
 
 
         public static void Postfix(ref float __result, Pawn __instance)
@@ -24,7 +24,7 @@ public static partial class HarmonyPatches
             }
 
             // cached value, or calculate, cache and return
-            if (statCache.TryGet(__instance, out var pawnSize) && Math.Abs(pawnSize - __result) > 0.01f)
+            if (StatCache.TryGet(__instance, out var pawnSize) && Math.Abs(pawnSize - __result) > 0.01f)
             {
                 __result = pawnSize;
                 return;
@@ -39,7 +39,7 @@ public static partial class HarmonyPatches
             }
 
             // Cache and return
-            statCache.Set(__instance, __result);
+            StatCache.Set(__instance, __result);
         }
     }
 

@@ -10,6 +10,9 @@ namespace VariedBodySizes;
 [StaticConstructorOnStartup]
 internal class VariedBodySizesMod : Mod
 {
+    public const float MinimumSize = 0.25f;
+    public const float MaximumSize = 2f;
+
     /// <summary>
     ///     The instance of the settings to be read by the mod
     /// </summary>
@@ -186,7 +189,8 @@ internal class VariedBodySizesMod : Mod
                 rowRect.size - new Vector2(iconSize.x, (rowRect.height / 2) + 3f));
 
             Widgets.Label(nameRect, raceLabel);
-            Widgets.FloatRange(sliderRect, pawnType.defName.GetHashCode(), ref currentValue, 0.25f, 2f, null,
+            Widgets.FloatRange(sliderRect, pawnType.defName.GetHashCode(), ref currentValue, MinimumSize, MaximumSize,
+                null,
                 ToStringStyle.PercentOne);
             GUI.contentColor = originalColor;
             if (currentValue != Settings.DefaultVariation)

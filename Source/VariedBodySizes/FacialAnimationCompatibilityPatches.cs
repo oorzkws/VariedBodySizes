@@ -13,7 +13,7 @@ public static partial class HarmonyPatches
         private static readonly MethodBase getHeadMeshSet =
             AccessTools.Method("FacialAnimation.GraphicHelper:GetHeadMeshSet");
 
-        private static readonly TimedCache<GraphicMeshSet> headCache = new TimedCache<GraphicMeshSet>(360);
+        public static readonly TimedCache<GraphicMeshSet> HeadCache = new TimedCache<GraphicMeshSet>(360);
 
         private static GraphicMeshSet TranslateForPawn(GraphicMeshSet baseMesh, Pawn pawn)
         {
@@ -24,13 +24,13 @@ public static partial class HarmonyPatches
 
         private static GraphicMeshSet GetBodyOverlayMeshForPawn(GraphicMeshSet baseMesh, Pawn pawn)
         {
-            if (headCache.TryGet(pawn, out var returnedMesh))
+            if (HeadCache.TryGet(pawn, out var returnedMesh))
             {
                 return returnedMesh;
             }
 
             var result = TranslateForPawn(baseMesh, pawn);
-            headCache.Set(pawn, result);
+            HeadCache.Set(pawn, result);
             return result;
         }
 

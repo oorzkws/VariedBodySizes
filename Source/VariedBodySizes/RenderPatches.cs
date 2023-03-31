@@ -315,7 +315,7 @@ public static partial class HarmonyPatches
         private static readonly MethodBase getBodyOverlayMesh =
             AccessTools.Method(typeof(PawnRenderer), "GetBodyOverlayMeshSet");
 
-        private static readonly TimedCache<GraphicMeshSet> overlayCache = new TimedCache<GraphicMeshSet>(360);
+        public static readonly TimedCache<GraphicMeshSet> OverlayCache = new TimedCache<GraphicMeshSet>(360);
 
         private static GraphicMeshSet TranslateForPawn(GraphicMeshSet baseMesh, Pawn pawn)
         {
@@ -338,13 +338,13 @@ public static partial class HarmonyPatches
 
         private static GraphicMeshSet GetBodyOverlayMeshForPawn(GraphicMeshSet baseMesh, Pawn pawn)
         {
-            if (overlayCache.TryGet(pawn, out var returnedMesh))
+            if (OverlayCache.TryGet(pawn, out var returnedMesh))
             {
                 return returnedMesh;
             }
 
             var result = TranslateForPawn(baseMesh, pawn);
-            overlayCache.Set(pawn, result);
+            OverlayCache.Set(pawn, result);
             return result;
         }
 

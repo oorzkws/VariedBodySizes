@@ -1,5 +1,8 @@
 # Changelog for VariedBodySizes
 
+1.4.11 - Added debug-options for changing sizes of pawns manually
+
+
 1.4.10 - Fixed caching-issues and faster cache. VFE patching more selective.
 
 
