@@ -1,11 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Reflection.Emit;
-using HarmonyLib;
-using RimWorld;
-using UnityEngine;
-using Verse;
 
 namespace VariedBodySizes;
 
@@ -19,9 +12,6 @@ public static partial class HarmonyPatches
         AccessTools.Method(typeof(HumanlikeMeshPoolUtility), "HumanlikeBodyWidthForPawn");
 
     private static readonly FieldInfo pawnRendererPawn = AccessTools.Field("Verse.PawnRenderer:pawn");
-
-    private static readonly MethodBase floatTimesVector2 =
-        AccessTools.Method(typeof(Vector2), "op_Multiply", new[] { typeof(float), typeof(Vector2) });
 
     private static readonly MethodBase getScalar =
         AccessTools.Method(typeof(HarmonyPatches), "GetScalarForPawn");
@@ -455,9 +445,7 @@ public static partial class HarmonyPatches
 
         private static readonly FieldInfo
             woundOffset = AccessTools.Field(typeof(BodyTypeDef.WoundAnchor), "offset");
-
-        private static readonly FieldInfo eyeOffset = AccessTools.Field(typeof(HeadTypeDef), "eyeOffsetEastWest");
-
+        
         private static Vector3 ModifyVectorForPawn(Vector3 vec, Pawn pawn)
         {
             var scalar = GetScalarForPawn(pawn);

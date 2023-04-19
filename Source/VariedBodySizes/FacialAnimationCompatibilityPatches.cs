@@ -1,7 +1,3 @@
-using System.Reflection;
-using HarmonyLib;
-using Verse;
-
 namespace VariedBodySizes;
 
 public static partial class HarmonyPatches

@@ -1,5 +1,3 @@
-using Verse;
-
 namespace VariedBodySizes;
 
 internal readonly struct CacheEntry<T>

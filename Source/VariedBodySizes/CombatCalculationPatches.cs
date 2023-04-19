@@ -1,7 +1,3 @@
-using HarmonyLib;
-using RimWorld;
-using Verse;
-
 namespace VariedBodySizes;
 
 public static partial class HarmonyPatches

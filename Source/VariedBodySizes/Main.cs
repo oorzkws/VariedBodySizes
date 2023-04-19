@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using HarmonyLib;
-using Verse;
+using System.Reflection.Emit;
+using Log = Verse.Log;
 
 namespace VariedBodySizes;
 
@@ -129,11 +125,6 @@ public static partial class HarmonyPatches
         }
 
         return false;
-    }
-
-    private static IEnumerable<MethodBase> YieldAll(params MethodBase[] input)
-    {
-        return input;
     }
 
     // CodeMatcher will throw errors if we try to take actions in an invalid state (i.e. no match)
