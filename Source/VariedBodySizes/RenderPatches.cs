@@ -186,125 +186,85 @@ public static partial class HarmonyPatches
     [HarmonyPatch]
     public static class GraphicMeshSet_GetHumanlikeSetForPawnPatch
     {
-        private static readonly MethodBase getHeadSet =
-            AccessTools.Method("Verse.HumanlikeMeshPoolUtility:GetHumanlikeHeadSetForPawn");
-
-        private static readonly MethodBase getBodySet =
-            AccessTools.Method("Verse.HumanlikeMeshPoolUtility:GetHumanlikeBodySetForPawn");
-
-        private static readonly FieldInfo headSetField = AccessTools.Field("Verse.MeshPool:humanlikeHeadSet");
-        private static readonly FieldInfo bodySetField = AccessTools.Field("Verse.MeshPool:humanlikeBodySet");
-
-        private static readonly MethodBase getMeshSet1D =
-            AccessTools.Method("Verse.MeshPool:GetMeshSetForWidth", new[] { typeof(float) });
-
-
-        public static bool Prepare()
-        {
-            return NotNull(getHeadSet, getBodySet, headSetField, bodySetField, getMeshSet1D);
-        }
-
-
         public static IEnumerable<MethodBase> TargetMethods()
         {
-            return YieldAll(getHeadSet, getBodySet);
+            yield return AccessTools.Method("Verse.HumanlikeMeshPoolUtility:GetHumanlikeHeadSetForPawn");
+            yield return AccessTools.Method("Verse.HumanlikeMeshPoolUtility:GetHumanlikeBodySetForPawn");
         }
-
-
-        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions,
-            ILGenerator generator, MethodBase original)
+        
+        public static CodeInstructions Transpiler(CodeInstructions instructions, MethodBase method)
         {
-            // store which method we are patching currently
-            var isHead = original == getHeadSet;
             var editor = new CodeMatcher(instructions);
-
+            
             // First change: MeshPool.GetMeshSetForWidth(pawn.ageTracker.CurLifeStage.bodyWidth.Value) -> MeshPool.GetMeshSetForWidth(MeshPool.HumanlikeBodyWidthForPawn(pawn))
-            editor.Start().MatchStartForward(
-                new CodeMatch(OpCodes.Ldfld),
-                new CodeMatch(OpCodes.Callvirt),
-                new CodeMatch(OpCodes.Ldflda),
-                new CodeMatch(OpCodes.Call),
-                new CodeMatch(OpCodes.Call, getMeshSet1D)
+            var getMeshSetForWidth = InstructionMatchSignature((Pawn pawn) => 
+                MeshPool.GetMeshSetForWidth(pawn.ageTracker.CurLifeStage.bodyWidth!.Value)
             );
-
-            // If success
-            OnSuccess(editor, match =>
-                match.RemoveInstructions(4).InsertAndAdvance(
-                    // We already have our pawn on the stack so we just replace our match with the function call
-                    new CodeInstruction(OpCodes.Call, getHumanlikeBodyWidthFunc)
-                )
+            var newGetMeshSetForWidth = InstructionSignature((Pawn pawn) => 
+                MeshPool.GetMeshSetForWidth(HumanlikeMeshPoolUtility.HumanlikeBodyWidthForPawn(pawn))
             );
-
+            editor.Start().Replace(getMeshSetForWidth, newGetMeshSetForWidth);
+            
             // Second change: MeshPool.humanlikeHead/BodySet -> MeshPool.GetMeshSetForWidth(MeshPool.HumanlikeBodyWidthForPawn(pawn))
-            editor.Start().MatchStartForward(
-                new CodeMatch(OpCodes.Ldsfld, isHead ? headSetField : bodySetField)
+            var getSet = method.Name.Contains("Head")
+                ? InstructionMatchSignature(() => MeshPool.humanlikeHeadSet )
+                : InstructionMatchSignature(() => MeshPool.humanlikeBodySet );
+            var newGetSet = InstructionSignature((Pawn pawn) =>
+                MeshPool.GetMeshSetForWidth(HumanlikeMeshPoolUtility.HumanlikeBodyWidthForPawn(pawn))
             );
-
-            OnSuccess(editor, match =>
-                match.SetAndAdvance(
-                    OpCodes.Ldarg_S, 0 // pawn to stack
-                ).InsertAndAdvance(
-                    new CodeInstruction(OpCodes.Call, getHumanlikeBodyWidthFunc), // Pop pawn, push width
-                    new CodeInstruction(OpCodes.Call, getMeshSet1D) // Pop width, push mesh
-                )
-            );
-
-            // Done
+            editor.Start().Replace(getSet, newGetSet);
+            
             return editor.InstructionEnumeration();
         }
     }
 
-    [HarmonyPatch]
-    public static class GraphicMeshSet_GetHairBeardSetForPawnPatch
+    [HarmonyPatch(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeHairSetForPawn")]
+    public static class GraphicMeshSet_GetHairSetForPawnPatch
     {
-        private static readonly MethodBase getHairSet =
-            AccessTools.Method("Verse.HumanlikeMeshPoolUtility:GetHumanlikeHairSetForPawn");
-
-        private static readonly MethodBase getBeardSet =
-            AccessTools.Method("Verse.HumanlikeMeshPoolUtility:GetHumanlikeBeardSetForPawn");
-
-
-        public static bool Prepare()
-        {
-            return NotNull(getHairSet, getBeardSet, floatTimesVector2);
-        }
-
-
-        public static IEnumerable<MethodBase> TargetMethods()
-        {
-            return YieldAll(getHairSet, getBeardSet);
-        }
-
-
-        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions,
-            ILGenerator generator, MethodBase original)
+        public static CodeInstructions Transpiler(CodeInstructions instructions)
         {
             var editor = new CodeMatcher(instructions);
-            // var vector *= GetScalarForPawn(pawn)
-            editor.Start().MatchStartForward(
-                new CodeMatch(OpCodes.Stloc_0)
-            );
-            OnSuccess(editor, match => match.Advance(1).InsertAndAdvance(
-                // Pawn to stack
-                new CodeInstruction(OpCodes.Ldarg_0),
-                // Pawn scalar to stack, consumes current stack
-                new CodeInstruction(OpCodes.Call, getScalar),
-                // Grab our local and multiply by the pawn scalar
-                new CodeInstruction(OpCodes.Ldloc_0),
-                new CodeInstruction(OpCodes.Call, floatTimesVector2),
-                // Store
-                new CodeInstruction(OpCodes.Stloc_0)
-            ));
+            
+            // Just adding our multiplier in here
+            var pattern = InstructionMatchSignature((Pawn pawn) =>
+            {
+                var hairMeshSize = pawn.story.headType.hairMeshSize;
+            });
+            var replacement = InstructionSignature((Pawn pawn) =>
+            {
+                var hairMeshSize = GetScalarForPawn(pawn) * pawn.story.headType.hairMeshSize;
+            });
+            editor.Start().Replace(pattern, replacement);
+
+            return editor.InstructionEnumeration();
+        }
+    }
+    
+    [HarmonyPatch(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeBeardSetForPawn")]
+    public static class GraphicMeshSet_GetBeardSetForPawnPatch
+    {
+        public static CodeInstructions Transpiler(CodeInstructions instructions)
+        {
+            var editor = new CodeMatcher(instructions);
+            
+            // Just adding our multiplier in here
+            var pattern = InstructionMatchSignature((Pawn pawn) =>
+            {
+                var hairMeshSize = pawn.story.headType.beardMeshSize;
+            });
+            var replacement = InstructionSignature((Pawn pawn) =>
+            {
+                var hairMeshSize = GetScalarForPawn(pawn) * pawn.story.headType.beardMeshSize;
+            });
+            editor.Start().Replace(pattern, replacement);
+
             return editor.InstructionEnumeration();
         }
     }
 
-    [HarmonyPatch]
+    [HarmonyPatch(typeof(PawnRenderer), "GetBodyOverlayMeshSet")]
     public static class PawnRenderer_GetBodyOverlayMeshSetPatch
     {
-        private static readonly MethodBase getBodyOverlayMesh =
-            AccessTools.Method(typeof(PawnRenderer), "GetBodyOverlayMeshSet");
-
         public static readonly TimedCache<GraphicMeshSet> OverlayCache = new TimedCache<GraphicMeshSet>(360);
 
         private static GraphicMeshSet TranslateForPawn(GraphicMeshSet baseMesh, Pawn pawn)
@@ -312,18 +272,6 @@ public static partial class HarmonyPatches
             // North[2] is positive on both x and y axis. Defaults would be 0.65,0,0.65 times 2 for the default 1.3f
             var baseVector = baseMesh.MeshAt(Rot4.North).vertices[2] * 2 * GetScalarForPawn(pawn);
             return MeshPool.GetMeshSetForWidth(baseVector.x, baseVector.z);
-        }
-
-
-        public static bool Prepare()
-        {
-            return NotNull(getBodyOverlayMesh);
-        }
-
-
-        public static MethodBase TargetMethod()
-        {
-            return getBodyOverlayMesh;
         }
 
         private static GraphicMeshSet GetBodyOverlayMeshForPawn(GraphicMeshSet baseMesh, Pawn pawn)
@@ -338,91 +286,52 @@ public static partial class HarmonyPatches
             return result;
         }
 
-
         public static void Postfix(ref GraphicMeshSet __result, Pawn ___pawn)
         {
             __result = GetBodyOverlayMeshForPawn(__result, ___pawn);
         }
     }
 
-    [HarmonyPatch]
+    [HarmonyPatch(typeof(PawnRenderer), "BaseHeadOffsetAt")]
     public static class PawnRenderer_BaseHeadOffsetAtPatch
     {
-        private static readonly MethodBase headOffsetAt = AccessTools.Method("Verse.PawnRenderer:BaseHeadOffsetAt");
-        private static readonly FieldInfo ageBodyFactor = AccessTools.Field("RimWorld.LifeStageDef:bodySizeFactor");
-
-
-        public static bool Prepare()
-        {
-            return NotNull(headOffsetAt, ageBodyFactor, pawnRendererPawn);
-        }
-
-
-        public static MethodBase TargetMethod()
-        {
-            return headOffsetAt;
-        }
-
-
-        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        public static CodeInstructions Transpiler(CodeInstructions instructions)
         {
             var editor = new CodeMatcher(instructions);
-            // Find where it roots the age/size factor
-            editor.Start().MatchStartForward(
-                new CodeMatch(OpCodes.Ldfld, ageBodyFactor)
-            );
-            OnSuccess(editor, match => match.Advance(1).InsertAndAdvance(
-                // Pawn to stack
-                new CodeInstruction(OpCodes.Ldarg_0),
-                new CodeInstruction(OpCodes.Ldfld, pawnRendererPawn),
-                // Pawn scalar to stack, consumes current stack
-                new CodeInstruction(OpCodes.Call, getScalar),
-                // Multiply ageBodyFactor by our scalar
-                new CodeInstruction(OpCodes.Mul)
-            ));
+
+            // Just adding our multiplier in here
+            var pattern = InstructionMatchSignature((PawnRenderer self) =>
+            {
+                var size = self.pawn.story.bodyType.headOffset * Mathf.Sqrt(self.pawn.ageTracker.CurLifeStage.bodySizeFactor);
+            });
+            var replacement = InstructionSignature((PawnRenderer self) =>
+            {
+                var size = self.pawn.story.bodyType.headOffset * Mathf.Sqrt(self.pawn.ageTracker.CurLifeStage.bodySizeFactor * HarmonyPatches.GetScalarForPawn(self.pawn));
+            });
+            editor.Start().Replace(pattern, replacement);
+
             return editor.InstructionEnumeration();
         }
     }
 
-    [HarmonyPatch]
+    [HarmonyPatch(typeof(PawnRenderer), "DrawBodyGenes")]
     public static class PawnRenderer_DrawBodyGenesPatch
     {
-        private static readonly MethodBase drawBodyGenes = AccessTools.Method("Verse.PawnRenderer:DrawBodyGenes");
-        private static readonly FieldInfo bodyScale = AccessTools.Field("RimWorld.BodyTypeDef:bodyGraphicScale");
-
-
-        public static bool Prepare()
-        {
-            return NotNull(drawBodyGenes, bodyScale, pawnRendererPawn, floatTimesVector2);
-        }
-
-
-        public static MethodBase TargetMethod()
-        {
-            return drawBodyGenes;
-        }
-
-
-        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        public static CodeInstructions Transpiler(CodeInstructions instructions)
         {
             var editor = new CodeMatcher(instructions);
-            // Find where it checks body scale
-            editor.Start().MatchStartForward(
-                new CodeMatch(OpCodes.Ldfld, bodyScale)
-            );
-            OnSuccess(editor, match => match.Advance(1).InsertAndAdvance(
-                // Pop body scale to local
-                new CodeInstruction(OpCodes.Stloc_0),
-                // Pawn to stack
-                new CodeInstruction(OpCodes.Ldarg_0),
-                new CodeInstruction(OpCodes.Ldfld, pawnRendererPawn),
-                // Pawn scalar to stack, consumes current stack
-                new CodeInstruction(OpCodes.Call, getScalar),
-                // Push body scale from local
-                new CodeInstruction(OpCodes.Ldloc_0),
-                // multiply by the pawn scalar
-                new CodeInstruction(OpCodes.Call, floatTimesVector2)
-            ));
+
+            // Just adding our multiplier in here
+            var pattern = InstructionMatchSignature((PawnRenderer self) =>
+            {
+                var size = self.pawn.story.bodyType.bodyGraphicScale;
+            });
+            var replacement = InstructionSignature((PawnRenderer self) =>
+            {
+                var size = GetScalarForPawn(self.pawn) * self.pawn.story.bodyType.bodyGraphicScale;
+            });
+            editor.Start().Replace(pattern, replacement);
+
             return editor.InstructionEnumeration();
         }
     }
@@ -460,19 +369,25 @@ public static partial class HarmonyPatches
             return NotNull(drawEyeOverlay, eyeOverlayPawnRendererField, pawnRendererPawn, woundOffset);
         }
 
-
+        
         public static MethodBase TargetMethod()
         {
             return drawEyeOverlay;
         }
 
 
-        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        public static CodeInstructions Transpiler(CodeInstructions instructions)
         {
+            var editor = new CodeMatcher(instructions);
             var woundOffsetCount = 0;
+            // First change: scale = HarmonyPatches.GetScalarForPawn(@this.<>4__this.pawn) * scale;
+            
+            // Second change: Matrix4x4.TRS(... woundAnchorl2.offset ...)
+            // |-> Matrix4x4.TRS(... PawnRenderer_DrawExtraEyeGraphicPatch.ModifyVectorForPawn(woundAnchorl.offset, @this.<>4__this.pawn) ...)
+            
             // Modify the 2nd arg - scale (float) - right at the start of the function
             // Since we use repeat() everywhere we don't have to care about checking for validity.. probably
-            return new CodeMatcher(instructions).Start().InsertAndAdvance(
+            return editor.Start().InsertAndAdvance(
                 // Pawn to stack
                 new CodeInstruction(OpCodes.Ldarg_0),
                 new CodeInstruction(OpCodes.Ldfld, eyeOverlayPawnRendererField),
