@@ -24,4 +24,6 @@
   <VariedBodySizes.meleedodgechance.tooltip>Die Körpergröße wirkt sich auch auf die Chance eines Bauern/Tieres aus, im Nahkampf auszuweichen.</VariedBodySizes.meleedodgechance.tooltip>
   <VariedBodySizes.harvestyield.label>Auch die Ausbeute an tierischen Erzeugnissen ändern</VariedBodySizes.harvestyield.label>
   <VariedBodySizes.harvestyield.tooltip>Die Körpergröße wirkt sich auch auf die Menge der Produkte aus, die beim Melken/Scheren usw. aufgenommen werden.</VariedBodySizes.harvestyield.tooltip>
+  <VariedBodySizes.lactating.label>Modifizieren Sie auch die humanoide Laktation (Biotech)</VariedBodySizes.lactating.label>
+  <VariedBodySizes.lactating.tooltip>Die Körpergröße wirkt sich bei Humanoiden auch auf die maximale Milchmenge und die Produktionsrate aus.</VariedBodySizes.lactating.tooltip>
 </LanguageData>

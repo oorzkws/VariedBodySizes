@@ -103,6 +103,12 @@ internal class VariedBodySizesMod : Mod
         listing_Standard.CheckboxLabeled("VariedBodySizes.harvestyield.label".Translate(),
             ref Settings.AffectHarvestYield,
             "VariedBodySizes.harvestyield.tooltip".Translate());
+        if (ModLister.BiotechInstalled)
+        {
+            listing_Standard.CheckboxLabeled("VariedBodySizes.lactating.label".Translate(),
+                ref Settings.AffectLactating,
+                "VariedBodySizes.lactating.tooltip".Translate());
+        }
 
         if (currentVersion != null)
         {

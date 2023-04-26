@@ -24,4 +24,6 @@
   <VariedBodySizes.meleedodgechance.tooltip>La taille du corps affecte également les chances d'esquive en mêlée d'un pion/animal.</VariedBodySizes.meleedodgechance.tooltip>
   <VariedBodySizes.harvestyield.label>Modifier également le rendement des produits animaux</VariedBodySizes.harvestyield.label>
   <VariedBodySizes.harvestyield.tooltip>La taille du corps affecte également la quantité de produits reçus lors de la traite/du cisaillement, etc.</VariedBodySizes.harvestyield.tooltip>
+  <VariedBodySizes.lactating.label>Modifier également la lactation des humanoïdes (Biotech)</VariedBodySizes.lactating.label>
+  <VariedBodySizes.lactating.tooltip>La taille du corps influe également sur la quantité maximale et le taux de production de lait des humanoïdes.</VariedBodySizes.lactating.tooltip>
 </LanguageData>

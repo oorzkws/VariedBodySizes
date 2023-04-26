@@ -116,4 +116,35 @@ public static partial class HarmonyPatches
             __result = (int)Math.Round(__result * GetScalarForPawn(pawn));
         }
     }
+
+    [HarmonyPatch(typeof(HediffComp_Chargeable), "GreedyConsume")]
+    public static class HediffComp_Chargeable_GreedyConsumePatch
+    {
+        public static void Prefix(HediffComp_Chargeable __instance, ref float desiredCharge, out bool __state)
+        {
+            __state = false;
+            if (!VariedBodySizesMod.instance.Settings.AffectLactating)
+            {
+                return;
+            }
+
+            if (__instance is not HediffComp_Lactating lactatingComp)
+            {
+                return;
+            }
+
+            __state = true;
+            desiredCharge /= GetScalarForPawn(lactatingComp.parent.pawn);
+        }
+
+        public static void Postfix(HediffComp_Chargeable __instance, bool __state, ref float __result)
+        {
+            if (!__state)
+            {
+                return;
+            }
+
+            __result *= GetScalarForPawn(__instance.parent.pawn);
+        }
+    }
 }

@@ -6,6 +6,7 @@
 public class VariedBodySizesModSettings : ModSettings
 {
     public bool AffectHarvestYield;
+    public bool AffectLactating;
     public bool AffectMeleeDamage = ModsConfig.IsActive("mute.genebodysize");
     public bool AffectMeleeDodgeChance = ModsConfig.IsActive("mute.genebodysize");
     public bool AffectRealBodySize = ModsConfig.IsActive("mute.genebodysize");
@@ -28,6 +29,7 @@ public class VariedBodySizesModSettings : ModSettings
         Scribe_Values.Look(ref AffectMeleeDamage, "AffectMeleeDamage");
         Scribe_Values.Look(ref AffectMeleeDodgeChance, "AffectMeleeDodgeChance");
         Scribe_Values.Look(ref AffectHarvestYield, "AffectHarvestYield");
+        Scribe_Values.Look(ref AffectLactating, "AffectLactating");
         Scribe_Values.Look(ref DefaultVariation, "DefaultVariation", new FloatRange(0.9f, 1.1f));
         Scribe_Collections.Look(ref VariedBodySizes, "VariedBodySizes", LookMode.Value,
             LookMode.Value,

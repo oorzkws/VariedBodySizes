@@ -24,4 +24,6 @@
   <VariedBodySizes.meleedodgechance.tooltip>Размер тела также влияет на шанс уклонения пешки/животного в ближнем бою.</VariedBodySizes.meleedodgechance.tooltip>
   <VariedBodySizes.harvestyield.label>Также изменяют выход продукции животноводства</VariedBodySizes.harvestyield.label>
   <VariedBodySizes.harvestyield.tooltip>Размер тела также влияет на количество получаемой продукции при доении/стрижке и т.д.</VariedBodySizes.harvestyield.tooltip>
+  <VariedBodySizes.lactating.label>Также модифицировать лактацию гуманоидов (Биотехнологии)</VariedBodySizes.lactating.label>
+  <VariedBodySizes.lactating.tooltip>Размер тела также влияет на максимальное количество и скорость выработки молока у гуманоидов.</VariedBodySizes.lactating.tooltip>
 </LanguageData>

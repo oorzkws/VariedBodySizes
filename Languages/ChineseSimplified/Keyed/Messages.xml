@@ -24,4 +24,6 @@
   <VariedBodySizes.meleedodgechance.tooltip>身体大小也会影响小兵/动物的近战躲避机会。</VariedBodySizes.meleedodgechance.tooltip>
   <VariedBodySizes.harvestyield.label>同时修改动物产品产量</VariedBodySizes.harvestyield.label>
   <VariedBodySizes.harvestyield.tooltip>身体大小也会影响挤奶/剪毛等时接收到的产品数量。</VariedBodySizes.harvestyield.tooltip>
+  <VariedBodySizes.lactating.label>同时修改人形的哺乳期（生物技术）。</VariedBodySizes.lactating.label>
+  <VariedBodySizes.lactating.tooltip>体型也会影响人形动物的最大奶量和生产速度。</VariedBodySizes.lactating.tooltip>
 </LanguageData>
