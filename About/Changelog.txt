@@ -1,5 +1,8 @@
 # Changelog for VariedBodySizes
 
+1.4.12 - Code-cleanup and support for [url=https://steamcommunity.com/sharedfiles/filedetails/?id=1687053679]Gradient Hair[/url]
+
+
 1.4.11 - Added debug-options for changing sizes of pawns manually
 
 

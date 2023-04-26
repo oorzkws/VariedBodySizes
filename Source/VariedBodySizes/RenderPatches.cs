@@ -191,29 +191,29 @@ public static partial class HarmonyPatches
             yield return AccessTools.Method("Verse.HumanlikeMeshPoolUtility:GetHumanlikeHeadSetForPawn");
             yield return AccessTools.Method("Verse.HumanlikeMeshPoolUtility:GetHumanlikeBodySetForPawn");
         }
-        
+
         public static CodeInstructions Transpiler(CodeInstructions instructions, MethodBase method)
         {
             var editor = new CodeMatcher(instructions);
-            
+
             // First change: MeshPool.GetMeshSetForWidth(pawn.ageTracker.CurLifeStage.bodyWidth.Value) -> MeshPool.GetMeshSetForWidth(MeshPool.HumanlikeBodyWidthForPawn(pawn))
-            var getMeshSetForWidth = InstructionMatchSignature((Pawn pawn) => 
+            var getMeshSetForWidth = InstructionMatchSignature((Pawn pawn) =>
                 MeshPool.GetMeshSetForWidth(pawn.ageTracker.CurLifeStage.bodyWidth!.Value)
             );
-            var newGetMeshSetForWidth = InstructionSignature((Pawn pawn) => 
+            var newGetMeshSetForWidth = InstructionSignature((Pawn pawn) =>
                 MeshPool.GetMeshSetForWidth(HumanlikeMeshPoolUtility.HumanlikeBodyWidthForPawn(pawn))
             );
             editor.Start().Replace(getMeshSetForWidth, newGetMeshSetForWidth);
-            
+
             // Second change: MeshPool.humanlikeHead/BodySet -> MeshPool.GetMeshSetForWidth(MeshPool.HumanlikeBodyWidthForPawn(pawn))
             var getSet = method.Name.Contains("Head")
-                ? InstructionMatchSignature(() => MeshPool.humanlikeHeadSet )
-                : InstructionMatchSignature(() => MeshPool.humanlikeBodySet );
+                ? InstructionMatchSignature(() => MeshPool.humanlikeHeadSet)
+                : InstructionMatchSignature(() => MeshPool.humanlikeBodySet);
             var newGetSet = InstructionSignature((Pawn pawn) =>
                 MeshPool.GetMeshSetForWidth(HumanlikeMeshPoolUtility.HumanlikeBodyWidthForPawn(pawn))
             );
             editor.Start().Replace(getSet, newGetSet);
-            
+
             return editor.InstructionEnumeration();
         }
     }
@@ -224,8 +224,9 @@ public static partial class HarmonyPatches
         public static CodeInstructions Transpiler(CodeInstructions instructions)
         {
             var editor = new CodeMatcher(instructions);
-            
+
             // Just adding our multiplier in here
+            // ReSharper disable all UnusedVariable
             var pattern = InstructionMatchSignature((Pawn pawn) =>
             {
                 var hairMeshSize = pawn.story.headType.hairMeshSize;
@@ -239,14 +240,14 @@ public static partial class HarmonyPatches
             return editor.InstructionEnumeration();
         }
     }
-    
+
     [HarmonyPatch(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeBeardSetForPawn")]
     public static class GraphicMeshSet_GetBeardSetForPawnPatch
     {
         public static CodeInstructions Transpiler(CodeInstructions instructions)
         {
             var editor = new CodeMatcher(instructions);
-            
+
             // Just adding our multiplier in here
             var pattern = InstructionMatchSignature((Pawn pawn) =>
             {
@@ -302,11 +303,13 @@ public static partial class HarmonyPatches
             // Just adding our multiplier in here
             var pattern = InstructionMatchSignature((PawnRenderer self) =>
             {
-                var size = self.pawn.story.bodyType.headOffset * Mathf.Sqrt(self.pawn.ageTracker.CurLifeStage.bodySizeFactor);
+                var size = self.pawn.story.bodyType.headOffset *
+                           Mathf.Sqrt(self.pawn.ageTracker.CurLifeStage.bodySizeFactor);
             });
             var replacement = InstructionSignature((PawnRenderer self) =>
             {
-                var size = self.pawn.story.bodyType.headOffset * Mathf.Sqrt(self.pawn.ageTracker.CurLifeStage.bodySizeFactor * HarmonyPatches.GetScalarForPawn(self.pawn));
+                var size = self.pawn.story.bodyType.headOffset *
+                           Mathf.Sqrt(self.pawn.ageTracker.CurLifeStage.bodySizeFactor * GetScalarForPawn(self.pawn));
             });
             editor.Start().Replace(pattern, replacement);
 
@@ -354,7 +357,7 @@ public static partial class HarmonyPatches
 
         private static readonly FieldInfo
             woundOffset = AccessTools.Field(typeof(BodyTypeDef.WoundAnchor), "offset");
-        
+
         private static Vector3 ModifyVectorForPawn(Vector3 vec, Pawn pawn)
         {
             var scalar = GetScalarForPawn(pawn);
@@ -369,7 +372,7 @@ public static partial class HarmonyPatches
             return NotNull(drawEyeOverlay, eyeOverlayPawnRendererField, pawnRendererPawn, woundOffset);
         }
 
-        
+
         public static MethodBase TargetMethod()
         {
             return drawEyeOverlay;
@@ -381,10 +384,10 @@ public static partial class HarmonyPatches
             var editor = new CodeMatcher(instructions);
             var woundOffsetCount = 0;
             // First change: scale = HarmonyPatches.GetScalarForPawn(@this.<>4__this.pawn) * scale;
-            
+
             // Second change: Matrix4x4.TRS(... woundAnchorl2.offset ...)
             // |-> Matrix4x4.TRS(... PawnRenderer_DrawExtraEyeGraphicPatch.ModifyVectorForPawn(woundAnchorl.offset, @this.<>4__this.pawn) ...)
-            
+
             // Modify the 2nd arg - scale (float) - right at the start of the function
             // Since we use repeat() everywhere we don't have to care about checking for validity.. probably
             return editor.Start().InsertAndAdvance(

@@ -132,8 +132,10 @@ public static partial class HarmonyPatches
     {
         switch (match.IsInvalid)
         {
-            case true when !suppress: 
-                Main.LogMessage($"Transpiler did not find target @ {new StackTrace().GetFrame(1).GetMethod().DeclaringType?.FullName ?? "unknown"}", true);
+            case true when !suppress:
+                Main.LogMessage(
+                    $"Transpiler did not find target @ {new StackTrace().GetFrame(1).GetMethod().DeclaringType?.FullName ?? "unknown"}",
+                    true);
                 break;
             case false:
                 action.Invoke(match);
@@ -144,15 +146,19 @@ public static partial class HarmonyPatches
     }
 
     /// <summary>
-    /// Replaces the pattern with the replacement. This is a naive implementation - if you need labels, DIY it.
+    ///     Replaces the pattern with the replacement. This is a naive implementation - if you need labels, DIY it.
     /// </summary>
     /// <param name="match">the CodeMatcher instance to use</param>
     /// <param name="pattern">instructions to match, the beginning of this match is where the replacement begins</param>
     /// <param name="replacement">the new instructions</param>
-    /// <param name="replace">Whether we should keep labels and set the opcodes/operands instead of recreating the CodeInstruction</param>
+    /// <param name="replace">
+    ///     Whether we should keep labels and set the opcodes/operands instead of recreating the
+    ///     CodeInstruction
+    /// </param>
     /// <param name="suppress">Whether to suppress the log message on a failed match</param>
     /// <returns></returns>
-    private static CodeMatcher Replace(this CodeMatcher match, CodeMatch[] pattern, CodeInstructions replacement, bool replace = true, bool suppress = false)
+    private static CodeMatcher Replace(this CodeMatcher match, CodeMatch[] pattern, CodeInstructions replacement,
+        bool replace = true, bool suppress = false)
     {
         return match.MatchStartForward(pattern).OnSuccess(matcher =>
         {
@@ -189,7 +195,7 @@ public static partial class HarmonyPatches
     }
 
     /// <summary>
-    /// Returns the given method as a basic ILCode signature, excluding ret statements
+    ///     Returns the given method as a basic ILCode signature, excluding ret statements
     /// </summary>
     /// <param name="method">The method to convert</param>
     /// <returns>A set of CodeInstructions representing the method given</returns>
@@ -210,7 +216,7 @@ public static partial class HarmonyPatches
     }
 
     /// <summary>
-    /// Returns the given method as a basic ILCode signature wrapped in a CodeMatch, excluding ret statements
+    ///     Returns the given method as a basic ILCode signature wrapped in a CodeMatch, excluding ret statements
     /// </summary>
     /// <param name="method">The method to convert</param>
     /// <returns>A set of CodeInstructions representing the method given</returns>

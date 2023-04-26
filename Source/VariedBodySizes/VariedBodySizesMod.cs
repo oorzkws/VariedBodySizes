@@ -25,7 +25,7 @@ internal class VariedBodySizesMod : Mod
     /// <summary>
     ///     The private settings
     /// </summary>
-    public VariedBodySizesModSettings Settings;
+    public readonly VariedBodySizesModSettings Settings;
 
     /// <summary>
     ///     Constructor

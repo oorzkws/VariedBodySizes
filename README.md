@@ -1,6 +1,6 @@
 # VariedBodySizes
 
-![Image](https://i.imgur.com/buuPQel.png)
+![Image](https://i.imgur.com/iCj5o7O.png)
 
 
 This mod adds some new settings to rimworld. It allows you to individually set a customized size range for all pawns and animal sizes. This change is strictly cosmetic and alters no other statistics of the pawn or animal.
@@ -28,6 +28,7 @@ You can enable the "Also modify health scaling" to make pawns health pool be aff
 
 Should work with most if not all pawn and animal mods
 Load order should not matter as all calculations are done after game-start.
+There are debug-options to change the sizes of pawns manually.
 
 ## Verified compatible mods
 
@@ -43,14 +44,14 @@ Also, Mute made a Biotech gene mod for body-sizes: https://steamcommunity.com/sh
 Idea: Visandar_the_Unliving
 VEF support and dodge chance by: oorzkws
 
-![Image](https://i.imgur.com/O0IIlYj.png)
+![Image](https://i.imgur.com/Ds0rBAD.png)
 
 Since modding is just a hobby for me I expect no donations to keep modding. If you still want to show your support you can gift me anything from my https://store.steampowered.com/wishlist/id/Mlie]Wishlist or buy me a cup of tea.
 
-https://ko-fi.com/G2G55DDYD]![Image](https://i.imgur.com/Utx6OIH.png)
+https://ko-fi.com/G2G55DDYD]![Image](https://i.imgur.com/VWG0yff.png)
 
 
-![Image](https://i.imgur.com/PwoNOj4.png)
+![Image](https://i.imgur.com/5xwDG6H.png)
 
 
 
@@ -62,4 +63,4 @@ https://ko-fi.com/G2G55DDYD]![Image](https://i.imgur.com/Utx6OIH.png)
 -  If you have the solution for a problem, please post it to the GitHub repository.
 
 
-https://steamcommunity.com/sharedfiles/filedetails/changelog/2863019550]Last updated 2023-03-31
+https://steamcommunity.com/sharedfiles/filedetails/changelog/2863019550]Last updated 2023-04-26
