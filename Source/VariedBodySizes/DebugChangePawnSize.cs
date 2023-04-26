@@ -1,7 +1,3 @@
-using RimWorld;
-using UnityEngine;
-using Verse;
-
 namespace VariedBodySizes;
 
 public static class DebugChangePawnSize

@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Mlie;
-using RimWorld;
-using UnityEngine;
-using Verse;
+﻿using Mlie;
 
 namespace VariedBodySizes;
 

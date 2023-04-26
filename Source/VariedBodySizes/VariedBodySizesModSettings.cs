@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using Verse;
-
-namespace VariedBodySizes;
+﻿namespace VariedBodySizes;
 
 /// <summary>
 ///     Definition of the settings for the mod

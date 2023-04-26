@@ -1,7 +1,4 @@
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using FisheryLib;
-using Verse;
 
 namespace VariedBodySizes;
 
