@@ -157,6 +157,7 @@ public static partial class HarmonyPatches
     /// </param>
     /// <param name="suppress">Whether to suppress the log message on a failed match</param>
     /// <returns></returns>
+    // ReSharper disable once UnusedMethodReturnValue.Local
     private static CodeMatcher Replace(this CodeMatcher match, CodeMatch[] pattern, CodeInstructions replacement,
         bool replace = true, bool suppress = false)
     {

@@ -183,7 +183,8 @@ public static partial class HarmonyPatches
         }
     }
 
-    [HarmonyPatch, HarmonyAfter("rimworld.erdelf.alien_race.main")]
+    [HarmonyPatch]
+    [HarmonyAfter("rimworld.erdelf.alien_race.main")]
     public static class GraphicMeshSet_GetHumanlikeSetForPawnPatch
     {
         public static IEnumerable<MethodBase> TargetMethods()
@@ -215,8 +216,10 @@ public static partial class HarmonyPatches
             var newGetSet = InstructionSignature((Pawn pawn) =>
                 MeshPool.GetMeshSetForWidth(HumanlikeMeshPoolUtility.HumanlikeBodyWidthForPawn(pawn))
             );
-            editor.Start().Replace(getSet, newGetSet, suppress:hasHAR); // Matching may error with HAR and that's fine, we cover that case below
-            
+            editor.Start()
+                .Replace(getSet, newGetSet,
+                    suppress: hasHAR); // Matching may error with HAR and that's fine, we cover that case below
+
             // Third change, if HAR is active: (object)1.5f -> MeshPool.HumanlikeBodyWidthForPawn(pawn)
             // ReSharper disable once InvertIf
             if (hasHAR)

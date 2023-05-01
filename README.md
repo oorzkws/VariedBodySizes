@@ -15,14 +15,15 @@ You can enable the "Also modify health scaling" to make pawns health pool be aff
 
 -  Can set a blanket default setting for everything
 -  Sizes can range from 10% to 200% of normal size
--  Also alter the actual body size-stat
--  Also alter the health factor
--  Also alter the hunger rate
--  Also alter melee damage factor
--  Also alter melee dodge chance
--  Also alter animal resource yield
+-  Affect the actual body size-stat
+-  Affect the health factor
+-  Affect the hunger rate
+-  Affect melee damage factor
+-  Affect melee dodge chance
+-  Affect animal resource yield
+-  Affect humanoid lactation (Biotech)
 -  Search filter for when you are looking for a specific pawn/animal or mod-name
--  Shows the mod name the pawn or animal came from
+-  Shows the mod name the pawn/animal came from
 
 
 
@@ -63,4 +64,4 @@ https://ko-fi.com/G2G55DDYD]![Image](https://i.imgur.com/VWG0yff.png)
 -  If you have the solution for a problem, please post it to the GitHub repository.
 
 
-https://steamcommunity.com/sharedfiles/filedetails/changelog/2863019550]Last updated 2023-04-26
+https://steamcommunity.com/sharedfiles/filedetails/changelog/2863019550]Last updated 2023-05-01
