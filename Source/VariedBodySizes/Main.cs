@@ -71,11 +71,6 @@ public static class Main
             HarmonyPatches.FacialAnimation_GetHeadMeshSetPatch.HeadCache.Remove(pawn);
         }
 
-        if (HarmonyPatches.Pawn_BodySizePatch.StatCache.TryGet(pawn, out _))
-        {
-            HarmonyPatches.Pawn_BodySizePatch.StatCache.Remove(pawn);
-        }
-
         if (HarmonyPatches.PawnRenderer_GetBodyOverlayMeshSetPatch.OverlayCache.TryGet(pawn, out _))
         {
             HarmonyPatches.PawnRenderer_GetBodyOverlayMeshSetPatch.OverlayCache.Remove(pawn);

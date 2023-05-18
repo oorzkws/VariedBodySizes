@@ -45,7 +45,10 @@ public class VariedBodySizes_GameComponent : GameComponent
         {
             bodySize = Main.GetPawnVariation(pawn);
             VariedBodySizesDictionary[pawnId] = bodySize;
-            Main.LogMessage($"Setting size of {pawn} to {bodySize}");
+            if (VariedBodySizesMod.instance.Settings.VerboseLogging)
+            {
+                Main.LogMessage($"Setting size of {pawn.NameFullColored} ({pawn.ThingID}) to {bodySize}");
+            }
         }
 
         // Apply any registered modifiers when storing

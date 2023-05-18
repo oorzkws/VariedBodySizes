@@ -5,7 +5,6 @@ public static partial class HarmonyPatches
     [HarmonyPatch(typeof(Pawn), "BodySize", MethodType.Getter)]
     public static class Pawn_BodySizePatch
     {
-        public static readonly TimedCache<float> StatCache = new TimedCache<float>(36);
 
         public static void Postfix(ref float __result, Pawn __instance)
         {
@@ -14,10 +13,10 @@ public static partial class HarmonyPatches
                 return;
             }
 
-            // cached value, or calculate, cache and return
-            if (StatCache.TryGet(__instance, out var pawnSize) && Math.Abs(pawnSize - __result) > 0.01f)
+            // The game can call stat lookups on pawns that aren't finished generating, if we cache this we shoot ourselves in the foot
+            // For some reason this always ends up as  __result == baseBodySize * 0.2f
+            if (__instance.needs is null)
             {
-                __result = pawnSize;
                 return;
             }
 
@@ -28,9 +27,6 @@ public static partial class HarmonyPatches
             {
                 __result = Mathf.Min(__result, 0.25f);
             }
-
-            // Cache and return
-            StatCache.Set(__instance, __result);
         }
     }
 
