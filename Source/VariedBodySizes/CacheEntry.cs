@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace VariedBodySizes;
 
 internal readonly struct CacheEntry<T>
@@ -8,7 +10,7 @@ internal readonly struct CacheEntry<T>
     public CacheEntry(T cachedValue)
     {
         CachedValue = cachedValue;
-        birthday = Find.TickManager.TicksGame;
+        birthday = Current.gameInt.tickManager.ticksGameInt;
     }
 
     public bool Expired(int currentTick, int expiryPeriod)
@@ -16,8 +18,9 @@ internal readonly struct CacheEntry<T>
         return birthday + expiryPeriod < currentTick;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Expired(int expiryPeriod)
     {
-        return birthday + expiryPeriod < Find.TickManager.TicksGame;
+        return birthday + expiryPeriod < Current.gameInt.tickManager.ticksGameInt;
     }
 }

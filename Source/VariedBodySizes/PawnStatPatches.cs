@@ -7,7 +7,6 @@ public static partial class HarmonyPatches
     {
         public static readonly TimedCache<float> StatCache = new TimedCache<float>(36);
 
-
         public static void Postfix(ref float __result, Pawn __instance)
         {
             if (!VariedBodySizesMod.instance.Settings.AffectRealBodySize)

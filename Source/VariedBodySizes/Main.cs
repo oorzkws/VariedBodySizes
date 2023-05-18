@@ -4,7 +4,6 @@ using Log = Verse.Log;
 
 namespace VariedBodySizes;
 
-[StaticConstructorOnStartup]
 public static class Main
 {
     public static VariedBodySizes_GameComponent CurrentComponent;

@@ -88,7 +88,7 @@ public static class DebugChangePawnSize
             return;
         }
 
-        Main.CurrentComponent.VariedBodySizesDictionary[pawn] = currentSize;
+        Main.CurrentComponent.VariedBodySizesDictionary[pawn.thingIDNumber] = currentSize;
         Main.ResetAllCaches(pawn);
         Messages.Message(message, MessageTypeDefOf.TaskCompletion, false);
         DebugActionsUtility.DustPuffFrom(pawn);
