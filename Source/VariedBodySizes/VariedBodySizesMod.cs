@@ -37,6 +37,7 @@ internal class VariedBodySizesMod : Mod
         searchText = string.Empty;
         currentVersion = VersionFromManifest.GetVersionFromModMetaData(content.ModMetaData);
         Settings = GetSettings<VariedBodySizesModSettings>();
+        Settings.VariedBodySizes ??= new Dictionary<string, FloatRange>();
     }
 
     public override string SettingsCategory()
