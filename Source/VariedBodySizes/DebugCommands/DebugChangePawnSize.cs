@@ -45,7 +45,7 @@ public static class DebugChangePawnSize
 
         if (increase)
         {
-            currentSize *= 1 + percentChange;
+            currentSize += percentChange;
             message =
                 $"Size of {pawn.Name} increased by {percentChange.ToStringPercent()} to {currentSize.ToStringPercent()}";
             if (currentSize > VariedBodySizesMod.MaximumSize)
@@ -58,7 +58,7 @@ public static class DebugChangePawnSize
 
         if (decrease)
         {
-            currentSize *= 1 - percentChange;
+            currentSize -= percentChange;
             message =
                 $"Size of {pawn.Name} decreased by -{percentChange.ToStringPercent()} to {currentSize.ToStringPercent()}";
             if (currentSize < VariedBodySizesMod.MinimumSize)
@@ -90,6 +90,9 @@ public static class DebugChangePawnSize
 
         Main.CurrentComponent.VariedBodySizesDictionary[pawn.thingIDNumber] = currentSize;
         Main.ResetAllCaches(pawn);
+        // Required for...reasons? The game doesn't seem to update its internal cache until the game is unpaused
+        // So we have to update our own value instead of invalidating it and asking the game
+        Main.CurrentComponent.sizeCache.Set(pawn, currentSize);
         Messages.Message(message, MessageTypeDefOf.TaskCompletion, false);
         DebugActionsUtility.DustPuffFrom(pawn);
     }

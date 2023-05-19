@@ -31,16 +31,9 @@ public static class Main
 
     public static void ResetAllCaches(Pawn pawn)
     {
-        if (HarmonyPatches.FacialAnimation_GetHeadMeshSetPatch.HeadCache.TryGet(pawn, out _))
-        {
-            HarmonyPatches.FacialAnimation_GetHeadMeshSetPatch.HeadCache.Remove(pawn);
-        }
-
-        if (HarmonyPatches.PawnRenderer_GetBodyOverlayMeshSetPatch.OverlayCache.TryGet(pawn, out _))
-        {
-            HarmonyPatches.PawnRenderer_GetBodyOverlayMeshSetPatch.OverlayCache.Remove(pawn);
-        }
-
+        HarmonyPatches.FacialAnimation_GetHeadMeshSetPatch.HeadCache.Remove(pawn);
+        HarmonyPatches.PawnRenderer_GetBodyOverlayMeshSetPatch.OverlayCache.Remove(pawn);
+        CurrentComponent.sizeCache.Remove(pawn);
         GlobalTextureAtlasManager.TryMarkPawnFrameSetDirty(pawn);
     }
 

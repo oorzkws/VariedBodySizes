@@ -6,7 +6,7 @@ namespace VariedBodySizes;
 public class VariedBodySizes_GameComponent : GameComponent
 {
     public Dictionary<int, float> VariedBodySizesDictionary;
-    private readonly TimedCache<float> sizeCache = new TimedCache<float>(36);
+    internal readonly TimedCache<float> sizeCache = new TimedCache<float>(36);
 
     public VariedBodySizes_GameComponent(Game game)
     {
