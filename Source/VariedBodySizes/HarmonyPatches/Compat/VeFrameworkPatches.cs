@@ -4,7 +4,7 @@ public static partial class HarmonyPatches
 {
     // We're just going to patch ourselves if it's relevant
     [HarmonyPatch]
-    public static class VefCompatibilityPatches
+    public static class VeFramework_OnCalculateBodySizePatch
     {
         private static readonly BodyScaleDelegate vefBodyScaleMethod = hasVef
             ? AccessTools.MethodDelegate<BodyScaleDelegate>(

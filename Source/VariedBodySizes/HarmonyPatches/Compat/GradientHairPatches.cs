@@ -5,7 +5,7 @@ namespace VariedBodySizes;
 public static partial class HarmonyPatches
 {
     [HarmonyPatch]
-    public static class GradientHairCompatibilityPatches
+    public static class GradientHair_MultiMaskInitPatch
     {
         private static readonly MethodBase maskInit =
             AccessTools.Method("GradientHair.Graphic_MultiMask:Init");

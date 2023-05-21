@@ -2,7 +2,6 @@
 
 namespace VariedBodySizes;
 
-[StaticConstructorOnStartup]
 internal class VariedBodySizesMod : Mod
 {
     public const float MinimumSize = 0.25f;
@@ -38,6 +37,7 @@ internal class VariedBodySizesMod : Mod
         searchText = string.Empty;
         currentVersion = VersionFromManifest.GetVersionFromModMetaData(content.ModMetaData);
         Settings = GetSettings<VariedBodySizesModSettings>();
+        Settings.VariedBodySizes ??= new Dictionary<string, FloatRange>();
     }
 
     public override string SettingsCategory()
@@ -73,7 +73,7 @@ internal class VariedBodySizesMod : Mod
                     "VariedBodySizes.no".Translate(), null, "VariedBodySizes.yes".Translate(),
                     delegate
                     {
-                        Main.CurrentComponent.VariedBodySizesDictionary = new Dictionary<Pawn, float>();
+                        Main.CurrentComponent.VariedBodySizesDictionary = new Dictionary<int, float>();
                         Current.Game.CurrentMap.mapPawns.AllPawns.ForEach(delegate(Pawn pawn)
                         {
                             PortraitsCache.SetDirty(pawn);
