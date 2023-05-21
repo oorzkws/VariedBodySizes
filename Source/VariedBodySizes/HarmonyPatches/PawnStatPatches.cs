@@ -5,7 +5,6 @@ public static partial class HarmonyPatches
     [HarmonyPatch(typeof(Pawn), "BodySize", MethodType.Getter)]
     public static class Pawn_BodySizePatch
     {
-
         public static void Postfix(ref float __result, Pawn __instance)
         {
             if (!VariedBodySizesMod.instance.Settings.AffectRealBodySize)

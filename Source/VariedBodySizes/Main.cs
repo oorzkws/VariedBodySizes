@@ -3,7 +3,7 @@ using Log = Verse.Log;
 namespace VariedBodySizes;
 
 /// <summary>
-/// Contains logic that must be run after the DefDatabase is initialized (thus, StaticConstructorOnStartup)
+///     Contains logic that must be run after the DefDatabase is initialized (thus, StaticConstructorOnStartup)
 /// </summary>
 [StaticConstructorOnStartup]
 public static class Main
@@ -49,4 +49,3 @@ public static class Main
 }
 
 // Utility stuff here
-

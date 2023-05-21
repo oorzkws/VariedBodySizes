@@ -39,10 +39,14 @@ public static partial class HarmonyPatches
 
             // Move it towards whichever is advantageous/disadvantageous based on body size
             var new_result = __result < 0 ? __result * GetScalarForPawn(pawn) : __result / GetScalarForPawn(pawn);
+
+            // Only delegate the string building when it's relevant
             if (VariedBodySizesMod.instance.Settings.VerboseLogging)
             {
-                Main.LogMessage($"Dodge chance for {pawn.LabelShort} modified: {__result * 100}% -> {new_result * 100}%");
+                Main.LogMessage(
+                    $"Dodge chance for {pawn.LabelShort} modified: {__result * 100}% -> {new_result * 100}%");
             }
+
             __result = new_result;
         }
     }

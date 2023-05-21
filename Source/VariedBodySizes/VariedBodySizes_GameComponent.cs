@@ -5,8 +5,8 @@ namespace VariedBodySizes;
 
 public class VariedBodySizes_GameComponent : GameComponent
 {
-    public Dictionary<int, float> VariedBodySizesDictionary;
     internal readonly TimedCache<float> sizeCache = new TimedCache<float>(36);
+    public Dictionary<int, float> VariedBodySizesDictionary;
 
     public VariedBodySizes_GameComponent(Game game)
     {
@@ -31,13 +31,13 @@ public class VariedBodySizes_GameComponent : GameComponent
         {
             return 1f;
         }
-        
+
         // cached value, or calculate, cache and return
         if (sizeCache.TryGet(pawn, out var cachedSize))
         {
             return cachedSize;
         }
-        
+
         VariedBodySizesDictionary ??= new Dictionary<int, float>();
 
         var pawnId = pawn.thingIDNumber;
@@ -45,6 +45,8 @@ public class VariedBodySizes_GameComponent : GameComponent
         {
             bodySize = Main.GetPawnVariation(pawn);
             VariedBodySizesDictionary[pawnId] = bodySize;
+
+            // Only delegate the string building when it's relevant
             if (VariedBodySizesMod.instance.Settings.VerboseLogging)
             {
                 Main.LogMessage($"Setting size of {pawn.NameFullColored} ({pawn.ThingID}) to {bodySize}");
@@ -54,27 +56,28 @@ public class VariedBodySizes_GameComponent : GameComponent
         // Apply any registered modifiers when storing
         bodySize = OnCalculateBodySize(bodySize, pawn);
         sizeCache.Set(pawn, bodySize);
-        
+
         return bodySize;
     }
 
     /// <summary>
-    /// Load the body size dict from XML and convert it from &lt;Pawn, float&gt; to &lt;int, float&gt;
+    ///     Load the body size dict from XML and convert it from &lt;Pawn, float&gt; to &lt;int, float&gt;
     /// </summary>
     /// <returns>bool - whether the dictionary was migrated</returns>
     private bool MigrateDictionaryFormat()
     {
-        var dictPath = "/savegame/game/components/li[@Class=\"VariedBodySizes.VariedBodySizes_GameComponent\"]/VariedBodySizesDictionary";
+        var dictPath =
+            "/savegame/game/components/li[@Class=\"VariedBodySizes.VariedBodySizes_GameComponent\"]/VariedBodySizesDictionary";
         var document = Scribe.loader.curXmlParent?.OwnerDocument;
         var bodySizeDict = document?.SelectSingleNode(dictPath);
         var keys = bodySizeDict?["keys"]?.ChildNodes;
         var values = bodySizeDict?["values"]?.ChildNodes;
-        
+
         if (bodySizeDict is null || keys is null || values is null)
         {
             return false;
         }
-            
+
         var i = 0;
         while (true)
         {
@@ -85,8 +88,9 @@ public class VariedBodySizes_GameComponent : GameComponent
             {
                 break;
             }
-                
-            var keyText = Regex.Match(key.InnerText, @"\d+$").Value; // drop all non-number, format is usually Thing_Human1234
+
+            var keyText =
+                Regex.Match(key.InnerText, @"\d+$").Value; // drop all non-number, format is usually Thing_Human1234
             var hasKey = int.TryParse(keyText, out var keyInt);
             var hasValue = float.TryParse(value.InnerText, out var valueFloat);
             if (hasKey && hasValue)
@@ -108,6 +112,7 @@ public class VariedBodySizes_GameComponent : GameComponent
         {
             return;
         }
+
         Scribe_Collections.Look(ref VariedBodySizesDictionary, "VariedBodySizesData", LookMode.Value, LookMode.Value);
         // If we don't have one saved, make it
         if (Scribe.mode == LoadSaveMode.PostLoadInit)

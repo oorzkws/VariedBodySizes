@@ -229,7 +229,7 @@ public static partial class HarmonyPatches
                 // Note: with [HarmonyAfter], if we're *before* HAR in the load order, our transpiler will run twice:
                 // Once on the vanilla code, and then once again on the code HAR has modified.
                 // The first will naturally not find the HAR edits, so we suppress the error here.
-                editor.Start().Replace(fixedWidth, newGetMeshSetForWidth, suppress:true);
+                editor.Start().Replace(fixedWidth, newGetMeshSetForWidth, suppress: true);
             }
 
             return editor.InstructionEnumeration();

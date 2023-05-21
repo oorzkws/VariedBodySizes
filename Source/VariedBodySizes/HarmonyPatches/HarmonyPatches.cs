@@ -4,7 +4,7 @@ using System.Reflection.Emit;
 namespace VariedBodySizes;
 
 /// <summary>
-/// Class containing Harmony patches used by the mod
+///     Class containing Harmony patches used by the mod
 /// </summary>
 /// <remarks>Shared functions are defined in HarmonyPatches/HarmonyPatches.cs</remarks>
 public static partial class HarmonyPatches
@@ -13,12 +13,13 @@ public static partial class HarmonyPatches
     private static bool hasVef => ModsConfig.IsActive("oskarpotocki.vanillafactionsexpanded.core");
 
     /// <summary>
-    /// This is only called once from Main to do our patching.
+    ///     This is only called once from Main to do our patching.
     /// </summary>
     public static void ApplyAll(Harmony harmony)
     {
         // Most of the VEF render patches co-exist fine, these don't.
-        var vePatchesToUndo = new[] {
+        var vePatchesToUndo = new[]
+        {
             new KeyValuePair<Type, string>(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeBodySetForPawn"),
             new KeyValuePair<Type, string>(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeHeadSetForPawn"),
             new KeyValuePair<Type, string>(typeof(PawnRenderer), "BaseHeadOffsetAt")
@@ -41,10 +42,11 @@ public static partial class HarmonyPatches
             Main.LogMessage($"Unpatching {targetMethod.DeclaringType?.Name ?? string.Empty}:{targetMethod.Name}", true);
             harmony.Unpatch(targetMethod, HarmonyPatchType.All, "OskarPotocki.VFECore");
         }
+
         // Do our patches after we undo theirs
         harmony.PatchAll(Assembly.GetExecutingAssembly());
     }
-    
+
 
     private static float GetScalarForPawn(Pawn pawn)
     {
@@ -71,7 +73,7 @@ public static partial class HarmonyPatches
     }
 
     /// <summary>
-    /// Returns the type that called a transpiler in a given stack trace
+    ///     Returns the type that called a transpiler in a given stack trace
     /// </summary>
     /// <returns></returns>
     private static string GetTranspilerStackFrame()
