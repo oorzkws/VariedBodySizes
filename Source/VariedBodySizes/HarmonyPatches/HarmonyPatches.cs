@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 
 namespace VariedBodySizes;
 
@@ -160,24 +161,73 @@ public static partial class HarmonyPatches
     }
 
     /// <summary>
+    /// Prevents the compiler from removing a given local
+    /// </summary>
+    /// <param name="variable">The local to protect</param>
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static void Pin<T>(ref T variable) {
+        // Do nothing
+    }
+
+    /// <summary>
     ///     Returns the given method as a basic ILCode signature, excluding ret statements
     /// </summary>
     /// <param name="method">The method to convert</param>
     /// <returns>A set of CodeInstructions representing the method given</returns>
+    /// <remarks>Declared locals need to be pinned with Pin(ref local)</remarks>
     private static CodeInstructions InstructionSignature(Delegate method)
     {
-        // arg indexes get shifted by 1 if we use this method, so we have to shift them back
-        return PatchProcessor.GetCurrentInstructions(method.Method)
-            .Manipulator(
-                i => i.IsLdarg() || i.IsStarg(),
-                i =>
-                {
-                    var index = new FishInstruction(i).GetIndex() - 1;
-                    var copy = i.IsLdarg() ? FishTranspiler.Argument(index) : FishTranspiler.StoreArgument(index);
-                    // Replace the opcode and operand with the proper one
-                    i.With(copy.OpCode, copy.Operand);
-                })
-            .Where(i => i.opcode != OpCodes.Ret && i.opcode != OpCodes.Nop);
+        var instructions = new List<CodeInstruction>();
+        var locals = method.Method.GetMethodBody()!.LocalVariables;
+        
+        // Fetch the given delegate as IL code and mutate it slightly before storing it
+        foreach (var instruction in PatchProcessor.GetCurrentInstructions(method.Method)) {
+            
+            // Returns are used as a declaration within patterns, so we drop the instruction
+            if (instruction == Fish.Return) {
+                continue;
+            }
+            
+            // Nops can be used for alignment or optimization, but we don't want that here as it can mess up our matching
+            if (instruction.opcode == OpCodes.Nop) {
+                continue;
+            }
+
+            // Arg indexes get shifted by 1, as the method is made static with "this" as the 0th arg. We shift them backwards here to match.
+            if (instruction.opcode.LoadsArgument() || instruction.opcode.StoresArgument()) {
+                // FishInstruction cast allows us to avoid branching on all the different starg_n/ldarg_n
+                var index = new FishInstruction(instruction).GetIndex() - 1;
+                // Create a copy with the proper index
+                var copy = instruction.IsLdarg() ? FishTranspiler.Argument(index) : FishTranspiler.StoreArgument(index);
+                // Push the changes back to the instruction. This allows us to maintain block/label attributes.
+                instruction.opcode = copy.OpCode;
+                instruction.operand = copy.Operand;
+            }
+            
+            // For methods that just declare a local, they have to pin it using HarmonyPatches.Pin. We remove this from the match.
+            // Doing so is a two-instruction process (Ldloca, Call) so we remove the last and current instructions
+            if (instructions.Count > 0) {
+                var lastInstruction = new FishInstruction(instructions.Last());
+                if (lastInstruction.OpCode == OpCodes.Ldloca_S || lastInstruction.OpCode == OpCodes.Ldloca) {
+                    // Fetch the instruction for Pin<T> where T is whatever type lastInstruction accesses...
+                    var genericPin = Fish.Call(typeof(HarmonyPatches), "Pin", generics: new[] {
+                        locals[lastInstruction.GetIndex()].LocalType
+                    });
+                    // ...and check it against our current instruction
+                    if (instruction == genericPin) {
+                        // Remove the ldloca from our list
+                        instructions.RemoveAt(instructions.Count - 1);
+                        // Skip storing the pin call
+                        continue;
+                    }
+                }
+            }
+            
+            // Store to our list
+            instructions.Add(instruction);
+        }
+
+        return instructions;
     }
 
     /// <summary>
@@ -185,6 +235,7 @@ public static partial class HarmonyPatches
     /// </summary>
     /// <param name="method">The method to convert</param>
     /// <returns>A set of CodeInstructions representing the method given</returns>
+    /// <remarks>Declared locals need to be pinned with Pin(ref local)</remarks>
     private static CodeMatch[] InstructionMatchSignature(Delegate method)
     {
         return InstructionSignature(method).Select(i => new CodeMatch(i.opcode, i.operand)).ToArray();

@@ -11,3 +11,4 @@ global using UnityEngine;
 global using Verse;
 global using CodeInstructions = System.Collections.Generic.IEnumerable<HarmonyLib.CodeInstruction>;
 global using FishInstruction = FisheryLib.FishTranspiler.Container;
+global using Fish = FisheryLib.FishTranspiler;

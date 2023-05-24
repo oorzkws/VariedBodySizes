@@ -248,10 +248,12 @@ public static partial class HarmonyPatches
             var pattern = InstructionMatchSignature((Pawn pawn) =>
             {
                 var hairMeshSize = pawn.story.headType.hairMeshSize;
+                Pin(ref hairMeshSize);
             });
             var replacement = InstructionSignature((Pawn pawn) =>
             {
                 var hairMeshSize = GetScalarForPawn(pawn) * pawn.story.headType.hairMeshSize;
+                Pin(ref hairMeshSize);
             });
             editor.Start().Replace(pattern, replacement);
 
@@ -270,10 +272,12 @@ public static partial class HarmonyPatches
             var pattern = InstructionMatchSignature((Pawn pawn) =>
             {
                 var hairMeshSize = pawn.story.headType.beardMeshSize;
+                Pin(ref hairMeshSize);
             });
             var replacement = InstructionSignature((Pawn pawn) =>
             {
                 var hairMeshSize = GetScalarForPawn(pawn) * pawn.story.headType.beardMeshSize;
+                Pin(ref hairMeshSize);
             });
             editor.Start().Replace(pattern, replacement);
 
@@ -323,11 +327,13 @@ public static partial class HarmonyPatches
             {
                 var size = self.pawn.story.bodyType.headOffset *
                            Mathf.Sqrt(self.pawn.ageTracker.CurLifeStage.bodySizeFactor);
+                Pin(ref size);
             });
             var replacement = InstructionSignature((PawnRenderer self) =>
             {
                 var size = self.pawn.story.bodyType.headOffset *
                            Mathf.Sqrt(self.pawn.ageTracker.CurLifeStage.bodySizeFactor * GetScalarForPawn(self.pawn));
+                Pin(ref size);
             });
             editor.Start().Replace(pattern, replacement);
 
@@ -346,10 +352,12 @@ public static partial class HarmonyPatches
             var pattern = InstructionMatchSignature((PawnRenderer self) =>
             {
                 var size = self.pawn.story.bodyType.bodyGraphicScale;
+                Pin(ref size);
             });
             var replacement = InstructionSignature((PawnRenderer self) =>
             {
                 var size = GetScalarForPawn(self.pawn) * self.pawn.story.bodyType.bodyGraphicScale;
+                Pin(ref size);
             });
             editor.Start().Replace(pattern, replacement);
 

@@ -37,7 +37,9 @@ public static partial class HarmonyPatches
             var pattern = InstructionMatchSignature((Graphic self, GraphicRequest req) =>
             {
                 var args = req.path.Split('\0');
+                Pin(ref args);
                 var mask = args[1];
+                Pin(ref mask);
             });
             var replacement = InstructionSignature((Graphic self, GraphicRequest req) =>
             {
