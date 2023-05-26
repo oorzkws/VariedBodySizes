@@ -161,11 +161,13 @@ public static partial class HarmonyPatches
     }
 
     /// <summary>
-    /// Prevents the compiler from removing a given local
+    ///     Prevents the compiler from removing a given local
     /// </summary>
     /// <param name="variable">The local to protect</param>
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private static void Pin<T>(ref T variable) {
+    // ReSharper disable once UnusedParameter.Local
+    private static void Pin<T>(ref T variable)
+    {
         // Do nothing
     }
 
@@ -179,22 +181,25 @@ public static partial class HarmonyPatches
     {
         var instructions = new List<CodeInstruction>();
         var locals = method.Method.GetMethodBody()!.LocalVariables;
-        
+
         // Fetch the given delegate as IL code and mutate it slightly before storing it
-        foreach (var instruction in PatchProcessor.GetCurrentInstructions(method.Method)) {
-            
+        foreach (var instruction in PatchProcessor.GetCurrentInstructions(method.Method))
+        {
             // Returns are used as a declaration within patterns, so we drop the instruction
-            if (instruction == Fish.Return) {
+            if (instruction == Fish.Return)
+            {
                 continue;
             }
-            
+
             // Nops can be used for alignment or optimization, but we don't want that here as it can mess up our matching
-            if (instruction.opcode == OpCodes.Nop) {
+            if (instruction.opcode == OpCodes.Nop)
+            {
                 continue;
             }
 
             // Arg indexes get shifted by 1, as the method is made static with "this" as the 0th arg. We shift them backwards here to match.
-            if (instruction.opcode.LoadsArgument() || instruction.opcode.StoresArgument()) {
+            if (instruction.opcode.LoadsArgument() || instruction.opcode.StoresArgument())
+            {
                 // FishInstruction cast allows us to avoid branching on all the different starg_n/ldarg_n
                 var index = new FishInstruction(instruction).GetIndex() - 1;
                 // Create a copy with the proper index
@@ -203,18 +208,22 @@ public static partial class HarmonyPatches
                 instruction.opcode = copy.OpCode;
                 instruction.operand = copy.Operand;
             }
-            
+
             // For methods that just declare a local, they have to pin it using HarmonyPatches.Pin. We remove this from the match.
             // Doing so is a two-instruction process (Ldloca, Call) so we remove the last and current instructions
-            if (instructions.Count > 0) {
+            if (instructions.Count > 0)
+            {
                 var lastInstruction = new FishInstruction(instructions.Last());
-                if (lastInstruction.OpCode == OpCodes.Ldloca_S || lastInstruction.OpCode == OpCodes.Ldloca) {
+                if (lastInstruction.OpCode == OpCodes.Ldloca_S || lastInstruction.OpCode == OpCodes.Ldloca)
+                {
                     // Fetch the instruction for Pin<T> where T is whatever type lastInstruction accesses...
-                    var genericPin = Fish.Call(typeof(HarmonyPatches), "Pin", generics: new[] {
+                    var genericPin = Fish.Call(typeof(HarmonyPatches), "Pin", generics: new[]
+                    {
                         locals[lastInstruction.GetIndex()].LocalType
                     });
                     // ...and check it against our current instruction
-                    if (instruction == genericPin) {
+                    if (instruction == genericPin)
+                    {
                         // Remove the ldloca from our list
                         instructions.RemoveAt(instructions.Count - 1);
                         // Skip storing the pin call
@@ -222,7 +231,7 @@ public static partial class HarmonyPatches
                     }
                 }
             }
-            
+
             // Store to our list
             instructions.Add(instruction);
         }

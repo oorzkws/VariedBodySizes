@@ -1,5 +1,8 @@
 # Changelog for VariedBodySizes
 
+1.4.16 - Bugfixes for some aggressive compiler optimizations
+
+
 1.4.15 - Fix for the issues with the cached values and compatibility with a mod
 
 

@@ -8,6 +8,7 @@ public class VariedBodySizes_GameComponent : GameComponent
     internal readonly TimedCache<float> sizeCache = new TimedCache<float>(36);
     public Dictionary<int, float> VariedBodySizesDictionary;
 
+    // ReSharper disable once UnusedParameter.Local
     public VariedBodySizes_GameComponent(Game game)
     {
         Main.CurrentComponent = this;
