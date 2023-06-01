@@ -26,4 +26,8 @@
   <VariedBodySizes.harvestyield.tooltip>身体大小也会影响挤奶/剪毛等时接收到的产品数量。</VariedBodySizes.harvestyield.tooltip>
   <VariedBodySizes.lactating.label>同时修改人形的哺乳期（生物技术）。</VariedBodySizes.lactating.label>
   <VariedBodySizes.lactating.tooltip>体型也会影响人形动物的最大奶量和生产速度。</VariedBodySizes.lactating.tooltip>
+  <VariedBodySizes.StandardDeviationDivider>价值观的传播</VariedBodySizes.StandardDeviationDivider>
+  <VariedBodySizes.StandardDeviationDividerTT>把它调高，使百分比的大小更多地集中在所选变异的中间。把它设置得低一些，使其更加随机。</VariedBodySizes.StandardDeviationDividerTT>
+  <VariedBodySizes.StandardDeviationDivider.Middle>减少随机性</VariedBodySizes.StandardDeviationDivider.Middle>
+  <VariedBodySizes.StandardDeviationDivider.Spread>更多的随机性</VariedBodySizes.StandardDeviationDivider.Spread>
 </LanguageData>

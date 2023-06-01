@@ -26,4 +26,8 @@
   <VariedBodySizes.harvestyield.tooltip>Размер тела также влияет на количество получаемой продукции при доении/стрижке и т.д.</VariedBodySizes.harvestyield.tooltip>
   <VariedBodySizes.lactating.label>Также модифицировать лактацию гуманоидов (Биотехнологии)</VariedBodySizes.lactating.label>
   <VariedBodySizes.lactating.tooltip>Размер тела также влияет на максимальное количество и скорость выработки молока у гуманоидов.</VariedBodySizes.lactating.tooltip>
+  <VariedBodySizes.StandardDeviationDivider>Распространение ценностей</VariedBodySizes.StandardDeviationDivider>
+  <VariedBodySizes.StandardDeviationDividerTT>Повысьте этот параметр, чтобы размер-процент был более сгруппирован вокруг середины выбранной вариации. Задайте меньшее значение, чтобы сделать выборку более случайной.</VariedBodySizes.StandardDeviationDividerTT>
+  <VariedBodySizes.StandardDeviationDivider.Middle>Меньше случайностей</VariedBodySizes.StandardDeviationDivider.Middle>
+  <VariedBodySizes.StandardDeviationDivider.Spread>Больше случайностей</VariedBodySizes.StandardDeviationDivider.Spread>
 </LanguageData>

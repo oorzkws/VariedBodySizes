@@ -2,6 +2,10 @@
 <LanguageData>
   <VariedBodySizes.search>Search</VariedBodySizes.search>
   <VariedBodySizes.reset>Reset</VariedBodySizes.reset>
+  <VariedBodySizes.StandardDeviationDivider>Spread of the values</VariedBodySizes.StandardDeviationDivider>
+  <VariedBodySizes.StandardDeviationDividerTT>Raise this to have size-percent be more clustered around the middle of the selected variation. Set it lower to make it more random.</VariedBodySizes.StandardDeviationDividerTT>
+  <VariedBodySizes.StandardDeviationDivider.Middle>Less random</VariedBodySizes.StandardDeviationDivider.Middle>
+  <VariedBodySizes.StandardDeviationDivider.Spread>More random</VariedBodySizes.StandardDeviationDivider.Spread>
   <VariedBodySizes.defaultvariation.label>Default variation</VariedBodySizes.defaultvariation.label>
   <VariedBodySizes.variations.label>Custom variations</VariedBodySizes.variations.label>
   <VariedBodySizes.resetgame.dialog>Do you want to reset all generated sizes of all pawns? All pawns will generate a new random size based on the current mod-settings.</VariedBodySizes.resetgame.dialog>

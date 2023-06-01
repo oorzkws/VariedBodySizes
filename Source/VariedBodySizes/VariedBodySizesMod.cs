@@ -60,6 +60,13 @@ internal class VariedBodySizesMod : Mod
             new Vector2(defaultLabel.width / 2, defaultLabel.height));
         Widgets.FloatRange(defaultRangeRect, "DefaultVariation".GetHashCode(), ref Settings.DefaultVariation, 0.25f, 2f,
             null, ToStringStyle.PercentOne);
+        var dividerRect = listing_Standard.GetRect(35f);
+        Settings.StandardDeviationDivider = Widgets.HorizontalSlider_NewTemp(dividerRect,
+            Settings.StandardDeviationDivider, 2f, 20f, false, "VariedBodySizes.StandardDeviationDivider".Translate(),
+            "VariedBodySizes.StandardDeviationDivider.Spread".Translate(),
+            "VariedBodySizes.StandardDeviationDivider.Middle".Translate());
+        TooltipHandler.TipRegion(dividerRect, "VariedBodySizes.StandardDeviationDividerTT".Translate());
+
         if (Current.Game != null && Main.CurrentComponent != null)
         {
             var resetLabel = listing_Standard.Label("VariedBodySizes.resetgame".Translate());

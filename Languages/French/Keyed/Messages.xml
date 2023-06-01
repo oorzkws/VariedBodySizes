@@ -26,4 +26,8 @@
   <VariedBodySizes.harvestyield.tooltip>La taille du corps affecte également la quantité de produits reçus lors de la traite/du cisaillement, etc.</VariedBodySizes.harvestyield.tooltip>
   <VariedBodySizes.lactating.label>Modifier également la lactation des humanoïdes (Biotech)</VariedBodySizes.lactating.label>
   <VariedBodySizes.lactating.tooltip>La taille du corps influe également sur la quantité maximale et le taux de production de lait des humanoïdes.</VariedBodySizes.lactating.tooltip>
+  <VariedBodySizes.StandardDeviationDivider>Diffusion des valeurs</VariedBodySizes.StandardDeviationDivider>
+  <VariedBodySizes.StandardDeviationDividerTT>Augmentez cette valeur pour que le pourcentage de taille soit plus concentré autour du milieu de la variation sélectionnée. Diminuez-le pour que la variation soit plus aléatoire.</VariedBodySizes.StandardDeviationDividerTT>
+  <VariedBodySizes.StandardDeviationDivider.Middle>Moins aléatoire</VariedBodySizes.StandardDeviationDivider.Middle>
+  <VariedBodySizes.StandardDeviationDivider.Spread>Plus aléatoire</VariedBodySizes.StandardDeviationDivider.Spread>
 </LanguageData>

@@ -26,7 +26,11 @@ public static class Main
             sizeRange = bodySize;
         }
 
-        return (float)Math.Round(Rand.Range(sizeRange.min, sizeRange.max), 2);
+        var randomStandardNormal = Math.Sqrt(-2.0 * Math.Log(Rand.Value)) * Math.Sin(2.0 * Math.PI * Rand.Value);
+        var mean = (sizeRange.min + sizeRange.max) / 2;
+        var standardDeviation = (sizeRange.max - sizeRange.min) /
+                                VariedBodySizesMod.instance.Settings.StandardDeviationDivider;
+        return (float)Math.Round(mean + (standardDeviation * randomStandardNormal), 2);
     }
 
     public static void ResetAllCaches(Pawn pawn)
