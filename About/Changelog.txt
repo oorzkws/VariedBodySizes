@@ -1,5 +1,8 @@
 # Changelog for VariedBodySizes
 
+1.4.18 - Increased the maximum size for the range to 400%
+
+
 1.4.17 - Added Gaussian distribution with setting, thanks YoureATowel for the info!.
 Used DeepL to update translations for ChineseSimplified, French, German, Russian
 

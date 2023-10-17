@@ -24,7 +24,7 @@ public static partial class HarmonyPatches
             // Babies won't fit in cribs if body size exceeds 0.25
             if (__instance.DevelopmentalStage == DevelopmentalStage.Baby)
             {
-                __result = Mathf.Min(__result, 0.25f);
+                __result = Mathf.Min(__result, VariedBodySizesMod.MinimumSize);
             }
         }
     }

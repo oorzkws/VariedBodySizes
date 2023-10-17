@@ -5,7 +5,7 @@ namespace VariedBodySizes;
 internal class VariedBodySizesMod : Mod
 {
     public const float MinimumSize = 0.25f;
-    public const float MaximumSize = 2f;
+    public const float MaximumSize = 4f;
 
     /// <summary>
     ///     The instance of the settings to be read by the mod
@@ -58,7 +58,8 @@ internal class VariedBodySizesMod : Mod
         var defaultLabel = listing_Standard.Label("VariedBodySizes.defaultvariation.label".Translate());
         var defaultRangeRect = new Rect(defaultLabel.position + new Vector2(rect.width / 2, 0),
             new Vector2(defaultLabel.width / 2, defaultLabel.height));
-        Widgets.FloatRange(defaultRangeRect, "DefaultVariation".GetHashCode(), ref Settings.DefaultVariation, 0.25f, 2f,
+        Widgets.FloatRange(defaultRangeRect, "DefaultVariation".GetHashCode(), ref Settings.DefaultVariation,
+            MinimumSize, MaximumSize,
             null, ToStringStyle.PercentOne);
         var dividerRect = listing_Standard.GetRect(35f);
         Settings.StandardDeviationDivider = Widgets.HorizontalSlider_NewTemp(dividerRect,
