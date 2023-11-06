@@ -17,6 +17,11 @@ public class TimedCache<T>
         internalCache[pawn.thingIDNumber] = new CacheEntry<T>(value);
     }
 
+    public void Clear()
+    {
+        internalCache.Clear();
+    }
+
     public void Remove(Pawn pawn)
     {
         internalCache.Remove(pawn.thingIDNumber);

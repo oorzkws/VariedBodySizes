@@ -30,4 +30,9 @@
   <VariedBodySizes.StandardDeviationDividerTT>Augmentez cette valeur pour que le pourcentage de taille soit plus concentré autour du milieu de la variation sélectionnée. Diminuez-le pour que la variation soit plus aléatoire.</VariedBodySizes.StandardDeviationDividerTT>
   <VariedBodySizes.StandardDeviationDivider.Middle>Moins aléatoire</VariedBodySizes.StandardDeviationDivider.Middle>
   <VariedBodySizes.StandardDeviationDivider.Spread>Plus aléatoire</VariedBodySizes.StandardDeviationDivider.Spread>
+  <VariedBodySizes.ignoreMechs.label>Ignorer les méchanoïdes</VariedBodySizes.ignoreMechs.label>
+  <VariedBodySizes.ignoreMechs.tooltip>Tous les mécanoïdes utiliseront la taille par défaut</VariedBodySizes.ignoreMechs.tooltip>
+  <VariedBodySizes.ignoreVehicles.label>Ignorer les véhicules</VariedBodySizes.ignoreVehicles.label>
+  <VariedBodySizes.ignoreVehicles.tooltip>Tous les véhicules utiliseront la taille par défaut</VariedBodySizes.ignoreVehicles.tooltip>
+  <VariedBodySizes.pawnLocked>Taille des pions verrouillée par un réglage global</VariedBodySizes.pawnLocked>
 </LanguageData>

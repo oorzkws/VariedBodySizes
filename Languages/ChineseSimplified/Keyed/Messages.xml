@@ -30,4 +30,9 @@
   <VariedBodySizes.StandardDeviationDividerTT>把它调高，使百分比的大小更多地集中在所选变异的中间。把它设置得低一些，使其更加随机。</VariedBodySizes.StandardDeviationDividerTT>
   <VariedBodySizes.StandardDeviationDivider.Middle>减少随机性</VariedBodySizes.StandardDeviationDivider.Middle>
   <VariedBodySizes.StandardDeviationDivider.Spread>更多的随机性</VariedBodySizes.StandardDeviationDivider.Spread>
+  <VariedBodySizes.ignoreMechs.label>忽略机械人</VariedBodySizes.ignoreMechs.label>
+  <VariedBodySizes.ignoreMechs.tooltip>所有机械体都将使用默认尺寸</VariedBodySizes.ignoreMechs.tooltip>
+  <VariedBodySizes.ignoreVehicles.label>忽略车辆</VariedBodySizes.ignoreVehicles.label>
+  <VariedBodySizes.ignoreVehicles.tooltip>所有车辆都将使用默认尺寸</VariedBodySizes.ignoreVehicles.tooltip>
+  <VariedBodySizes.pawnLocked>通过全局设置锁定棋子大小</VariedBodySizes.pawnLocked>
 </LanguageData>

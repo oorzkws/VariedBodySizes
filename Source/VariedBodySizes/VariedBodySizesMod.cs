@@ -55,13 +55,14 @@ internal class VariedBodySizesMod : Mod
 
         var listing_Standard = new Listing_Standard();
         listing_Standard.Begin(rect);
-        var defaultLabel = listing_Standard.Label("VariedBodySizes.defaultvariation.label".Translate());
-        var defaultRangeRect = new Rect(defaultLabel.position + new Vector2(rect.width / 2, 0),
-            new Vector2(defaultLabel.width / 2, defaultLabel.height));
-        Widgets.FloatRange(defaultRangeRect, "DefaultVariation".GetHashCode(), ref Settings.DefaultVariation,
-            MinimumSize, MaximumSize,
-            null, ToStringStyle.PercentOne);
-        var dividerRect = listing_Standard.GetRect(35f);
+        listing_Standard.ColumnWidth = rect.width / 2.1f;
+        listing_Standard.Label("VariedBodySizes.defaultvariation.label".Translate());
+        Widgets.FloatRange(listing_Standard.GetRect(30f), "DefaultVariation".GetHashCode(),
+            ref Settings.DefaultVariation,
+            MinimumSize, MaximumSize, null, ToStringStyle.PercentOne);
+
+        listing_Standard.Gap();
+        var dividerRect = listing_Standard.GetRect(25f);
         Settings.StandardDeviationDivider = Widgets.HorizontalSlider_NewTemp(dividerRect,
             Settings.StandardDeviationDivider, 2f, 20f, false, "VariedBodySizes.StandardDeviationDivider".Translate(),
             "VariedBodySizes.StandardDeviationDivider.Spread".Translate(),
@@ -91,6 +92,29 @@ internal class VariedBodySizesMod : Mod
             }
         }
 
+        listing_Standard.Gap();
+        listing_Standard.CheckboxLabeled("VariedBodySizes.ignoreMechs.label".Translate(), ref Settings.IgnoreMechs,
+            "VariedBodySizes.ignoreMechs.tooltip".Translate());
+        if (Main.VehiclesLoaded)
+        {
+            listing_Standard.CheckboxLabeled("VariedBodySizes.ignoreVehicles.label".Translate(),
+                ref Settings.IgnoreVehicles,
+                "VariedBodySizes.ignoreVehicles.tooltip".Translate());
+        }
+        else
+        {
+            Settings.IgnoreVehicles = false;
+        }
+
+        if (currentVersion != null)
+        {
+            GUI.contentColor = Color.gray;
+            listing_Standard.Label("VariedBodySizes.version.label".Translate(currentVersion));
+            GUI.contentColor = Color.white;
+        }
+
+        listing_Standard.NewColumn();
+
         listing_Standard.CheckboxLabeled("VariedBodySizes.logging.label".Translate(), ref Settings.VerboseLogging,
             "VariedBodySizes.logging.tooltip".Translate());
         listing_Standard.CheckboxLabeled("VariedBodySizes.realbodysize.label".Translate(),
@@ -118,34 +142,24 @@ internal class VariedBodySizesMod : Mod
                 "VariedBodySizes.lactating.tooltip".Translate());
         }
 
-        if (currentVersion != null)
-        {
-            listing_Standard.Gap();
-            GUI.contentColor = Color.gray;
-            listing_Standard.Label("VariedBodySizes.version.label".Translate(currentVersion));
-            GUI.contentColor = Color.white;
-        }
+        listing_Standard.End();
+        var listing_Second = new Listing_Standard();
+        var secondRect = rect;
+        secondRect.height -= listing_Standard.CurHeight;
+        secondRect.y += listing_Standard.CurHeight;
+        listing_Second.Begin(secondRect);
 
-        listing_Standard.GapLine();
+        listing_Second.GapLine();
         Text.Font = GameFont.Medium;
-        var titleRect = listing_Standard.Label("VariedBodySizes.variations.label".Translate());
+        var titleRect = listing_Second.Label("VariedBodySizes.variations.label".Translate());
         Text.Font = GameFont.Small;
-        if (Widgets.ButtonText(
-                new Rect(titleRect.position + new Vector2(titleRect.width - buttonSize.x, 0), buttonSize),
-                "VariedBodySizes.reset".Translate()))
+        if (Widgets.ButtonText(titleRect.LeftHalf().RightHalf().RightHalf(), "VariedBodySizes.reset".Translate()))
         {
             Settings.ResetSettings();
         }
 
-        var searchRect = listing_Standard.GetRect(searchSize.x);
-        searchText =
-            Widgets.TextField(
-                new Rect(
-                    searchRect.position +
-                    new Vector2(searchRect.width - searchSize.x, 5),
-                    searchSize),
-                searchText);
-        Widgets.Label(searchRect, "VariedBodySizes.search".Translate());
+        searchText = Widgets.TextField(titleRect.RightHalf().RightHalf(), searchText);
+        Widgets.Label(titleRect.RightHalf().LeftHalf().RightHalf(), "VariedBodySizes.search".Translate());
 
         var allPawnTypes = Main.AllPawnTypes;
         if (!string.IsNullOrEmpty(searchText))
@@ -156,11 +170,11 @@ internal class VariedBodySizesMod : Mod
                 .ToList();
         }
 
-        listing_Standard.End();
+        listing_Second.End();
 
         var borderRect = rect;
-        borderRect.height -= searchRect.y + 40f;
-        borderRect.y += searchRect.y + 40f;
+        borderRect.height -= listing_Standard.CurHeight + listing_Second.CurHeight;
+        borderRect.y += listing_Standard.CurHeight + listing_Second.CurHeight;
         var scrollContentRect = borderRect;
         scrollContentRect.height = allPawnTypes.Count * 61f;
         scrollContentRect.width -= 20;
@@ -173,6 +187,9 @@ internal class VariedBodySizesMod : Mod
         var alternate = false;
         foreach (var pawnType in allPawnTypes)
         {
+            var locked = Settings.IgnoreMechs && pawnType.race.IsMechanoid ||
+                         Settings.IgnoreVehicles && pawnType.thingClass.Name.EndsWith("VehiclePawn");
+
             var modInfo = pawnType.modContentPack?.Name;
             var rowRect = scrollListing.GetRect(60);
             alternate = !alternate;
@@ -185,8 +202,15 @@ internal class VariedBodySizesMod : Mod
             var originalColor = GUI.contentColor;
             if (instance.Settings.VariedBodySizes.TryGetValue(pawnType.defName, out var bodySize))
             {
-                currentValue = bodySize;
-                GUI.contentColor = Color.green;
+                if (locked)
+                {
+                    instance.Settings.VariedBodySizes.Remove(pawnType.defName);
+                }
+                else
+                {
+                    currentValue = bodySize;
+                    GUI.contentColor = Color.green;
+                }
             }
 
             var raceLabel = $"{pawnType.label.CapitalizeFirst()} ({pawnType.defName}) - {modInfo}";
@@ -198,6 +222,13 @@ internal class VariedBodySizesMod : Mod
                 rowRect.size - new Vector2(iconSize.x, (rowRect.height / 2) + 3f));
 
             Widgets.Label(nameRect, raceLabel);
+
+            if (locked)
+            {
+                Widgets.Label(sliderRect, "VariedBodySizes.pawnLocked".Translate());
+                continue;
+            }
+
             Widgets.FloatRange(sliderRect, pawnType.defName.GetHashCode(), ref currentValue, MinimumSize, MaximumSize,
                 null,
                 ToStringStyle.PercentOne);
@@ -216,6 +247,12 @@ internal class VariedBodySizesMod : Mod
 
         scrollListing.End();
         Widgets.EndScrollView();
+    }
+
+    public override void WriteSettings()
+    {
+        base.WriteSettings();
+        Main.ResetAllCaches();
     }
 
     private void DrawIcon(ThingDef pawn, Rect rect)

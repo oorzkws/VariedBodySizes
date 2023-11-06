@@ -9,10 +9,12 @@ namespace VariedBodySizes;
 public static class Main
 {
     public static VariedBodySizes_GameComponent CurrentComponent;
+    public static readonly bool VehiclesLoaded;
     public static readonly List<ThingDef> AllPawnTypes;
 
     static Main()
     {
+        VehiclesLoaded = ModLister.GetActiveModWithIdentifier("SmashPhil.VehicleFramework") != null;
         AllPawnTypes = DefDatabase<ThingDef>.AllDefsListForReading.Where(def => def.race != null)
             .OrderBy(def => def.label).ToList();
         HarmonyPatches.ApplyAll(new Harmony("Mlie.VariedBodySizes"));
@@ -20,6 +22,16 @@ public static class Main
 
     public static float GetPawnVariation(Pawn pawn)
     {
+        if (VariedBodySizesMod.instance.Settings.IgnoreMechs && pawn.RaceProps.IsMechanoid)
+        {
+            return 1f;
+        }
+
+        if (VariedBodySizesMod.instance.Settings.IgnoreVehicles && pawn.def.thingClass.Name.EndsWith("VehiclePawn"))
+        {
+            return 1f;
+        }
+
         var sizeRange = VariedBodySizesMod.instance.Settings.DefaultVariation;
         if (VariedBodySizesMod.instance.Settings.VariedBodySizes.TryGetValue(pawn.def.defName, out var bodySize))
         {
@@ -33,8 +45,16 @@ public static class Main
         return (float)Math.Round(mean + (standardDeviation * randomStandardNormal), 2);
     }
 
-    public static void ResetAllCaches(Pawn pawn)
+    public static void ResetAllCaches(Pawn pawn = null)
     {
+        if (pawn == null)
+        {
+            HarmonyPatches.FacialAnimation_GetHeadMeshSetPatch.HeadCache?.Clear();
+            HarmonyPatches.PawnRenderer_GetBodyOverlayMeshSetPatch.OverlayCache?.Clear();
+            CurrentComponent?.sizeCache?.Clear();
+            return;
+        }
+
         HarmonyPatches.FacialAnimation_GetHeadMeshSetPatch.HeadCache.Remove(pawn);
         HarmonyPatches.PawnRenderer_GetBodyOverlayMeshSetPatch.OverlayCache.Remove(pawn);
         CurrentComponent.sizeCache.Remove(pawn);

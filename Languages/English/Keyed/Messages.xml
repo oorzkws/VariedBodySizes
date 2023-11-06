@@ -29,4 +29,9 @@
   <VariedBodySizes.version.label>Installed mod-version: {0}</VariedBodySizes.version.label>
   <VariedBodySizes.logging.label>Verbose logging</VariedBodySizes.logging.label>
   <VariedBodySizes.logging.tooltip>Increased logging for debugging</VariedBodySizes.logging.tooltip>
+  <VariedBodySizes.ignoreMechs.label>Ignore Mechanoids</VariedBodySizes.ignoreMechs.label>
+  <VariedBodySizes.ignoreMechs.tooltip>All mechanoids will use the default size</VariedBodySizes.ignoreMechs.tooltip>
+  <VariedBodySizes.ignoreVehicles.label>Ignore Vehicles</VariedBodySizes.ignoreVehicles.label>
+  <VariedBodySizes.ignoreVehicles.tooltip>All vehicles will use the default size</VariedBodySizes.ignoreVehicles.tooltip>
+  <VariedBodySizes.pawnLocked>Pawnsize locked by global setting</VariedBodySizes.pawnLocked>
 </LanguageData>

@@ -13,6 +13,8 @@ public class VariedBodySizesModSettings : ModSettings
     public bool AffectRealHealthScale = ModsConfig.IsActive("mute.genebodysize");
     public bool AffectRealHungerRate;
     public FloatRange DefaultVariation = new FloatRange(0.9f, 1.1f);
+    public bool IgnoreMechs;
+    public bool IgnoreVehicles;
     public float StandardDeviationDivider = 6f;
     public Dictionary<string, FloatRange> VariedBodySizes;
     private List<string> variedBodySizesKeys;
@@ -31,6 +33,8 @@ public class VariedBodySizesModSettings : ModSettings
         Scribe_Values.Look(ref AffectMeleeDodgeChance, "AffectMeleeDodgeChance");
         Scribe_Values.Look(ref AffectHarvestYield, "AffectHarvestYield");
         Scribe_Values.Look(ref AffectLactating, "AffectLactating");
+        Scribe_Values.Look(ref IgnoreMechs, "IgnoreMechs");
+        Scribe_Values.Look(ref IgnoreVehicles, "IgnoreVehicles");
         Scribe_Values.Look(ref StandardDeviationDivider, "StandardDeviationDivider", 6f);
         Scribe_Values.Look(ref DefaultVariation, "DefaultVariation", new FloatRange(0.9f, 1.1f));
         Scribe_Collections.Look(ref VariedBodySizes, "VariedBodySizes", LookMode.Value,

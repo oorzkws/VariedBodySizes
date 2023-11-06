@@ -30,4 +30,9 @@
   <VariedBodySizes.StandardDeviationDividerTT>Erhöhen Sie diesen Wert, damit sich der Größenprozentsatz stärker um die Mitte der ausgewählten Variation gruppiert. Stellen Sie ihn niedriger ein, um ihn zufälliger zu machen.</VariedBodySizes.StandardDeviationDividerTT>
   <VariedBodySizes.StandardDeviationDivider.Middle>Weniger zufällig</VariedBodySizes.StandardDeviationDivider.Middle>
   <VariedBodySizes.StandardDeviationDivider.Spread>Mehr Zufall</VariedBodySizes.StandardDeviationDivider.Spread>
+  <VariedBodySizes.ignoreMechs.label>Mechanoide ignorieren</VariedBodySizes.ignoreMechs.label>
+  <VariedBodySizes.ignoreMechs.tooltip>Alle Mechanoide werden die Standardgröße verwenden</VariedBodySizes.ignoreMechs.tooltip>
+  <VariedBodySizes.ignoreVehicles.label>Fahrzeuge ignorieren</VariedBodySizes.ignoreVehicles.label>
+  <VariedBodySizes.ignoreVehicles.tooltip>Alle Fahrzeuge werden die Standardgröße verwenden</VariedBodySizes.ignoreVehicles.tooltip>
+  <VariedBodySizes.pawnLocked>Pawnsize durch globale Einstellung gesperrt</VariedBodySizes.pawnLocked>
 </LanguageData>
