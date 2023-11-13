@@ -35,4 +35,6 @@
   <VariedBodySizes.ignoreVehicles.label>Fahrzeuge ignorieren</VariedBodySizes.ignoreVehicles.label>
   <VariedBodySizes.ignoreVehicles.tooltip>Alle Fahrzeuge werden die Standardgröße verwenden</VariedBodySizes.ignoreVehicles.tooltip>
   <VariedBodySizes.pawnLocked>Pawnsize durch globale Einstellung gesperrt</VariedBodySizes.pawnLocked>
+  <VariedBodySizes.sizeChange>Faktor für Größenänderung</VariedBodySizes.sizeChange>
+  <VariedBodySizes.sizeNote>Größenänderungsfaktor {0}</VariedBodySizes.sizeNote>
 </LanguageData>

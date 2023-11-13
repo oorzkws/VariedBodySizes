@@ -35,4 +35,6 @@
   <VariedBodySizes.ignoreVehicles.label>Ignorer les véhicules</VariedBodySizes.ignoreVehicles.label>
   <VariedBodySizes.ignoreVehicles.tooltip>Tous les véhicules utiliseront la taille par défaut</VariedBodySizes.ignoreVehicles.tooltip>
   <VariedBodySizes.pawnLocked>Taille des pions verrouillée par un réglage global</VariedBodySizes.pawnLocked>
+  <VariedBodySizes.sizeChange>Facteur de changement de taille</VariedBodySizes.sizeChange>
+  <VariedBodySizes.sizeNote>Facteur de changement de taille {0}</VariedBodySizes.sizeNote>
 </LanguageData>

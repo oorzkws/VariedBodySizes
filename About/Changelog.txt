@@ -1,5 +1,9 @@
 # Changelog for VariedBodySizes
 
+1.4.20 - Added some extra explanations for the size-change in the pawn info window..
+Used DeepL to update translations for ChineseSimplified, French, German, Russian
+
+
 1.4.19 - Redesigned the mod-settings, added settings to ignore mechs and vehicles from [url=https://steamcommunity.com/workshop/filedetails/?id=3014915404]Vehicle Framework[/url].
 Used DeepL to update translations for ChineseSimplified, French, German, Russian
 

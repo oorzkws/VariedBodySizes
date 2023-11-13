@@ -23,7 +23,7 @@
   <VariedBodySizes.meleedodgechance.label>Also modify melee dodge chance</VariedBodySizes.meleedodgechance.label>
   <VariedBodySizes.meleedodgechance.tooltip>Bodysize will also affect the melee dodge chance of a pawn/animal.</VariedBodySizes.meleedodgechance.tooltip>
   <VariedBodySizes.harvestyield.label>Also modify animal product yield</VariedBodySizes.harvestyield.label>
-  <VariedBodySizes.harvestyield.tooltip>Bodysize will also affect the amount of products recieved when milking/shearing etc.</VariedBodySizes.harvestyield.tooltip>
+  <VariedBodySizes.harvestyield.tooltip>Bodysize will also affect the amount of products received when milking/shearing etc.</VariedBodySizes.harvestyield.tooltip>
   <VariedBodySizes.lactating.label>Also modify humanoid lactation (Biotech)</VariedBodySizes.lactating.label>
   <VariedBodySizes.lactating.tooltip>Bodysize will also affect the maximum amount and production rate of milk for humanoids.</VariedBodySizes.lactating.tooltip>
   <VariedBodySizes.version.label>Installed mod-version: {0}</VariedBodySizes.version.label>
@@ -34,4 +34,6 @@
   <VariedBodySizes.ignoreVehicles.label>Ignore Vehicles</VariedBodySizes.ignoreVehicles.label>
   <VariedBodySizes.ignoreVehicles.tooltip>All vehicles will use the default size</VariedBodySizes.ignoreVehicles.tooltip>
   <VariedBodySizes.pawnLocked>Pawnsize locked by global setting</VariedBodySizes.pawnLocked>
+  <VariedBodySizes.sizeChange>Factor for size-change</VariedBodySizes.sizeChange>
+  <VariedBodySizes.sizeNote>    Size-change factor {0}</VariedBodySizes.sizeNote>
 </LanguageData>

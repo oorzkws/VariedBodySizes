@@ -35,4 +35,6 @@
   <VariedBodySizes.ignoreVehicles.label>忽略车辆</VariedBodySizes.ignoreVehicles.label>
   <VariedBodySizes.ignoreVehicles.tooltip>所有车辆都将使用默认尺寸</VariedBodySizes.ignoreVehicles.tooltip>
   <VariedBodySizes.pawnLocked>通过全局设置锁定棋子大小</VariedBodySizes.pawnLocked>
+  <VariedBodySizes.sizeChange>尺寸变化系数</VariedBodySizes.sizeChange>
+  <VariedBodySizes.sizeNote>尺寸变化系数 {0}</VariedBodySizes.sizeNote>
 </LanguageData>

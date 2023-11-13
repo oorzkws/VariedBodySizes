@@ -35,4 +35,6 @@
   <VariedBodySizes.ignoreVehicles.label>Игнорировать транспортные средства</VariedBodySizes.ignoreVehicles.label>
   <VariedBodySizes.ignoreVehicles.tooltip>Для всех транспортных средств будет использоваться размер по умолчанию</VariedBodySizes.ignoreVehicles.tooltip>
   <VariedBodySizes.pawnLocked>Размер пешки блокируется глобальной настройкой</VariedBodySizes.pawnLocked>
+  <VariedBodySizes.sizeChange>Коэффициент изменения размера</VariedBodySizes.sizeChange>
+  <VariedBodySizes.sizeNote>Коэффициент изменения размеров {0}</VariedBodySizes.sizeNote>
 </LanguageData>

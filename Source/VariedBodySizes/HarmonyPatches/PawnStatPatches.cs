@@ -57,30 +57,73 @@ public static partial class HarmonyPatches
         }
     }
 
+    [HarmonyPatch(typeof(StatPart_BodySize), "ExplanationPart")]
+    public static class StatPart_BodySize_ExplanationPartPatch
+    {
+        public static void Postfix(ref string __result, StatRequest req)
+        {
+            if (!VariedBodySizesMod.instance.Settings.AffectRealBodySize)
+            {
+                return;
+            }
+
+            if (!req.HasThing)
+            {
+                return;
+            }
+
+            if (req.Thing is not Pawn pawn)
+            {
+                return;
+            }
+
+            var scalarValue = GetScalarForPawn(pawn);
+
+            var bodySizeFactor = "VariedBodySizes.sizeNote".Translate(scalarValue.ToStringPercent());
+
+            if (__result == null)
+            {
+                __result = bodySizeFactor;
+                return;
+            }
+
+            __result += Environment.NewLine + bodySizeFactor;
+        }
+    }
+
     [HarmonyPatch(typeof(RaceProperties), "NutritionEatenPerDayExplanation")]
     public static class RaceProperties_NutritionEatenPerDayExplanationPatch
     {
-        public static void Prefix(Pawn p, out float __state)
+        public static void Prefix(Pawn p, out Tuple<float, float> __state)
         {
-            __state = float.NaN;
+            __state = new Tuple<float, float>(float.NaN, float.NaN);
             if (!VariedBodySizesMod.instance.Settings.AffectRealHungerRate)
             {
                 return;
             }
 
-            __state = p.def.race.baseHungerRate;
-            p.def.race.baseHungerRate *= GetScalarForPawn(p);
+            var hungerRate = p.def.race.baseHungerRate;
+            var scalarValue = GetScalarForPawn(p);
+            __state = new Tuple<float, float>(hungerRate, scalarValue);
+            p.def.race.baseHungerRate *= scalarValue;
         }
 
 
-        public static void Postfix(Pawn p, float __state)
+        public static void Postfix(Pawn p, Tuple<float, float> __state, ref string __result)
         {
-            if (float.IsNaN(__state))
+            if (float.IsNaN(__state.Item1))
             {
                 return;
             }
 
-            p.def.race.baseHungerRate = __state;
+            var indexOfPlaceToAddExplanation = __result.LastIndexOf(Environment.NewLine, StringComparison.Ordinal) - 1;
+
+            __result = __result.Insert(indexOfPlaceToAddExplanation, Environment.NewLine + Environment.NewLine +
+                                                                     "VariedBodySizes.sizeChange".Translate() +
+                                                                     ": x" + __state.Item2.ToStringPercent() +
+                                                                     Environment.NewLine);
+
+            p.def.race.baseHungerRate = __state.Item1;
         }
     }
 

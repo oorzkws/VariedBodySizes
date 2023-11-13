@@ -22,6 +22,8 @@ You can enable the "Also modify health scaling" to make pawns health pool be aff
 -  Affect melee dodge chance
 -  Affect animal resource yield
 -  Affect humanoid lactation (Biotech)
+-  Ignore mechanoids
+-  Ignore vehicles from https://steamcommunity.com/workshop/filedetails/?id=3014915404]Vehicle Framework
 -  Search filter for when you are looking for a specific pawn/animal or mod-name
 -  Shows the mod name the pawn/animal came from
 
