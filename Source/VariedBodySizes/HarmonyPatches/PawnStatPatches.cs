@@ -14,7 +14,7 @@ public static partial class HarmonyPatches
 
             // The game can call stat lookups on pawns that aren't finished generating, if we cache this we shoot ourselves in the foot
             // For some reason this always ends up as  __result == baseBodySize * 0.2f
-            if (__instance.needs is null)
+            if (!__instance.Dead && __instance.needs is null)
             {
                 return;
             }

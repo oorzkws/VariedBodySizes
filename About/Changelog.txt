@@ -1,5 +1,8 @@
 # Changelog for VariedBodySizes
 
+1.4.21 - Dead pawns should now also have modified body-size
+
+
 1.4.20 - Added some extra explanations for the size-change in the pawn info window..
 Used DeepL to update translations for ChineseSimplified, French, German, Russian
 
