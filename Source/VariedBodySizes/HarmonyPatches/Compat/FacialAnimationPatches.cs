@@ -15,7 +15,7 @@ public static partial class HarmonyPatches
         {
             // North[2] is positive on both x and y axis
             var baseVector = baseMesh.MeshAt(Rot4.North).vertices[2] * 2 * GetScalarForPawn(pawn);
-            return MeshPool.GetMeshSetForWidth(baseVector.x, baseVector.z);
+            return MeshPool.GetMeshSetForSize(baseVector.x, baseVector.z);
         }
 
         private static GraphicMeshSet GetBodyOverlayMeshForPawn(GraphicMeshSet baseMesh, Pawn pawn)

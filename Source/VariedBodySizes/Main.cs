@@ -50,13 +50,11 @@ public static class Main
         if (pawn == null)
         {
             HarmonyPatches.FacialAnimation_GetHeadMeshSetPatch.HeadCache?.Clear();
-            HarmonyPatches.PawnRenderer_GetBodyOverlayMeshSetPatch.OverlayCache?.Clear();
             CurrentComponent?.sizeCache?.Clear();
             return;
         }
 
         HarmonyPatches.FacialAnimation_GetHeadMeshSetPatch.HeadCache.Remove(pawn);
-        HarmonyPatches.PawnRenderer_GetBodyOverlayMeshSetPatch.OverlayCache.Remove(pawn);
         CurrentComponent.sizeCache.Remove(pawn);
         GlobalTextureAtlasManager.TryMarkPawnFrameSetDirty(pawn);
     }

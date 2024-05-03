@@ -1,3 +1,5 @@
+using LudeonTK;
+
 namespace VariedBodySizes;
 
 public static class DebugChangePawnSize

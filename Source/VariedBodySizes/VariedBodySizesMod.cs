@@ -63,7 +63,7 @@ internal class VariedBodySizesMod : Mod
 
         listing_Standard.Gap();
         var dividerRect = listing_Standard.GetRect(25f);
-        Settings.StandardDeviationDivider = Widgets.HorizontalSlider_NewTemp(dividerRect,
+        Settings.StandardDeviationDivider = Widgets.HorizontalSlider(dividerRect,
             Settings.StandardDeviationDivider, 2f, 20f, false, "VariedBodySizes.StandardDeviationDivider".Translate(),
             "VariedBodySizes.StandardDeviationDivider.Spread".Translate(),
             "VariedBodySizes.StandardDeviationDivider.Middle".Translate());

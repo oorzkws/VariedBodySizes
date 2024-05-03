@@ -36,7 +36,47 @@ public static partial class HarmonyPatches
             __result *= GetScalarForPawn(pawn);
         }
     }
+    
+    [HarmonyPatch]
+    public static class HumanlikeMeshPoolUtility_HumanlikeHeadWidthForPawnPatch
+    {
+        
+        private static readonly MethodBase humanlikeHeadWidthForPawn =
+            AccessTools.Method(typeof(HumanlikeMeshPoolUtility), "HumanlikeHeadWidthForPawn");
+        
+        public static bool Prepare()
+        {
+            return NotNull(humanlikeHeadWidthForPawn);
+        }
 
+
+        public static MethodBase TargetMethod()
+        {
+            return humanlikeHeadWidthForPawn;
+        }
+
+
+        /*public static void Postfix(Pawn pawn, ref float __result)
+        {
+            __result *= GetScalarForPawn(pawn);
+        }*/
+        
+        public static CodeInstructions Transpiler(CodeInstructions instructions, MethodBase method)
+        {
+            var editor = new CodeMatcher(instructions);
+            
+            var fixedWidth = InstructionMatchSignature(() => 1.5f);
+            var newGetMeshSetForWidth = InstructionSignature((Pawn pawn) =>
+                // ReSharper disable once ConvertClosureToMethodGroup - accepting this suggestion breaks the signature
+                GetScalarForPawn(pawn)
+            ); // We reference this multiple times, so we .ToArray to avoid multi-enumeration issues.
+            editor.Start().Replace(fixedWidth, newGetMeshSetForWidth, suppress: true);
+
+            return editor.InstructionEnumeration();
+        }
+    }
+
+    
     [HarmonyPatch]
     public static class PawnGraphicSet_ResolveAllGraphicsPatch
     {
@@ -48,13 +88,19 @@ public static partial class HarmonyPatches
 
         private static readonly Dictionary<Pawn, Dictionary<Apparel, Vector2>> originalGearSizes =
             new Dictionary<Pawn, Dictionary<Apparel, Vector2>>();
+        
+        private static readonly Dictionary<Pawn, Dictionary<Hediff, Vector2>> originalHediffSizes = 
+            new Dictionary<Pawn, Dictionary<Hediff, Vector2>>();
+        
+        private static readonly Dictionary<Pawn, Dictionary<Trait, Vector2>> originalTraitSizes = 
+            new Dictionary<Pawn, Dictionary<Trait, Vector2>>();
 
         private static readonly IEnumerable<FieldInfo> graphicFields = AccessTools
-            .GetDeclaredFields(typeof(PawnGraphicSet))
+            .GetDeclaredFields(typeof(PawnRenderTree))
             .Where(f => f.FieldType == typeof(Graphic));
 
         private static readonly MethodBase resolveAllGraphics =
-            AccessTools.Method(typeof(PawnGraphicSet), "ResolveAllGraphics");
+            AccessTools.Method(typeof(PawnRenderTree), "TrySetupGraphIfNeeded");
 
         private static bool ProcessField<TKey>(Dictionary<TKey, Vector2> backingDict, TKey key, Graphic graphic,
             float pawnScale, out Graphic scaledGraphic)
@@ -100,6 +146,76 @@ public static partial class HarmonyPatches
             return true;
         }
 
+        private static void processNode(ref PawnRenderNode node, ref Pawn pawn, ref float pawnDrawSize)
+        {
+            for (var i = 0; i < (node.children?.Length ?? 0); i++)
+            {
+                processNode(ref node.children![i], ref pawn, ref pawnDrawSize);
+            }
+
+            // my brain is too fried rn to deduplicate this
+            
+            if (node.apparel is not null)
+            {
+                var graphic = node.graphic;
+
+                // If it doesn't match we won't have a rotting graphic anyway
+                if (!ProcessField(originalGearSizes[pawn], node.apparel, node.graphic, pawnDrawSize,
+                        out var scaledGraphic))
+                {
+                    return;
+                }
+                
+                // Pop back and continue
+                node.graphic = scaledGraphic; ;
+            }
+            
+            if (node.hediff is not null)
+            {
+                var graphic = node.graphic;
+
+                // If it doesn't match we won't have a rotting graphic anyway
+                if (!ProcessField(originalHediffSizes[pawn], node.hediff, node.graphic, pawnDrawSize,
+                        out var scaledGraphic))
+                {
+                    return;
+                }
+                
+                // Pop back and continue
+                node.graphic = scaledGraphic; ;
+            }
+            
+            if (node.gene is not null)
+            {
+                var graphic = node.graphic;
+
+                // If it doesn't match we won't have a rotting graphic anyway
+                if (!ProcessField(originalGeneSizes[pawn], node.gene, node.graphic, pawnDrawSize,
+                        out var scaledGraphic))
+                {
+                    return;
+                }
+                
+                // Pop back and continue
+                node.graphic = scaledGraphic; ;
+            }
+            
+            if (node.trait is not null)
+            {
+                var graphic = node.graphic;
+
+                // If it doesn't match we won't have a rotting graphic anyway
+                if (!ProcessField(originalTraitSizes[pawn], node.trait, node.graphic, pawnDrawSize,
+                        out var scaledGraphic))
+                {
+                    return;
+                }
+                
+                // Pop back and continue
+                node.graphic = scaledGraphic;
+            }
+            
+        }
 
         public static bool Prepare()
         {
@@ -113,7 +229,7 @@ public static partial class HarmonyPatches
         }
 
 
-        public static void Postfix(PawnGraphicSet __instance, Pawn ___pawn)
+        public static void Postfix(PawnRenderTree __instance, Pawn ___pawn)
         {
             var pawnDrawSize = GetScalarForPawn(___pawn);
 
@@ -123,6 +239,8 @@ public static partial class HarmonyPatches
                 originalSizes.Add(___pawn, new Dictionary<FieldInfo, Vector2>());
                 originalGeneSizes.Add(___pawn, new Dictionary<Gene, Vector2>());
                 originalGearSizes.Add(___pawn, new Dictionary<Apparel, Vector2>());
+                originalHediffSizes.Add(___pawn, new Dictionary<Hediff, Vector2>());
+                originalTraitSizes.Add(___pawn, new Dictionary<Trait, Vector2>());
             }
 
             // Regular graphics incl naked body for animals
@@ -137,105 +255,15 @@ public static partial class HarmonyPatches
                 // Resize and continue
                 field.SetValue(__instance, scaledGraphic);
             }
-
-            // Gene graphics like eye overlays
-            for (var i = 0; i < (__instance.geneGraphics?.Count ?? 0); i++)
-            {
-                var geneGraphic = __instance.geneGraphics![i];
-
-                // If it doesn't match we won't have a rotting graphic anyway
-                if (!ProcessField(originalGeneSizes[___pawn], geneGraphic.sourceGene, geneGraphic.graphic, pawnDrawSize,
-                        out var scaledGraphic))
-                {
-                    continue;
-                }
-
-                geneGraphic.graphic = scaledGraphic;
-
-                if (ProcessField(originalGeneSizes[___pawn], geneGraphic.sourceGene, geneGraphic.rottingGraphic,
-                        pawnDrawSize,
-                        out var scaledRottingGraphic))
-                {
-                    geneGraphic.rottingGraphic = scaledRottingGraphic;
-                }
-
-                // Pop back and continue
-                __instance.geneGraphics[i] = new GeneGraphicRecord(geneGraphic.graphic,
-                    geneGraphic.rottingGraphic, geneGraphic.sourceGene);
-            }
-
-            // Apparel graphics 
-            for (var i = 0; i < (__instance.apparelGraphics?.Count ?? 0); i++)
-            {
-                var gearGraphic = __instance.apparelGraphics![i];
-                if (!ProcessField(originalGearSizes[___pawn], gearGraphic.sourceApparel, gearGraphic.graphic,
-                        pawnDrawSize,
-                        out var scaledGraphic))
-                {
-                    continue;
-                }
-
-                // Pop back and continue
-                __instance.apparelGraphics[i] =
-                    new ApparelGraphicRecord(scaledGraphic, gearGraphic.sourceApparel);
-            }
+            
+            // "Child" graphics - genes, hediffs, apparel
+            processNode(ref __instance.rootNode, ref ___pawn, ref pawnDrawSize);
+            
             // Done
         }
     }
 
-    [HarmonyPatch]
-    [HarmonyAfter("rimworld.erdelf.alien_race.main")]
-    public static class GraphicMeshSet_GetHumanlikeSetForPawnPatch
-    {
-        public static IEnumerable<MethodBase> TargetMethods()
-        {
-            yield return AccessTools.Method("Verse.HumanlikeMeshPoolUtility:GetHumanlikeHeadSetForPawn");
-            yield return AccessTools.Method("Verse.HumanlikeMeshPoolUtility:GetHumanlikeBodySetForPawn");
-        }
-
-        public static CodeInstructions Transpiler(CodeInstructions instructions, MethodBase method)
-        {
-            var editor = new CodeMatcher(instructions);
-
-            // First change: MeshPool.GetMeshSetForWidth(pawn.ageTracker.CurLifeStage.bodyWidth.Value) -> MeshPool.GetMeshSetForWidth(MeshPool.HumanlikeBodyWidthForPawn(pawn))
-            var getMeshSetForWidth = InstructionMatchSignature((Pawn pawn) =>
-                pawn.ageTracker.CurLifeStage.bodyWidth!.Value
-            );
-            var newGetMeshSetForWidth = InstructionSignature((Pawn pawn) =>
-                // ReSharper disable once ConvertClosureToMethodGroup - accepting this suggestion breaks the signature
-                HumanlikeMeshPoolUtility.HumanlikeBodyWidthForPawn(pawn)
-            ).ToArray(); // We reference this multiple times, so we .ToArray to avoid multi-enumeration issues.
-            editor.Start().Replace(getMeshSetForWidth, newGetMeshSetForWidth);
-
-            // Second change: MeshPool.humanlikeHead/BodySet -> MeshPool.GetMeshSetForWidth(MeshPool.HumanlikeBodyWidthForPawn(pawn))
-            // May fail if HAR is present
-            var hasHAR = ModsConfig.IsActive("erdelf.humanoidalienraces");
-            var getSet = method.Name.Contains("Head")
-                ? InstructionMatchSignature(() => MeshPool.humanlikeHeadSet)
-                : InstructionMatchSignature(() => MeshPool.humanlikeBodySet);
-            var newGetSet = InstructionSignature((Pawn pawn) =>
-                MeshPool.GetMeshSetForWidth(HumanlikeMeshPoolUtility.HumanlikeBodyWidthForPawn(pawn))
-            );
-            editor.Start()
-                .Replace(getSet, newGetSet,
-                    suppress: hasHAR); // Matching may error with HAR and that's fine, we cover that case below
-
-            // Third change, if HAR is active: (object)1.5f -> MeshPool.HumanlikeBodyWidthForPawn(pawn)
-            // ReSharper disable once InvertIf
-            if (hasHAR)
-            {
-                var fixedWidth = InstructionMatchSignature(() => 1.5f);
-                // replacement IL is the same as the first edit
-                // Note: with [HarmonyAfter], if we're *before* HAR in the load order, our transpiler will run twice:
-                // Once on the vanilla code, and then once again on the code HAR has modified.
-                // The first will naturally not find the HAR edits, so we suppress the error here.
-                editor.Start().Replace(fixedWidth, newGetMeshSetForWidth, suppress: true);
-            }
-
-            return editor.InstructionEnumeration();
-        }
-    }
-
+    
     [HarmonyPatch(typeof(HumanlikeMeshPoolUtility), "GetHumanlikeHairSetForPawn")]
     public static class GraphicMeshSet_GetHairSetForPawnPatch
     {
@@ -245,16 +273,8 @@ public static partial class HarmonyPatches
 
             // Just adding our multiplier in here
             // ReSharper disable all UnusedVariable
-            var pattern = InstructionMatchSignature((Pawn pawn) =>
-            {
-                var hairMeshSize = pawn.story.headType.hairMeshSize;
-                Pin(ref hairMeshSize);
-            });
-            var replacement = InstructionSignature((Pawn pawn) =>
-            {
-                var hairMeshSize = GetScalarForPawn(pawn) * pawn.story.headType.hairMeshSize;
-                Pin(ref hairMeshSize);
-            });
+            var pattern = InstructionMatchSignature((Pawn pawn) => pawn.story.headType.hairMeshSize);
+            var replacement = InstructionSignature((Pawn pawn) => GetScalarForPawn(pawn) * pawn.story.headType.hairMeshSize);
             editor.Start().Replace(pattern, replacement);
 
             return editor.InstructionEnumeration();
@@ -269,49 +289,11 @@ public static partial class HarmonyPatches
             var editor = new CodeMatcher(instructions);
 
             // Just adding our multiplier in here
-            var pattern = InstructionMatchSignature((Pawn pawn) =>
-            {
-                var hairMeshSize = pawn.story.headType.beardMeshSize;
-                Pin(ref hairMeshSize);
-            });
-            var replacement = InstructionSignature((Pawn pawn) =>
-            {
-                var hairMeshSize = GetScalarForPawn(pawn) * pawn.story.headType.beardMeshSize;
-                Pin(ref hairMeshSize);
-            });
+            var pattern = InstructionMatchSignature((Pawn pawn) => pawn.story.headType.beardMeshSize);
+            var replacement = InstructionSignature((Pawn pawn) => GetScalarForPawn(pawn) * pawn.story.headType.beardMeshSize);
             editor.Start().Replace(pattern, replacement);
 
             return editor.InstructionEnumeration();
-        }
-    }
-
-    [HarmonyPatch(typeof(PawnRenderer), "GetBodyOverlayMeshSet")]
-    public static class PawnRenderer_GetBodyOverlayMeshSetPatch
-    {
-        public static readonly TimedCache<GraphicMeshSet> OverlayCache = new TimedCache<GraphicMeshSet>(360);
-
-        private static GraphicMeshSet TranslateForPawn(GraphicMeshSet baseMesh, Pawn pawn)
-        {
-            // North[2] is positive on both x and y axis. Defaults would be 0.65,0,0.65 times 2 for the default 1.3f
-            var baseVector = baseMesh.MeshAt(Rot4.North).vertices[2] * 2 * GetScalarForPawn(pawn);
-            return MeshPool.GetMeshSetForWidth(baseVector.x, baseVector.z);
-        }
-
-        private static GraphicMeshSet GetBodyOverlayMeshForPawn(GraphicMeshSet baseMesh, Pawn pawn)
-        {
-            if (OverlayCache.TryGet(pawn, out var returnedMesh))
-            {
-                return returnedMesh;
-            }
-
-            var result = TranslateForPawn(baseMesh, pawn);
-            OverlayCache.Set(pawn, result);
-            return result;
-        }
-
-        public static void Postfix(ref GraphicMeshSet __result, Pawn ___pawn)
-        {
-            __result = GetBodyOverlayMeshForPawn(__result, ___pawn);
         }
     }
 
@@ -341,6 +323,7 @@ public static partial class HarmonyPatches
         }
     }
 
+    /*
     [HarmonyPatch(typeof(PawnRenderer), "DrawBodyGenes")]
     public static class PawnRenderer_DrawBodyGenesPatch
     {
@@ -363,8 +346,9 @@ public static partial class HarmonyPatches
 
             return editor.InstructionEnumeration();
         }
-    }
+    }*/
 
+    /*
     [HarmonyPatch]
     public static class PawnRenderer_DrawExtraEyeGraphicPatch
     {
@@ -467,5 +451,5 @@ public static partial class HarmonyPatches
                 new CodeInstruction(OpCodes.Call, modifyVec)
             )).InstructionEnumeration();
         }
-    }
+    }*/
 }
