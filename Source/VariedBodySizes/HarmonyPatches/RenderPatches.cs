@@ -16,6 +16,16 @@ public static partial class HarmonyPatches
     private static readonly MethodBase getScalar =
         AccessTools.Method(typeof(HarmonyPatches), "GetScalarForPawn");
 
+    [HarmonyPatch(typeof(PawnDrawUtility), "CalcAnchorData")]
+    public static class PawnDrawUtility_CalcAnchorDataPatch
+    {
+        public static void Postfix(Pawn pawn, Rot4 pawnRot, ref Vector3 anchorOffset)
+        {
+            var scale = GetScalarForPawn(pawn);
+            anchorOffset = anchorOffset.ScaledBy(new Vector3(scale, 1f, 1f / Mathf.Sqrt(scale * 1.2f)));
+        }
+    }
+    
     [HarmonyPatch]
     public static class HumanlikeMeshPoolUtility_HumanlikeBodyWidthForPawnPatch
     {
@@ -68,7 +78,7 @@ public static partial class HarmonyPatches
             var fixedWidth = InstructionMatchSignature(() => 1.5f);
             var newGetMeshSetForWidth = InstructionSignature((Pawn pawn) =>
                 // ReSharper disable once ConvertClosureToMethodGroup - accepting this suggestion breaks the signature
-                GetScalarForPawn(pawn)
+                1.5f * GetScalarForPawn(pawn)
             ); // We reference this multiple times, so we .ToArray to avoid multi-enumeration issues.
             editor.Start().Replace(fixedWidth, newGetMeshSetForWidth, suppress: true);
 
@@ -314,7 +324,7 @@ public static partial class HarmonyPatches
             var replacement = InstructionSignature((PawnRenderer self) =>
             {
                 var size = self.pawn.story.bodyType.headOffset *
-                           Mathf.Sqrt(self.pawn.ageTracker.CurLifeStage.bodySizeFactor * GetScalarForPawn(self.pawn));
+                           Mathf.Sqrt(self.pawn.ageTracker.CurLifeStage.bodySizeFactor) * GetScalarForPawn(self.pawn);
                 Pin(ref size);
             });
             editor.Start().Replace(pattern, replacement);
@@ -322,134 +332,4 @@ public static partial class HarmonyPatches
             return editor.InstructionEnumeration();
         }
     }
-
-    /*
-    [HarmonyPatch(typeof(PawnRenderer), "DrawBodyGenes")]
-    public static class PawnRenderer_DrawBodyGenesPatch
-    {
-        public static CodeInstructions Transpiler(CodeInstructions instructions)
-        {
-            var editor = new CodeMatcher(instructions);
-
-            // Just adding our multiplier in here
-            var pattern = InstructionMatchSignature((PawnRenderer self) =>
-            {
-                var size = self.pawn.story.bodyType.bodyGraphicScale;
-                Pin(ref size);
-            });
-            var replacement = InstructionSignature((PawnRenderer self) =>
-            {
-                var size = GetScalarForPawn(self.pawn) * self.pawn.story.bodyType.bodyGraphicScale;
-                Pin(ref size);
-            });
-            editor.Start().Replace(pattern, replacement);
-
-            return editor.InstructionEnumeration();
-        }
-    }*/
-
-    /*
-    [HarmonyPatch]
-    public static class PawnRenderer_DrawExtraEyeGraphicPatch
-    {
-        private static readonly MethodBase modifyVec =
-            AccessTools.Method(typeof(PawnRenderer_DrawExtraEyeGraphicPatch), "ModifyVectorForPawn");
-
-        // Verse.PawnRenderer+<>c__DisplayClass54_0:<DrawHeadHair>g__DrawExtraEyeGraphic|6
-        private static readonly MethodBase drawEyeOverlay =
-            AccessTools.FindIncludingInnerTypes<MethodBase>(typeof(PawnRenderer),
-                type => AccessTools.FirstMethod(type, info => info.Name.Contains("DrawExtraEyeGraphic")));
-
-        // Grab the "this" so we can move upwards later
-        private static readonly FieldInfo eyeOverlayPawnRendererField = AccessTools
-            .GetDeclaredFields(drawEyeOverlay?.DeclaringType)
-            .First(field => field.FieldType == typeof(PawnRenderer));
-
-        private static readonly FieldInfo
-            woundOffset = AccessTools.Field(typeof(BodyTypeDef.WoundAnchor), "offset");
-
-        private static Vector3 ModifyVectorForPawn(Vector3 vec, Pawn pawn)
-        {
-            var scalar = GetScalarForPawn(pawn);
-            vec.x *= scalar;
-            vec.z += vec.z * (1 - scalar) * 0.5f; // +/- 50% * scalar
-            return vec;
-        }
-
-
-        public static bool Prepare()
-        {
-            return NotNull(drawEyeOverlay, eyeOverlayPawnRendererField, pawnRendererPawn, woundOffset);
-        }
-
-
-        public static MethodBase TargetMethod()
-        {
-            return drawEyeOverlay;
-        }
-
-
-        public static CodeInstructions Transpiler(CodeInstructions instructions)
-        {
-            var editor = new CodeMatcher(instructions);
-            var woundOffsetCount = 0;
-            // First change: scale = HarmonyPatches.GetScalarForPawn(@this.<>4__this.pawn) * scale;
-
-            // Second change: Matrix4x4.TRS(... woundAnchorl2.offset ...)
-            // |-> Matrix4x4.TRS(... PawnRenderer_DrawExtraEyeGraphicPatch.ModifyVectorForPawn(woundAnchorl.offset, @this.<>4__this.pawn) ...)
-
-            // Modify the 2nd arg - scale (float) - right at the start of the function
-            // Since we use repeat() everywhere we don't have to care about checking for validity.. probably
-            return editor.Start().InsertAndAdvance(
-                // Pawn to stack
-                new CodeInstruction(OpCodes.Ldarg_0),
-                new CodeInstruction(OpCodes.Ldfld, eyeOverlayPawnRendererField),
-                new CodeInstruction(OpCodes.Ldfld, pawnRendererPawn),
-                // Pawn scalar to stack, consumes current stack
-                new CodeInstruction(OpCodes.Call, getScalar),
-                // Scale factor to stack
-                new CodeInstruction(OpCodes.Ldarg_2),
-                // multiply by the pawn scalar
-                new CodeInstruction(OpCodes.Mul),
-                // Store back as arg
-                new CodeInstruction(OpCodes.Starg, 2)
-            ).Start().MatchStartForward(
-                // First two instances of wound offset. Can't just modify vector3_1 since it's used elsewhere.
-                new CodeMatch(i => i.IsLdloc()),
-                new CodeMatch(OpCodes.Ldfld, woundOffset),
-                new CodeMatch(_ => woundOffsetCount++ < 2)
-            ).Repeat(match => match.Advance(2).InsertAndAdvance(
-                new CodeInstruction(OpCodes.Ldarg_0),
-                new CodeInstruction(OpCodes.Ldfld, eyeOverlayPawnRendererField),
-                new CodeInstruction(OpCodes.Ldfld, pawnRendererPawn),
-                new CodeInstruction(OpCodes.Call, modifyVec)
-            )).Start().MatchStartForward(
-                // vector 3_2, vector 3_3
-                new CodeMatch(i =>
-                {
-                    if (!i.IsLdloc())
-                    {
-                        return false;
-                    }
-
-                    if (i.operand is not LocalBuilder candidateLocal)
-                    {
-                        return false;
-                    }
-
-                    if (candidateLocal.LocalType != typeof(Vector3))
-                    {
-                        return false;
-                    }
-
-                    return candidateLocal.LocalIndex >= 3;
-                })
-            ).Repeat(match => match.Advance(1).InsertAndAdvance(
-                new CodeInstruction(OpCodes.Ldarg_0),
-                new CodeInstruction(OpCodes.Ldfld, eyeOverlayPawnRendererField),
-                new CodeInstruction(OpCodes.Ldfld, pawnRendererPawn),
-                new CodeInstruction(OpCodes.Call, modifyVec)
-            )).InstructionEnumeration();
-        }
-    }*/
 }
