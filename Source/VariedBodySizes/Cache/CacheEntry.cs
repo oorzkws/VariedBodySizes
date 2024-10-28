@@ -2,16 +2,10 @@ using System.Runtime.CompilerServices;
 
 namespace VariedBodySizes;
 
-internal readonly struct CacheEntry<T>
+internal readonly struct CacheEntry<T>(T cachedValue)
 {
-    public readonly T CachedValue;
-    private readonly int birthday;
-
-    public CacheEntry(T cachedValue)
-    {
-        CachedValue = cachedValue;
-        birthday = Current.gameInt.tickManager.ticksGameInt;
-    }
+    public readonly T CachedValue = cachedValue;
+    private readonly int birthday = Current.gameInt.tickManager.ticksGameInt;
 
     public bool Expired(int currentTick, int expiryPeriod)
     {

@@ -2,7 +2,7 @@ namespace VariedBodySizes;
 
 public static partial class HarmonyPatches
 {
-    [HarmonyPatch(typeof(VerbProperties), "GetDamageFactorFor", typeof(Tool), typeof(Pawn),
+    [HarmonyPatch(typeof(VerbProperties), nameof(VerbProperties.GetDamageFactorFor), typeof(Tool), typeof(Pawn),
         typeof(HediffComp_VerbGiver))]
     public static class VerbProperties_GetDamageFactorForPatch
     {
@@ -22,7 +22,7 @@ public static partial class HarmonyPatches
         }
     }
 
-    [HarmonyPatch(typeof(Verb_MeleeAttack), "GetDodgeChance")]
+    [HarmonyPatch(typeof(Verb_MeleeAttack), nameof(Verb_MeleeAttack.GetDodgeChance))]
     public static class VerbMeleeAttack_GetDodgeChancePatch
     {
         public static void Postfix(ref float __result, LocalTargetInfo target)

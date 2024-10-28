@@ -2,7 +2,7 @@ namespace VariedBodySizes;
 
 public static partial class HarmonyPatches
 {
-    [HarmonyPatch(typeof(Pawn), "BodySize", MethodType.Getter)]
+    [HarmonyPatch(typeof(Pawn), nameof(Pawn.BodySize), MethodType.Getter)]
     public static class Pawn_BodySizePatch
     {
         public static void Postfix(ref float __result, Pawn __instance)
@@ -29,7 +29,7 @@ public static partial class HarmonyPatches
         }
     }
 
-    [HarmonyPatch(typeof(Pawn), "HealthScale", MethodType.Getter)]
+    [HarmonyPatch(typeof(Pawn), nameof(Pawn.HealthScale), MethodType.Getter)]
     public static class Pawn_HealthScalePatch
     {
         public static void Postfix(ref float __result, Pawn __instance)
@@ -43,7 +43,7 @@ public static partial class HarmonyPatches
         }
     }
 
-    [HarmonyPatch(typeof(Need_Food), "FoodFallPerTickAssumingCategory")]
+    [HarmonyPatch(typeof(Need_Food), nameof(Need_Food.FoodFallPerTickAssumingCategory))]
     public static class Need_Food_FoodFallPerTickAssumingCategoryPatch
     {
         public static void Postfix(ref float __result, Pawn ___pawn)
@@ -57,7 +57,7 @@ public static partial class HarmonyPatches
         }
     }
 
-    [HarmonyPatch(typeof(StatPart_BodySize), "ExplanationPart")]
+    [HarmonyPatch(typeof(StatPart_BodySize), nameof(StatPart_BodySize.ExplanationPart))]
     public static class StatPart_BodySize_ExplanationPartPatch
     {
         public static void Postfix(ref string __result, StatRequest req)
@@ -91,7 +91,7 @@ public static partial class HarmonyPatches
         }
     }
 
-    [HarmonyPatch(typeof(RaceProperties), "NutritionEatenPerDayExplanation")]
+    [HarmonyPatch(typeof(RaceProperties), nameof(RaceProperties.NutritionEatenPerDayExplanation))]
     public static class RaceProperties_NutritionEatenPerDayExplanationPatch
     {
         public static void Prefix(Pawn p, out Tuple<float, float> __state)
@@ -154,7 +154,7 @@ public static partial class HarmonyPatches
         }
     }
 
-    [HarmonyPatch(typeof(HediffComp_Chargeable), "GreedyConsume")]
+    [HarmonyPatch(typeof(HediffComp_Chargeable), nameof(HediffComp_Chargeable.GreedyConsume))]
     public static class HediffComp_Chargeable_GreedyConsumePatch
     {
         public static void Prefix(HediffComp_Chargeable __instance, ref float desiredCharge, out bool __state)

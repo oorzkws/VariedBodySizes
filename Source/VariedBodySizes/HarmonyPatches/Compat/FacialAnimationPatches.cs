@@ -2,7 +2,7 @@ namespace VariedBodySizes;
 
 public static partial class HarmonyPatches
 {
-    // It uses a custom head mesh so we have to modify it a little
+    // It uses a custom head mesh, so we have to modify it a little
     [HarmonyPatch]
     public static class FacialAnimation_GetHeadMeshSetPatch
     {
@@ -13,9 +13,9 @@ public static partial class HarmonyPatches
 
         private static GraphicMeshSet TranslateForPawn(GraphicMeshSet baseMesh, Pawn pawn)
         {
-            // North[2] is positive on both x and y axis
+            // North[2] is positive on both x and y-axis
             var baseVector = baseMesh.MeshAt(Rot4.North).vertices[2] * 2 * GetScalarForPawn(pawn);
-            return MeshPool.GetMeshSetForWidth(baseVector.x, baseVector.z);
+            return MeshPool.GetMeshSetForSize(baseVector.x, baseVector.z);
         }
 
         private static GraphicMeshSet GetBodyOverlayMeshForPawn(GraphicMeshSet baseMesh, Pawn pawn)

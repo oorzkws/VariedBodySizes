@@ -2,15 +2,9 @@ using System.Runtime.CompilerServices;
 
 namespace VariedBodySizes;
 
-public class TimedCache<T>
+public class TimedCache<T>(int expiryTime)
 {
-    private readonly int expiry;
     private readonly Dictionary<int, CacheEntry<T>> internalCache = new Dictionary<int, CacheEntry<T>>();
-
-    public TimedCache(int expiryTime)
-    {
-        expiry = expiryTime;
-    }
 
     public void Set(Pawn pawn, T value)
     {
@@ -37,7 +31,7 @@ public class TimedCache<T>
         ref var reference = ref internalCache.TryGetReferenceUnsafe(pawn.thingIDNumber);
         if (!Unsafe.IsNullRef(ref reference))
         {
-            if (reference.Expired(expiry))
+            if (reference.Expired(expiryTime))
             {
                 internalCache.Remove(pawn.thingIDNumber);
                 value = default;

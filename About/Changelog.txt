@@ -1,5 +1,8 @@
 # Changelog for VariedBodySizes
 
+1.5.0 - Updated for 1.5, thanks to oorzkws!
+
+
 1.4.21 - Dead pawns should now also have modified body-size
 
 

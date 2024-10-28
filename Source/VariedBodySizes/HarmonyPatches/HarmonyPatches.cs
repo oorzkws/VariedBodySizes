@@ -217,10 +217,10 @@ public static partial class HarmonyPatches
                 if (lastInstruction.OpCode == OpCodes.Ldloca_S || lastInstruction.OpCode == OpCodes.Ldloca)
                 {
                     // Fetch the instruction for Pin<T> where T is whatever type lastInstruction accesses...
-                    var genericPin = Fish.Call(typeof(HarmonyPatches), "Pin", generics: new[]
-                    {
+                    var genericPin = Fish.Call(typeof(HarmonyPatches), "Pin", generics:
+                    [
                         locals[lastInstruction.GetIndex()].LocalType
-                    });
+                    ]);
                     // ...and check it against our current instruction
                     if (instruction == genericPin)
                     {

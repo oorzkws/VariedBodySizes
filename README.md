@@ -1,7 +1,6 @@
-# VariedBodySizes
+# [Varied Body Sizes](https://steamcommunity.com/sharedfiles/filedetails/?id=2863019550)
 
 ![Image](https://i.imgur.com/iCj5o7O.png)
-
 
 This mod adds some new settings to rimworld. It allows you to individually set a customized size range for all pawns and animal sizes. This change is strictly cosmetic and alters no other statistics of the pawn or animal.
 
@@ -23,7 +22,7 @@ You can enable the "Also modify health scaling" to make pawns health pool be aff
 -  Affect animal resource yield
 -  Affect humanoid lactation (Biotech)
 -  Ignore mechanoids
--  Ignore vehicles from https://steamcommunity.com/workshop/filedetails/?id=3014915404]Vehicle Framework
+-  Ignore vehicles from [Vehicle Framework](https://steamcommunity.com/workshop/filedetails/?id=3014915404)
 -  Search filter for when you are looking for a specific pawn/animal or mod-name
 -  Shows the mod name the pawn/animal came from
 
@@ -37,22 +36,21 @@ There are debug-options to change the sizes of pawns manually.
 
 
 
-- https://steamcommunity.com/sharedfiles/filedetails/?id=839005762]Humanoid Alien Races
-- https://steamcommunity.com/sharedfiles/filedetails/?id=2559574784]Babies and Children
+- [Humanoid Alien Races](https://steamcommunity.com/sharedfiles/filedetails/?id=839005762)
+- [Babies and Children](https://steamcommunity.com/sharedfiles/filedetails/?id=2559574784)
 
 
 
-Also, Mute made a Biotech gene mod for body-sizes: https://steamcommunity.com/sharedfiles/filedetails/?id=2887397385]Body Size Genes
+Also, Mute made a Biotech gene mod for body-sizes: [Body Size Genes](https://steamcommunity.com/sharedfiles/filedetails/?id=2887397385)
 
 Idea: Visandar_the_Unliving
 VEF support and dodge chance by: oorzkws
 
 ![Image](https://i.imgur.com/Ds0rBAD.png)
 
-Since modding is just a hobby for me I expect no donations to keep modding. If you still want to show your support you can gift me anything from my https://store.steampowered.com/wishlist/id/Mlie]Wishlist or buy me a cup of tea.
+Since modding is just a hobby for me I expect no donations to keep modding. If you still want to show your support you can gift me anything from my [Wishlist](https://store.steampowered.com/wishlist/id/Mlie) or buy me a cup of tea.
 
-https://ko-fi.com/G2G55DDYD]![Image](https://i.imgur.com/VWG0yff.png)
-
+[![Image](https://i.imgur.com/VWG0yff.png)](https://ko-fi.com/G2G55DDYD)
 
 ![Image](https://i.imgur.com/5xwDG6H.png)
 
@@ -60,13 +58,12 @@ https://ko-fi.com/G2G55DDYD]![Image](https://i.imgur.com/VWG0yff.png)
 
 -  See if the the error persists if you just have this mod and its requirements active.
 -  If not, try adding your other mods until it happens again.
--  Post your error-log using https://steamcommunity.com/workshop/filedetails/?id=818773962]HugsLib or the standalone https://steamcommunity.com/sharedfiles/filedetails/?id=2873415404]Uploader and command Ctrl+F12
+-  Post your error-log using [HugsLib](https://steamcommunity.com/workshop/filedetails/?id=818773962) or the standalone [Uploader](https://steamcommunity.com/sharedfiles/filedetails/?id=2873415404) and command Ctrl+F12
 -  For best support, please use the Discord-channel for error-reporting.
 -  Do not report errors by making a discussion-thread, I get no notification of that.
 -  If you have the solution for a problem, please post it to the GitHub repository.
--  Use https://github.com/RimSort/RimSort/releases/latest]RimSort to sort your mods
+-  Use [RimSort](https://github.com/RimSort/RimSort/releases/latest) to sort your mods
 
+ 
 
-
-https://steamcommunity.com/sharedfiles/filedetails/changelog/2863019550]![Image](https://img.shields.io/github/v/release/emipa606/VariedBodySizes?label=latest%20version&style=plastic&labelColor=0070cd&color=white)
-
+[![Image](https://img.shields.io/github/v/release/emipa606/VariedBodySizes?label=latest%20version&style=plastic&labelColor=0070cd&color=white)](https://steamcommunity.com/sharedfiles/filedetails/changelog/2863019550) | tags: customization,  pawn size,  scale options.
