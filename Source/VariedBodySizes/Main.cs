@@ -20,6 +20,13 @@ public static class Main
         HarmonyPatches.ApplyAll(new Harmony("Mlie.VariedBodySizes"));
     }
 
+    public static GraphicMeshSet TranslateForPawn(GraphicMeshSet baseMesh, Pawn pawn)
+    {
+        // North[2] is positive on both x and y-axis
+        var baseVector = baseMesh.MeshAt(Rot4.North).vertices[2] * 2 * HarmonyPatches.GetScalarForPawn(pawn);
+        return MeshPool.GetMeshSetForSize(baseVector.x, baseVector.z);
+    }
+
     public static float GetPawnVariation(Pawn pawn)
     {
         if (VariedBodySizesMod.instance.Settings.IgnoreMechs && pawn.RaceProps.IsMechanoid)

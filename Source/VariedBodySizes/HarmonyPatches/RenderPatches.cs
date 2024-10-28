@@ -24,6 +24,20 @@ public static partial class HarmonyPatches
         }
     }
 
+    [HarmonyPatch(typeof(PawnRenderNode_AnimalPart), nameof(PawnRenderNode_AnimalPart.MeshSetFor))]
+    public static class PawnRenderNode_AnimalPart_MeshSetFor
+    {
+        public static void Postfix(Pawn pawn, ref GraphicMeshSet __result)
+        {
+            if (__result == null)
+            {
+                return;
+            }
+
+            __result = Main.TranslateForPawn(__result, pawn);
+        }
+    }
+
     [HarmonyPatch]
     public static class HumanlikeMeshPoolUtility_HumanlikeBodyWidthForPawnPatch
     {

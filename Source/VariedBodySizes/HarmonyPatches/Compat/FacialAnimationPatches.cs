@@ -11,13 +11,6 @@ public static partial class HarmonyPatches
 
         public static readonly TimedCache<GraphicMeshSet> HeadCache = new TimedCache<GraphicMeshSet>(360);
 
-        private static GraphicMeshSet TranslateForPawn(GraphicMeshSet baseMesh, Pawn pawn)
-        {
-            // North[2] is positive on both x and y-axis
-            var baseVector = baseMesh.MeshAt(Rot4.North).vertices[2] * 2 * GetScalarForPawn(pawn);
-            return MeshPool.GetMeshSetForSize(baseVector.x, baseVector.z);
-        }
-
         private static GraphicMeshSet GetBodyOverlayMeshForPawn(GraphicMeshSet baseMesh, Pawn pawn)
         {
             if (HeadCache.TryGet(pawn, out var returnedMesh))
@@ -25,10 +18,11 @@ public static partial class HarmonyPatches
                 return returnedMesh;
             }
 
-            var result = TranslateForPawn(baseMesh, pawn);
+            var result = Main.TranslateForPawn(baseMesh, pawn);
             HeadCache.Set(pawn, result);
             return result;
         }
+
 
         public static bool Prepare()
         {

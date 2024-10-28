@@ -49,7 +49,7 @@ public static partial class HarmonyPatches
     }
 
 
-    private static float GetScalarForPawn(Pawn pawn)
+    public static float GetScalarForPawn(Pawn pawn)
     {
         return Main.CurrentComponent?.GetVariedBodySize(pawn) ?? 1f;
     }

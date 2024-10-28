@@ -1,5 +1,8 @@
 # Changelog for VariedBodySizes
 
+1.5.1 - Animals should now also scale correctly
+
+
 1.5.0 - Updated for 1.5, thanks to oorzkws!
 
 
