@@ -1,5 +1,8 @@
 # Changelog for VariedBodySizes
 
+1.5.2 - Removed the outdated VE-patch
+
+
 1.5.1 - Animals should now also scale correctly
 
 
