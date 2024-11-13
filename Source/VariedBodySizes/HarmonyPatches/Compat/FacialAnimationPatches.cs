@@ -11,19 +11,6 @@ public static partial class HarmonyPatches
 
         public static readonly TimedCache<GraphicMeshSet> HeadCache = new TimedCache<GraphicMeshSet>(360);
 
-        private static GraphicMeshSet GetBodyOverlayMeshForPawn(GraphicMeshSet baseMesh, Pawn pawn)
-        {
-            if (HeadCache.TryGet(pawn, out var returnedMesh))
-            {
-                return returnedMesh;
-            }
-
-            var result = Main.TranslateForPawn(baseMesh, pawn);
-            HeadCache.Set(pawn, result);
-            return result;
-        }
-
-
         public static bool Prepare()
         {
             return ModsConfig.IsActive("Nals.FacialAnimation") && NotNull(getHeadMeshSet);
@@ -34,9 +21,9 @@ public static partial class HarmonyPatches
             return getHeadMeshSet;
         }
 
-        public static void Postfix(ref GraphicMeshSet __result, Pawn pawn)
+        public static void Postfix(ref Vector2 __result, Pawn pawn)
         {
-            __result = GetBodyOverlayMeshForPawn(__result, pawn);
+            __result *= GetScalarForPawn(pawn);
         }
     }
 }

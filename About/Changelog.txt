@@ -1,5 +1,8 @@
 # Changelog for VariedBodySizes
 
+1.5.3 - Fixed patch for [NL] Facial Animation - WIP
+
+
 1.5.2 - Removed the outdated VE-patch
 
 
