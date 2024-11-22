@@ -28,25 +28,18 @@ public class TimedCache<T>(int expiryTime)
 
     public bool TryGet(Pawn pawn, out T value)
     {
-        try
+        ref var reference = ref internalCache.TryGetReferenceUnsafe(pawn.thingIDNumber);
+        if (!Unsafe.IsNullRef(ref reference))
         {
-            ref var reference = ref internalCache.TryGetReferenceUnsafe(pawn.thingIDNumber);
-            if (!Unsafe.IsNullRef(ref reference))
+            if (reference.Expired(expiryTime))
             {
-                if (reference.Expired(expiryTime))
-                {
-                    internalCache.Remove(pawn.thingIDNumber);
-                    value = default;
-                    return false;
-                }
-
-                value = reference.CachedValue;
-                return true;
+                internalCache.Remove(pawn.thingIDNumber);
+                value = default;
+                return false;
             }
-        }
-        catch (Exception)
-        {
-            // ignored
+
+            value = reference.CachedValue;
+            return true;
         }
 
         value = default;

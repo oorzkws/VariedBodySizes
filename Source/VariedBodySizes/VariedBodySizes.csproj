@@ -18,7 +18,7 @@
       <Version>*</Version>
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="*" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
     <PackageReference Include="Mlie_Rimworld_VersionFromManifest" Version="*" />
     <PackageReference Include="Krafs.Publicizer" Version="*">
       <PrivateAssets>all</PrivateAssets>
